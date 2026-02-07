@@ -1,11 +1,19 @@
 package com.irenaprokhyra.levelife.model;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.ColumnInfo;
+
+@Entity(tableName = "tasks")
 public class Task {
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String title;
     private String description;
     private String category;
+    @ColumnInfo(name = "reward_berries")
     private int rewardBerries;
+    @ColumnInfo(name = "reward_xp")
     private int rewardXP;
     private boolean isCompleted;
     private String frequency;
