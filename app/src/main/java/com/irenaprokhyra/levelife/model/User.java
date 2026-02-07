@@ -1,7 +1,14 @@
 package com.irenaprokhyra.levelife.model;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.ColumnInfo;
+
+@Entity(tableName = "users")
 public class User {
+    @PrimaryKey(autoGenerate = true)
     private int id;
+    @ColumnInfo(name = "user_name")
     private String name;
     private int level;
     private int experience;
