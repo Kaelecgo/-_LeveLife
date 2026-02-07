@@ -1,10 +1,20 @@
 package com.irenaprokhyra.levelife.model;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.ColumnInfo;
+
+
+@Entity(tableName = "furniture")
 public class Furniture {
+    @PrimaryKey(autoGenerate = true)
     private int id;
+
+    @ColumnInfo(name = "image_ref")
+    private String imageRef;
+
     private String name;
     private int price;
-    private String imageRef;
     private String category;
 
     public Furniture() {}

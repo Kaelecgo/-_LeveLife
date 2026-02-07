@@ -8,17 +8,21 @@ import androidx.room.ColumnInfo;
 public class Task {
     @PrimaryKey(autoGenerate = true)
     private int id;
+
+    @ColumnInfo(name = "reward_berries")
+    private int rewardBerries;
+
+    @ColumnInfo(name = "reward_xp")
+    private int rewardXP;
+
     private String title;
     private String description;
     private String category;
-    @ColumnInfo(name = "reward_berries")
-    private int rewardBerries;
-    @ColumnInfo(name = "reward_xp")
-    private int rewardXP;
     private boolean isCompleted;
     private String frequency;
 
     public Task() {}
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getTitle() { return title; }
