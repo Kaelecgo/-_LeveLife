@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">LeveLife</string>
+    <string name="login_title">LeveLife Login</string>
+    <string name="hint_username">Usuario</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="btn_enter">Entrar</string>
+    <string name="error_empty_fields">Por favor, completa todos los campos</string>
 </resources>
