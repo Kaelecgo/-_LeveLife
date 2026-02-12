@@ -7,18 +7,52 @@ import java.util.concurrent.Executors;
 
 
 public class MainRepository {
+    // Instancia estática para el Singleton
+    private static MainRepository instance;
+
     private final UserDao userDao;
     private final TaskDao taskDao;
     private final FurnitureDao furnitureDao;
     // Executor para ejecutar tareas en segundo plano (PSP)
     private final ExecutorService executorService;
 
-    public MainRepository(Application application) {
+    private MainRepository(Application application) {
         AppDatabase db = AppDatabase.getInstance(application);
         userDao = db.userDao();
         taskDao = db.taskDao();
         furnitureDao = db.furnitureDao();
         executorService = Executors.newSingleThreadExecutor();
+    }
+
+    // Metodo Singleton: Para obtener el repositorio desde la Activity
+    public static synchronized MainRepository getInstance(Application application) {
+        if (instance == null) {
+            instance = new MainRepository(application);
+        }
+        return instance;
+    }
+
+    // Interfaz Callback para comunicar resultados a la Activity
+    public interface LoginCallback {
+        void onSuccess(User user);
+        void onError(String message);
+    }
+
+    // Lógica de Login en segundo plano
+    public void loginUser(String username, String password, LoginCallback callback) {
+        executorService.execute(() -> {
+            try {
+                User user = userDao.login(username, password);
+
+                if (user != null) {
+                    callback.onSuccess(user);
+                } else {
+                    callback.onError("Login failed: User not found");
+                }
+            } catch (Exception e) {
+                callback.onError("Login failed: " + e.getMessage());
+            }
+        });
     }
 
     // --- MÉTODOS MODULARES PARA USUARIO ---

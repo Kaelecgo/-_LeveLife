@@ -1,14 +1,16 @@
 package com.irenaprokhyra.levelife.controller;
 
-import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+import android.app.Application;
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.MainRepository;
+import com.irenaprokhyra.levelife.model.User;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -16,13 +18,15 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etPassword;
     private Button btnLogin;
 
-    // private MainRepository repository;
+    private MainRepository repository;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        repository = MainRepository.getInstance((Application) getApplicationContext());
 
         initViews();
         setupListeners();
@@ -40,9 +44,7 @@ public class LoginActivity extends AppCompatActivity {
             String password = etPassword.getText().toString();
 
             if (validateInput(username, password)) {
-                // TODO: Aquí llamaremos al Repository para verificar en BBDD real
-                // Por ahora, simulamos que pasa y vamos al Main
-                doLogin();
+                performLogin(username, password);
             }
         });
     }
@@ -55,9 +57,29 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    private void doLogin() {
+    private void performLogin(String username, String password) {
+        repository.loginUser(username, password, new MainRepository.LoginCallback() {
+            @Override
+            public void onSuccess(User user) {
+                runOnUiThread(() -> {
+                    String welcome = getString(R.string.welcome_message, user.getName());
+                    Toast.makeText(LoginActivity.this, welcome, Toast.LENGTH_SHORT).show();
+                    navigateToMain();
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(() -> {
+                    Toast.makeText(LoginActivity.this, getString(R.string.error_login_failed), Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private void navigateToMain() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
-        finish(); // cerramos para que no se pueda volver atras
+        finish();
     }
 }
