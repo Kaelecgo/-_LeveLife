@@ -16,8 +16,19 @@
     <string name="label_berries">Bayas:</string>
     <string name="btn_shop">Tienda</string>
     <string name="btn_tasks">Tareas</string>
+    <string name="btn_logout">Logout</string>
     <string name="btn_inventory">Inventario</string>
     <string name="loading_data">Cargando...</string>
     <string name="error_load_user">Error al cargar el perfil de usuario</string>
+
+    <!-- Strings para el ShopActivity -->
+    <!-- Strings para el TaskActivity -->
+
+    <!-- AlertDialog -->
+    <string name="dialog_logout_title">Cerrar Sesión</string>
+    <string name="dialog_logout_message">¿Seguro que quieres salir de LeveLife?</string>
+    <string name="dialog_yes">Sí, salir</string>
+    <string name="dialog_no">Cancelar</string>
+
 
 </resources>

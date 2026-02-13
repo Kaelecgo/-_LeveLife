@@ -24,6 +24,21 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // --- NUEVO: AUTO-LOGIN ---
+        // Verificamos si existe un ID guardado
+        int savedUserId = getSharedPreferences("LeveLifeSession", MODE_PRIVATE)
+                .getInt("saved_user_id", -1);
+
+        if (savedUserId != -1) {
+            // ¡Ya estamos logueados! Saltamos al Main directamente
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("USER_ID", savedUserId);
+            startActivity(intent);
+            finish(); // Cerramos Login para que no se vea
+            return; // Cortamos la ejecución del resto del onCreate
+        }
+
         setContentView(R.layout.activity_login);
 
         repository = MainRepository.getInstance((Application) getApplicationContext());
@@ -65,11 +80,16 @@ public class LoginActivity extends AppCompatActivity {
                     String welcome = getString(R.string.welcome_message, user.getName());
                     Toast.makeText(LoginActivity.this, welcome, Toast.LENGTH_SHORT).show();
 
+                    // --- GUARDAR SESION ---
+                    getSharedPreferences("LeveLifeSession", MODE_PRIVATE)
+                            .edit()
+                            .putInt("saved_user_id", user.getId())
+                            .apply(); // guarda los cambios
+
                     // Pasar ID de usuario
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra("USER_ID", user.getId());
                     startActivity(intent);
-
                     finish();
                 });
             }

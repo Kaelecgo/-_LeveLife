@@ -1,9 +1,7 @@
 package com.irenaprokhyra.levelife.controller;
 
 import android.os.Bundle;
-
 import android.content.Intent;
-import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,7 +14,7 @@ import com.irenaprokhyra.levelife.model.User;
 public class MainActivity extends AppCompatActivity {
 
     private TextView tvWelcome, tvLevel, tvBerries;
-    private Button btnTasks, btnShop, btnInventory;
+    private Button btnTasks, btnShop, btnInventory, btnLogout;
 
     private MainRepository repository;
     private int currentUserId;
@@ -37,8 +35,15 @@ public class MainActivity extends AppCompatActivity {
         repository = MainRepository.getInstance(getApplication());
 
         initViews();
-        loadUserData();
         setupListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Cada vez que esta pantalla se muestre (al inicio o al volver),
+        // recargamos los datos frescos de la BD
+        loadUserData();
     }
 
     private void initViews() {
@@ -48,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         btnTasks = findViewById(R.id.btnTasks);
         btnShop = findViewById(R.id.btnShop);
         btnInventory = findViewById(R.id.btnInventory);
+        btnLogout = findViewById(R.id.btnLogout);
     }
 
     private void updateUI(User user) {
@@ -89,6 +95,36 @@ public class MainActivity extends AppCompatActivity {
 //            Intent intent = new Intent(MainActivity.this, InventoryActivity.class);
 //            startActivity(intent);
 //        }
+
+        btnLogout.setOnClickListener(v -> showLogoutDialog());
+    }
+
+    private void showLogoutDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_logout_title))
+                .setMessage(getString(R.string.dialog_logout_message))
+                .setPositiveButton(getString(R.string.dialog_yes), (dialog, which) -> {
+                    performLogout();
+                })
+                .setNegativeButton(getString(R.string.dialog_no), null)
+                .show();
+                }
+
+    private void performLogout() {
+        clearSessionPreferences();
+
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+
+    }
+
+    private void clearSessionPreferences() {
+        getSharedPreferences("LeveLifeSession", MODE_PRIVATE)
+                .edit()
+                .clear()
+                .apply();
     }
 
 }
