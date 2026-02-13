@@ -10,7 +10,7 @@ public interface FurnitureDao {
     @Insert
     void insertFurniture(Furniture furniture);
 
-    @Query("SELECT * FROM furniture")
+    @Query("SELECT * FROM furniture ORDER BY price ASC")
     List<Furniture> getAllFurniture();
 
     @Query("SELECT * FROM furniture WHERE category = :categoryName")

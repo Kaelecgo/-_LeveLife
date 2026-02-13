@@ -23,7 +23,6 @@ public abstract class AppDatabase extends RoomDatabase {
     // Executor para operaciones de base de datos (Global para la app)
     public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-
     public static AppDatabase getInstance(final Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
@@ -49,18 +48,38 @@ public abstract class AppDatabase extends RoomDatabase {
 
             // Ejecutamos en segundo plano la inserción del usuario Admin
             databaseWriteExecutor.execute(() -> {
-                UserDao dao = INSTANCE.userDao();
-
+                UserDao userDao = INSTANCE.userDao();
                 // Creamos el Usuario Admin por defecto
                 User admin = new User("admin", "1234");
                 admin.setLevel(1);
                 admin.setExperience(0);
                 admin.setBerries(100);
+                userDao.insertUser(admin);
 
-                dao.insertUser(admin);
+                TaskDao taskDao = INSTANCE.taskDao();
+                // Tarea 1: Facil
+                Task t1 = new Task();
+                t1.setTitle("Beber agua");
+                t1.setDescription("Hidrátate con un vaso de agua");
+                t1.setCategory("Salud");
+                t1.setFrequency("Diaria");
+                t1.setRewardXP(10);
+                t1.setRewardBerries(5);
+                t1.setCompleted(false);
+                t1.setUserId(1);
+                taskDao.insertTask(t1);
+
+                Task t2 = new Task();
+                t2.setTitle("Estudiar Android");
+                t2.setDescription("Completar el módulo de Room Database");
+                t2.setCategory("Estudios");
+                t2.setFrequency("Única");
+                t2.setRewardXP(50);
+                t2.setRewardBerries(20);
+                t2.setCompleted(false);
+                t2.setUserId(1);
+                taskDao.insertTask(t2);
             });
         }
     };
 }
-
-

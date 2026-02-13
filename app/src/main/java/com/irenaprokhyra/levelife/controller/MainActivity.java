@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setNegativeButton(getString(R.string.dialog_no), null)
                 .show();
-                }
+    }
 
     private void performLogout() {
         clearSessionPreferences();

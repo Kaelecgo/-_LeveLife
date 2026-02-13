@@ -15,10 +15,10 @@ public interface UserDao {
 
     @Query("SELECT * FROM users WHERE id = :id LIMIT 1")
     User getUserById(int id);
-    @Query("SELECT * FROM users LIMIT 1")
-    User getUser();
+
     @Query("SELECT * FROM users WHERE user_name = :username AND password = :password LIMIT 1")
     User login(String username, String password);
+
     @Query("UPDATE users SET berries = berries + :amount WHERE id = :userId")
     void updateBerries(int userId, int amount);
 

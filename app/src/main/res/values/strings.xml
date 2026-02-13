@@ -20,6 +20,7 @@
     <string name="btn_inventory">Inventario</string>
     <string name="loading_data">Cargando...</string>
     <string name="error_load_user">Error al cargar el perfil de usuario</string>
+    <string name="error_session_lost">Error: User session lost</string>
 
     <!-- Strings para el ShopActivity -->
     <!-- Strings para el TaskActivity -->

@@ -1,26 +1,29 @@
 package com.irenaprokhyra.levelife.controller;
 
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import com.irenaprokhyra.levelife.R;
 
 public class TaskActivity extends AppCompatActivity {
 
+    private int currentUserId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_task);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        currentUserId = getIntent().getIntExtra("USER_ID", -1);
+        if (currentUserId == -1) {
+            Toast.makeText(this, getString(R.string.error_session_lost), Toast.LENGTH_SHORT).show();
+            finish(); // Volver atrás si no hay usuario
+            return;
+        }
+
+        // Aquí inicializaremos el RecyclerView en la próxima sesión
+        // initViews();
+        // setupRecyclerView();
+        // loadTasks();
     }
 }

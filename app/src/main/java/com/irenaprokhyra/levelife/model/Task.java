@@ -9,6 +9,9 @@ public class Task {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
+    @ColumnInfo(name = "user_id")
+    private int userId;
+
     @ColumnInfo(name = "reward_berries")
     private int rewardBerries;
 
@@ -25,18 +28,28 @@ public class Task {
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
+
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
+
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
+
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
+
     public int getRewardBerries() { return rewardBerries; }
     public void setRewardBerries(int rewardBerries) { this.rewardBerries = rewardBerries; }
+
     public int getRewardXP() { return rewardXP; }
     public void setRewardXP(int rewardXP) { this.rewardXP = rewardXP; }
+
     public boolean isCompleted() { return isCompleted; }
     public void setCompleted(boolean completed) { isCompleted = completed; }
+
     public String getFrequency() { return frequency; }
     public void setFrequency(String frequency) { this.frequency = frequency; }
 }
