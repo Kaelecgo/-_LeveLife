@@ -12,5 +12,12 @@
 
     <!-- Strings para el MainActivity -->
     <string name="main_welcome">Bienvenido a LeveLife</string>
+    <string name="label_level">Nivel:</string>
+    <string name="label_berries">Bayas:</string>
+    <string name="btn_shop">Tienda</string>
+    <string name="btn_tasks">Tareas</string>
+    <string name="btn_inventory">Inventario</string>
+    <string name="loading_data">Cargando...</string>
+    <string name="error_load_user">Error al cargar el perfil de usuario</string>
 
 </resources>

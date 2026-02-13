@@ -64,7 +64,13 @@ public class LoginActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     String welcome = getString(R.string.welcome_message, user.getName());
                     Toast.makeText(LoginActivity.this, welcome, Toast.LENGTH_SHORT).show();
-                    navigateToMain();
+
+                    // Pasar ID de usuario
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("USER_ID", user.getId());
+                    startActivity(intent);
+
+                    finish();
                 });
             }
 
@@ -75,11 +81,5 @@ public class LoginActivity extends AppCompatActivity {
                 });
             }
         });
-    }
-
-    private void navigateToMain() {
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
     }
 }

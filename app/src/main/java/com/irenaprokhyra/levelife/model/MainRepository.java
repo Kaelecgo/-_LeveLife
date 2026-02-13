@@ -55,6 +55,31 @@ public class MainRepository {
         });
     }
 
+    public void getUserById(int userId, LoginCallback callback) {
+        executorService.execute(() -> {
+            try {
+                User user = userDao.getUserById(userId);
+
+                if (user != null) {
+                    callback.onSuccess(user);
+                } else {
+                    callback.onError("No se encuentra usuario.");
+                }
+            } catch (Exception e) {
+                callback.onError("Error al cargar el perfil de usuario: " + e.getMessage());
+            }
+
+            User user = userDao.getUser();
+
+            if (user != null) {
+                callback.onSuccess(user);
+            } else {
+                callback.onError("User not found");
+            }
+        });
+    }
+
+
     // --- MÉTODOS MODULARES PARA USUARIO ---
     public void insertUser(User user) {
         executorService.execute(() -> userDao.insertUser(user));
