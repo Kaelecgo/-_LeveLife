@@ -20,6 +20,9 @@ public class User {
 
     public User() {}
 
+    // Añadimos @Ignore para que Room ignore este constructor
+    // (Este lo usas tú manualmente para crear usuarios nuevos)
+    @Ignore
     public User(String name, String password) {
         this.name = name;
         this.password = password;

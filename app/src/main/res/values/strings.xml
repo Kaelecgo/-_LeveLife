@@ -28,6 +28,7 @@
     <string name="item_task_default_title">Tarea de ejemplo</string>
     <string name="item_task_default_category">General</string>
     <string name="item_task_reward_format">+%1$d XP | +%2$d 🍒</string>
+    <string name="error_load_tasks">Error: No se pudieron cargar las tareas</string>
 
     <!-- >_ AlertDialog >_ -->
     <string name="dialog_logout_title">Cerrar Sesión</string>
