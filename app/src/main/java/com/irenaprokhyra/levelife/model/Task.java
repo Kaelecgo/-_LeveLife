@@ -52,4 +52,9 @@ public class Task {
 
     public String getFrequency() { return frequency; }
     public void setFrequency(String frequency) { this.frequency = frequency; }
+
+    // >_ METODO DE CAMBIO DE ESTADO _<
+    public void toggleCompleted() {
+        this.isCompleted = !this.isCompleted;
+    }
 }

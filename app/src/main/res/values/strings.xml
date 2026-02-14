@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">LeveLife</string>
 
-    <!-- Strings para el LoginActivity -->
+    <!-- >_ Strings para el LoginActivity _< -->
     <string name="login_title">LeveLife Login</string>
     <string name="hint_username">Usuario</string>
     <string name="hint_password">Contraseña</string>
@@ -10,7 +10,7 @@
     <string name="welcome_message">Welcome back, %1$s!</string>
     <string name="error_login_failed">Login failed: User not found</string>
 
-    <!-- Strings para el MainActivity -->
+    <!-- >_ Strings para el MainActivity _< -->
     <string name="main_welcome">Bienvenido a LeveLife</string>
     <string name="label_level">Nivel:</string>
     <string name="label_berries">Bayas:</string>
@@ -22,10 +22,14 @@
     <string name="error_load_user">Error al cargar el perfil de usuario</string>
     <string name="error_session_lost">Error: User session lost</string>
 
-    <!-- Strings para el ShopActivity -->
-    <!-- Strings para el TaskActivity -->
+    <!--  >_ Strings para el ShopActivity _< -->
+    <!-- >_ Strings para el TaskActivity _< -->
+    <string name="reward_claimed">¡Bien! +%1$d XP y +%2$d Bayas</string>
+    <string name="item_task_default_title">Tarea de ejemplo</string>
+    <string name="item_task_default_category">General</string>
+    <string name="item_task_reward_format">+%1$d XP | +%2$d 🍒</string>
 
-    <!-- AlertDialog -->
+    <!-- >_ AlertDialog >_ -->
     <string name="dialog_logout_title">Cerrar Sesión</string>
     <string name="dialog_logout_message">¿Seguro que quieres salir de LeveLife?</string>
     <string name="dialog_yes">Sí, salir</string>

@@ -56,6 +56,7 @@ public class MainRepository {
         });
     }
 
+    // >_ METODO PARA OBTENER USUARIO _<
     public void getUserById(int userId, LoginCallback callback) {
         executorService.execute(() -> {
             try {
@@ -71,20 +72,24 @@ public class MainRepository {
         });
     }
 
-    // --- MÉTODOS MODULARES PARA USUARIO ---
+    // >_ MÉTODOS PARA USUARIO _<
     public void insertUser(User user) {
         executorService.execute(() -> userDao.insertUser(user));
     }
     // Nota: Este metodo se usará con precaución más adelante
     public User getUserSync(int id) { return userDao.getUserById(id); }
 
-    // --- MÉTODOS MODULARES PARA TAREAS ---
+    // >_  MÉTODOS PARA TAREAS _<
     public void insertTask(Task task) {
         executorService.execute(() -> taskDao.insertTask(task));
     }
 
     public void updateTask(Task task) {
         executorService.execute(() -> taskDao.updateTask(task));
+    }
+    // >_ METODO DE ELIMINACIÓN _<
+    public void deleteTask(Task task) {
+        executorService.execute(() -> taskDao.deleteTask(task));
     }
 
     public void getTaskForUser(int userId, TaskListCallback callback) {
@@ -98,9 +103,10 @@ public class MainRepository {
         });
     }
 
+
     // Los métodos que devuelven listas los manejaremos con LiveData o hilos más adelante
 
-    // --- MÉTODOS PARA MUEBLES ---
+    // >_  MÉTODOS PARA MUEBLES _<
     public void insertFurniture(Furniture furniture) {
         executorService.execute(() -> furnitureDao.insertFurniture(furniture));
     }

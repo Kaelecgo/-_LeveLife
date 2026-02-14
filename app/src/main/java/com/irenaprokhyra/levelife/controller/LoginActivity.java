@@ -24,14 +24,13 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // --- NUEVO: AUTO-LOGIN ---
+        // >_ AUTO-LOGIN
         // Verificamos si existe un ID guardado
         int savedUserId = getSharedPreferences("LeveLifeSession", MODE_PRIVATE)
                 .getInt("saved_user_id", -1);
 
         if (savedUserId != -1) {
-            // ¡Ya estamos logueados! Saltamos al Main directamente
+            // Ya estamos logueados y saltamos al Main directamente
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("USER_ID", savedUserId);
             startActivity(intent);
@@ -74,13 +73,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private void performLogin(String username, String password) {
         repository.loginUser(username, password, new MainRepository.LoginCallback() {
+            // >_ GUARDAR SESIÓN _<
             @Override
             public void onSuccess(User user) {
                 runOnUiThread(() -> {
                     String welcome = getString(R.string.welcome_message, user.getName());
                     Toast.makeText(LoginActivity.this, welcome, Toast.LENGTH_SHORT).show();
 
-                    // --- GUARDAR SESION ---
                     getSharedPreferences("LeveLifeSession", MODE_PRIVATE)
                             .edit()
                             .putInt("saved_user_id", user.getId())

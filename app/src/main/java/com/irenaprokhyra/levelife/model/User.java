@@ -3,6 +3,7 @@ package com.irenaprokhyra.levelife.model;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
+import androidx.room.Ignore; // Importante para métodos que no son columnas
 
 @Entity(tableName = "users")
 public class User {
@@ -44,4 +45,28 @@ public class User {
 
     public int getBerries() { return berries; }
     public void setBerries(int berries) { this.berries = berries; }
+
+    // >_ LOGICA DE NIVELES _<
+    public int getXpToNextLevel() {
+        return this.level * 100;
+    }
+    // Añade XP y devuelve true si ha subido de nivel (para notificar al usuario)
+    public boolean addExperience(int xp) {
+        this.experience += xp;
+        int required = getXpToNextLevel();
+
+        boolean leveledUp = false;
+        // Usamos while por si gana tanta XP que sube 2 niveles de golpe
+        while (this.experience >= required) {
+            this.experience -= required;
+            this.level++;
+            required = getXpToNextLevel(); // Recalcula para el siguiente
+            leveledUp = true;
+        }
+        return leveledUp;
+    }
+
+    public void addBerries(int amount) {
+        this.berries += amount;
+    }
 }

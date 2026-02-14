@@ -98,28 +98,30 @@ public class MainActivity extends AppCompatActivity {
 
         btnLogout.setOnClickListener(v -> showLogoutDialog());
     }
-
+    // Metodo para mostrar el dialogo de logout
     private void showLogoutDialog() {
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle(getString(R.string.dialog_logout_title))
                 .setMessage(getString(R.string.dialog_logout_message))
                 .setPositiveButton(getString(R.string.dialog_yes), (dialog, which) -> {
+                    // Se ejecuta si la respuesta es 'Si'
                     performLogout();
                 })
                 .setNegativeButton(getString(R.string.dialog_no), null)
                 .show();
     }
-
+    // Metodo para cerrar sesion
     private void performLogout() {
+        // Borra sesion
         clearSessionPreferences();
-
+        // Volvemos a la actividad de Login
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
-
     }
 
+    // >_ BORRAR SESIÓN _<
     private void clearSessionPreferences() {
         getSharedPreferences("LeveLifeSession", MODE_PRIVATE)
                 .edit()
