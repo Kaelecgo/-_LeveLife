@@ -76,6 +76,11 @@ public class MainRepository {
     public void insertUser(User user) {
         executorService.execute(() -> userDao.insertUser(user));
     }
+    // >_ METODO PARA ACTUALIZACIÓN _<
+    public void updateUser(User user) {
+        executorService.execute(() -> userDao.updateUser(user));
+    }
+
     // Nota: Este metodo se usará con precaución más adelante
     public User getUserSync(int id) { return userDao.getUserById(id); }
 

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.MainRepository;
 import com.irenaprokhyra.levelife.model.Task;
+import com.irenaprokhyra.levelife.model.User;
 import com.irenaprokhyra.levelife.view.TaskAdapter;
 
 import java.util.List;
@@ -22,6 +25,9 @@ public class TaskActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TaskAdapter adapter;
     private TextView tvEmptyState;
+
+    // >_ Variable para guardar al usuario actual en memoria _<
+    private User currentUser;
 
 
     @Override
@@ -40,28 +46,65 @@ public class TaskActivity extends AppCompatActivity {
         repository = MainRepository.getInstance(getApplication());
 
         initViews();
-        loadTasks();
+        // >_ IMPORTANTE -> Cargamos perfil y tareas _<
+        loadUserProfile();
     }
 
     private void initViews() {
         recyclerView = findViewById(R.id.rvTasks);
         tvEmptyState = findViewById(R.id.tvEmptyState);
-        // Configuramos el RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Inicializamos el adaptador
-        adapter = new TaskAdapter(new TaskAdapter.OnTaskActionListener() {
-            @Override
-            public void onTaskClic(Task task) {
-                // AQUÍ irá la lógica de gamificación en la próxima sesión (Sesión 3)
-                // Por ahora, solo mostramos que funciona el click
-                Toast.makeText(TaskActivity.this, "Click en la tarea: " + task.getTitle(), Toast.LENGTH_SHORT).show();
+        // Inicializamos el adaptador con la LÓGICA DE GAMIFICACIÓN
+        adapter = new TaskAdapter(task -> {
+            if (currentUser == null) return; // Protección por si no ha cargado el usuario
 
-                // Pequeño truco visual: invertimos el estado localmente para ver el check moverse
-                task.toggleCompleted();
+            // Cambiar estado visual (Check/Uncheck)
+            task.toggleCompleted();
+
+            // Calcular recompensas
+            if (task.isCompleted()) {
+                // Si la completa -> GANA XP y Bayas
+                boolean leveledUp = currentUser.addExperience(task.getRewardXP());
+                currentUser.addBerries(task.getRewardBerries());
+
+                // Feedback al usuario
+                showRewardToast(task.getRewardXP(), task.getRewardBerries());
+
+                if (leveledUp) {
+                    showLevelUpToast();
+                }
+            } else {
+                // Si la desmarca (se arrepiente) -> PIERDE lo ganado (Opcional, pero justo)
+                // Nota: Por simplicidad, ahora mismo solo restamos visualmente,
+                // implementar "restar XP" requeriría lógica extra en User.java.
+                // Lo dejamos como mejora futura.
             }
+            // Guardar cambios en BD
+            repository.updateTask(task); // Guardamos el check de la tarea
+            repository.updateUser(currentUser); // Guardamos la nueva XP/Bayas del usuario
+
+            // Refrescar la lista (para que el check se pinte bien)
+            adapter.notifyDataSetChanged();
         });
         recyclerView.setAdapter(adapter);
+    }
+
+    // >_ CARGA DEL PERFIL (Necesario para sumar XP) _<
+    private void loadUserProfile() {
+        repository.getUserById(currentUserId, new MainRepository.LoginCallback() {
+            @Override
+            public void onSuccess(User user) {
+                currentUser = user;
+                // Una vez tenemos al usuario, cargamos sus tareas
+                loadTasks();
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(() -> Toast.makeText(TaskActivity.this, "Error loading profile", Toast.LENGTH_SHORT).show());
+            }
+        });
     }
 
     private void loadTasks() {
@@ -84,12 +127,25 @@ public class TaskActivity extends AppCompatActivity {
                     }
                 });
             }
-
             @Override
             public void onError(String message) {
                 runOnUiThread(() ->
                     Toast.makeText(TaskActivity.this, getString(R.string.error_load_tasks), Toast.LENGTH_SHORT).show());
             }
         });
+    }
+
+    // >_ FEEDBACK VISUAL _<
+    private void showRewardToast(int xp, int berries) {
+        String msg = getString(R.string.reward_claimed, xp, berries);
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showLevelUpToast() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_levelup_title)
+                .setMessage(getString(R.string.dialog_levelup_message, currentUser.getLevel()))
+                .setPositiveButton(R.string.dialog_levelup_button, null)
+                .show();
     }
 }

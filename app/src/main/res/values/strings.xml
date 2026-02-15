@@ -23,16 +23,17 @@
     <string name="error_session_lost">Error: User session lost</string>
 
     <!--  >_ Strings para el ShopActivity _< -->
-
-
-
     <!-- >_ Strings para el TaskActivity _< -->
     <string name="reward_claimed">¡Bien! +%1$d XP y +%2$d Bayas</string>
     <string name="item_task_default_title">Tarea de ejemplo</string>
     <string name="item_task_default_category">General</string>
     <string name="item_task_reward_format">+%1$d XP | +%2$d 🍒</string>
     <string name="item_task_clean">"¡Todo limpio! No tienes tareas pendientes."</string>
+    <string name="dialog_levelup_title">¡NIVEL SUBIDO! 🎉</string>
+    <string name="dialog_levelup_message">¡Felicidades! Has alcanzado el Nivel %1$d.\n¡Sigue así!</string>
+    <string name="dialog_levelup_button">¡Genial!</string>
     <string name="error_load_tasks">Error: No se pudieron cargar las tareas</string>
+
 
 
     <!-- >_ AlertDialog >_ -->
@@ -40,6 +41,4 @@
     <string name="dialog_logout_message">¿Seguro que quieres salir de LeveLife?</string>
     <string name="dialog_yes">Sí, salir</string>
     <string name="dialog_no">Cancelar</string>
-
-
 </resources>

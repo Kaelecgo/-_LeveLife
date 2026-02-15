@@ -29,7 +29,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class, "levelife_db")
-                            // Estrategia destructiva: Si cambias la versión, borra todo y empieza de cero
+                            // Estrategia destructiva: Si cambias la versión, borra to y empieza de cero
                             // (Útil en desarrollo para no lidiar con migraciones complejas aún)
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -56,6 +56,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 admin.setBerries(100);
                 userDao.insertUser(admin);
 
+                // >_ INSERCIÓN DE USUARIO PRUEBA _<
                 User irena = new User("irena", "1234");
                 irena.setLevel(1);
                 irena.setExperience(0);
