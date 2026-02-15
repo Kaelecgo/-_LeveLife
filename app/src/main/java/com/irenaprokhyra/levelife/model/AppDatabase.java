@@ -56,6 +56,13 @@ public abstract class AppDatabase extends RoomDatabase {
                 admin.setBerries(100);
                 userDao.insertUser(admin);
 
+                User irena = new User("irena", "1234");
+                irena.setLevel(1);
+                irena.setExperience(0);
+                irena.setBerries(100);
+                userDao.insertUser(irena);
+
+
                 // >_ INSERCIÓN DE TAREAS _<
                 TaskDao taskDao = INSTANCE.taskDao();
                 // Tarea 1: Facil

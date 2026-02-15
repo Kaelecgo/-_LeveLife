@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- >_ Dirección _< -->
+    <!-- >_ Izquierda → derecha → 0 _< -->
+    <!-- >_ Derecha → izquierda → 180 _< -->
+    <!-- >_ Arriba → abajo → 270 _< -->
+    <!-- >_ Abajo → arriba → 90 _< -->
+    <!-- >_ Diagonal ↗ → 45 _< -->
+    <!-- >_ Diagonal ↘ → 135 _< -->
+    <gradient
+        android:angle="270"
+        android:startColor="#FF6E61"
+        android:centerColor="#F67481"
+        android:endColor="#365C7D"
+        android:type="linear"/>
+</shape>

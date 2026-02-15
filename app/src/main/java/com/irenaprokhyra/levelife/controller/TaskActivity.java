@@ -1,6 +1,8 @@
 package com.irenaprokhyra.levelife.controller;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +21,7 @@ public class TaskActivity extends AppCompatActivity {
     private MainRepository repository;
     private RecyclerView recyclerView;
     private TaskAdapter adapter;
+    private TextView tvEmptyState;
 
 
     @Override
@@ -42,6 +45,8 @@ public class TaskActivity extends AppCompatActivity {
 
     private void initViews() {
         recyclerView = findViewById(R.id.rvTasks);
+        tvEmptyState = findViewById(R.id.tvEmptyState);
+        // Configuramos el RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Inicializamos el adaptador
@@ -66,8 +71,17 @@ public class TaskActivity extends AppCompatActivity {
             @Override
             public void onSuccess(List<Task> tasks) {
                 runOnUiThread(() -> {
-                    // Pasamos la lista al adaptador para que la pinte
-                    adapter.setTasks(tasks);
+                    // >_ METODO DE VERIFICACIÓN DE TAREAS _<
+                    // Si no hay tareas, ocultamos lista, mostramos mensaje
+                    if (tasks.isEmpty()) {
+                        recyclerView.setVisibility(View.GONE);
+                        tvEmptyState.setVisibility(View.VISIBLE);
+                    } else {
+                        // Si hay tareas, Mostramos lista, ocultamos mensaje
+                        recyclerView.setVisibility(View.VISIBLE);
+                        tvEmptyState.setVisibility(View.GONE);
+                        adapter.setTasks(tasks);
+                    }
                 });
             }
 
