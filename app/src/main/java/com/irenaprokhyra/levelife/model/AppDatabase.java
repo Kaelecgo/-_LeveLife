@@ -9,9 +9,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Task.class, Furniture.class}, version = 1, exportSchema = false)
+// >_ IMPORTANTE: Subimos la versión a 2 para forzar la recreación con los nuevos índices _<
+@Database(entities = {User.class, Task.class, Furniture.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
-
     public abstract UserDao userDao();
     public abstract TaskDao taskDao();
     public abstract FurnitureDao furnitureDao();
@@ -20,7 +20,7 @@ public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
 
-    // Executor para operaciones de base de datos (Global para la app)
+    // Executor para operaciones en segundo plano
     public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public static AppDatabase getInstance(final Context context) {
@@ -29,8 +29,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class, "levelife_db")
-                            // Estrategia destructiva: Si cambias la versión, borra to y empieza de cero
-                            // (Útil en desarrollo para no lidiar con migraciones complejas aún)
+                            // Estrategia destructiva: Borra y crea de nuevo si cambia la versión
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .build();
@@ -40,7 +39,7 @@ public abstract class AppDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    // Callback: Se ejecuta SOLO cuando se crea la base de datos por primera vez
+    // >_ CALLBACK DE POBLADO (SEEDER) _<
     private static final RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
@@ -48,46 +47,37 @@ public abstract class AppDatabase extends RoomDatabase {
 
             // Ejecutamos en segundo plano la inserción del usuario Admin
             databaseWriteExecutor.execute(() -> {
+                // Limpieza inicial
                 UserDao userDao = INSTANCE.userDao();
-                // Creamos el Usuario Admin por defecto
+                TaskDao taskDao = INSTANCE.taskDao();
+                FurnitureDao furnitureDao = INSTANCE.furnitureDao();
+
+                // CREAR USUARIOS (constructor nuevo)
                 User admin = new User("admin", "1234");
                 admin.setLevel(1);
                 admin.setExperience(0);
-                admin.setBerries(100);
+                admin.setBerries(1000); // El admin empieza rico para pruebas
                 userDao.insertUser(admin);
 
                 // >_ INSERCIÓN DE USUARIO PRUEBA _<
                 User irena = new User("irena", "1234");
-                irena.setLevel(1);
-                irena.setExperience(0);
-                irena.setBerries(100);
+                irena.setBerries(50);
                 userDao.insertUser(irena);
 
+                // CREAR TAREAS
+                // Asumimos que admin es ID 1 e irena es ID 2
+                taskDao.insertTask(new Task(1, "Beber agua", "Hidrátate", "Salud", 10, 5));
+                taskDao.insertTask(new Task(1, "Estudiar Android", "Room Database", "Estudios", 50, 20));
 
-                // >_ INSERCIÓN DE TAREAS _<
-                TaskDao taskDao = INSTANCE.taskDao();
-                // Tarea 1: Facil
-                Task t1 = new Task();
-                t1.setTitle("Beber agua");
-                t1.setDescription("Hidrátate con un vaso de agua");
-                t1.setCategory("Salud");
-                t1.setFrequency("Diaria");
-                t1.setRewardXP(10);
-                t1.setRewardBerries(5);
-                t1.setCompleted(false);
-                t1.setUserId(1);
-                taskDao.insertTask(t1);
+                // Tareas para Irena
+                taskDao.insertTask(new Task(2, "Hacer la cama", "Antes de salir", "Hogar", 15, 10));
 
-                Task t2 = new Task();
-                t2.setTitle("Estudiar Android");
-                t2.setDescription("Completar el módulo de Room Database");
-                t2.setCategory("Estudios");
-                t2.setFrequency("Única");
-                t2.setRewardXP(50);
-                t2.setRewardBerries(20);
-                t2.setCompleted(false);
-                t2.setUserId(1);
-                taskDao.insertTask(t2);
+                // CREAR MUEBLES (PREPARACIÓN HITO 4 - TIENDA)
+                furnitureDao.insertFurniture(new Furniture("Silla Madera", 50, "Básico", "furn_chair_wood"));
+                furnitureDao.insertFurniture(new Furniture("Planta", 30, "Decoración", "furn_plant_small"));
+                furnitureDao.insertFurniture(new Furniture("PC Gamer", 500, "Tecnología", "furn_pc_gamer"));
+                furnitureDao.insertFurniture(new Furniture("Lámpara", 80, "Iluminación", "furn_lamp_desk"));
+
             });
         }
     };

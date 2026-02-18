@@ -10,6 +10,7 @@ public class Furniture {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
+    // Guardaremos el NOMBRE del recurso (ej: "ic_chair_wood"), no el ID numérico
     @ColumnInfo(name = "image_ref")
     private String imageRef;
 
@@ -17,7 +18,17 @@ public class Furniture {
     private int price;
     private String category;
 
+    // Constructor vacio obligatorio para Room
     public Furniture() {}
+
+    // >_ CONSTRUCTOR DE CONVENIENCIA _<
+    // Nos permitirá llenar la tienda en una sola línea de código
+    public Furniture(String name, int price, String category, String imageRef) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.imageRef = imageRef;
+    }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -26,7 +37,13 @@ public class Furniture {
     public void setName(String name) { this.name = name; }
 
     public int getPrice() { return price;}
-    public void setPrice(int price) { this.price = price; }
+    // >_ METODO DE VALIDACION _<
+    public void setPrice(int price) {
+        if (price < 0) {
+            this.price = 0; // Evitar precios negativos
+        } else {
+            this.price = price; }
+        }
 
     public String getImageRef() {return imageRef; }
     public void setImageRef(String imageRef) { this.imageRef = imageRef; }

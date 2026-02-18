@@ -1,10 +1,20 @@
 package com.irenaprokhyra.levelife.model;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
 
-@Entity(tableName = "tasks")
+// >_ CLAVES FORÁNEAS E ÍNDICES _<
+// Vinculamos la tarea al usuario. Si el usuario se borra (CASCADE), sus tareas también.
+// Creamos un índice en user_id para que las búsquedas sean ultra rápidas.
+@Entity(tableName = "tasks",
+        foreignKeys = @ForeignKey(entity = User.class,
+                parentColumns = "id", childColumns = "user_id",
+                onDelete = ForeignKey.CASCADE),
+        indices = {@Index(value = "user_id")})
 public class Task {
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -24,7 +34,22 @@ public class Task {
     private boolean isCompleted;
     private String frequency;
 
+    // Constructor vacio obligatorio para Room
     public Task() {}
+
+    // >_ MEJORA 3: CONSTRUCTOR DE CONVENIENCIA _<
+    // Para crear tareas fácilmente en el código (ej: en el Seeder)
+    @Ignore
+    public Task(int userId, String title, String description, String category, int rewardXP, int rewardBerries) {
+        this.userId = userId;
+        this.title = title;
+        this.description = description;
+        this.category = category;
+        this.rewardXP = rewardXP;
+        this.rewardBerries = rewardBerries;
+        this.isCompleted = false; // Por defecto no esta hecha
+        this.frequency = "Normal"; // Valor por defecto
+    }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
