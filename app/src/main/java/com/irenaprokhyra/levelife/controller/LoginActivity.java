@@ -72,8 +72,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupListeners() {
         btnLogin.setOnClickListener(v -> {
-            String username = etUsername.getText().toString();
-            String password = etPassword.getText().toString();
+            String username = etUsername.getText().toString().trim();
+            String password = etPassword.getText().toString().trim();
 
             if (validateInput(username, password)) {
                 performLogin(username, password);

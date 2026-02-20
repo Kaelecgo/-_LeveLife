@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog; // >_ IMPORTACIÓN LIMPIA _<
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.MainRepository;
 import com.irenaprokhyra.levelife.model.User;
@@ -100,27 +103,28 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-// >_ NAVEGACIÓN A INVENTARIO (Hito 5 - Futuro) _<
-//        btnInventory.setOnClickListener(v -> {
-//            Intent intent = new Intent(MainActivity.this, InventoryActivity.class);
-//            startActivity(intent);
-//        }
+        /* // >_ NAVEGACIÓN A INVENTARIO (Hito 5 - Futuro) _<
+        btnInventory.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, InventoryActivity.class);
+            intent.putExtra("USER_ID", currentUserId); // >_ CORREGIDO: Faltaba pasar el ID _<
+            startActivity(intent);
+        });
+        */
 
         // >_ LOGOUT _<
         btnLogout.setOnClickListener(v -> showLogoutDialog());
     }
     // Metodo para mostrar el dialogo de logout
     private void showLogoutDialog() {
-        new androidx.appcompat.app.AlertDialog.Builder(this)
+        // >_ USO DEL IMPORT LIMPIO _<
+        new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.dialog_logout_title))
                 .setMessage(getString(R.string.dialog_logout_message))
-                .setPositiveButton(getString(R.string.dialog_yes), (dialog, which) -> {
-                    // Se ejecuta si la respuesta es 'Si'
-                    performLogout();
-                })
+                .setPositiveButton(getString(R.string.dialog_yes), (dialog, which) -> performLogout())
                 .setNegativeButton(getString(R.string.dialog_no), null)
                 .show();
     }
+
     // Metodo para cerrar sesion
     private void performLogout() {
         // Borra sesion

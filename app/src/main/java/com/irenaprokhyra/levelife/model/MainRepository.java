@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 
 public class MainRepository {
     // Instancia estática para el Singleton
-    private static MainRepository instance;
+    private static volatile MainRepository instance;
 
     private final UserDao userDao;
     private final TaskDao taskDao;

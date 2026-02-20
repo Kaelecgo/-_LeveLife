@@ -9,7 +9,7 @@ import androidx.room.Ignore; // Importante para métodos que no son columnas
 public class User {
 
     // >_ CONSTANTES DE EQUILIBRIO DEL JUEGO _<
-    private static final int BASE_XP_PET_LEVEL = 100;
+    private static final int BASE_XP_PER_LEVEL = 100;
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -61,7 +61,7 @@ public class User {
      * Nivel Actual * 100 (Ej: Nivel 1 necesita 100, Nivel 2 necesita 200).
      */
     public int getXpToNextLevel() {
-        return this.level * BASE_XP_PET_LEVEL;
+        return this.level * BASE_XP_PER_LEVEL;
     }
 
     /**

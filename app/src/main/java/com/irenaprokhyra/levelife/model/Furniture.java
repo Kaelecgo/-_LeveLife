@@ -1,6 +1,7 @@
 package com.irenaprokhyra.levelife.model;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 
@@ -23,6 +24,7 @@ public class Furniture {
 
     // >_ CONSTRUCTOR DE CONVENIENCIA _<
     // Nos permitirá llenar la tienda en una sola línea de código
+    @Ignore
     public Furniture(String name, int price, String category, String imageRef) {
         this.name = name;
         this.price = price;

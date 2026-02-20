@@ -54,8 +54,6 @@ public abstract class AppDatabase extends RoomDatabase {
 
                 // CREAR USUARIOS (constructor nuevo)
                 User admin = new User("admin", "1234");
-                admin.setLevel(1);
-                admin.setExperience(0);
                 admin.setBerries(1000); // El admin empieza rico para pruebas
                 userDao.insertUser(admin);
 
