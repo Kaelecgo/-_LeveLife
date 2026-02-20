@@ -13,7 +13,7 @@
         android:id="@+id/tvWelcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/main_welcome"
+        android:text="@string/main_welcome_format"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +23,7 @@
         android:id="@+id/tvLevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/label_level"
+        android:text="@string/main_level_format"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvWelcome" />
@@ -32,7 +32,7 @@
         android:id="@+id/tvBerries"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/label_berries"
+        android:text="@string/main_berries_format"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvLevel" />

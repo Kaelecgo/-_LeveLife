@@ -29,7 +29,6 @@ public class TaskActivity extends AppCompatActivity {
     // >_ Variable para guardar al usuario actual en memoria _<
     private User currentUser;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +71,7 @@ public class TaskActivity extends AppCompatActivity {
                 showRewardToast(task.getRewardXP(), task.getRewardBerries());
 
                 if (leveledUp) {
-                    showLevelUpToast();
+                    showLevelUpDialog();
                 }
             } else {
                 // Si la desmarca (se arrepiente) -> PIERDE lo ganado (Opcional, pero justo)
@@ -102,7 +101,8 @@ public class TaskActivity extends AppCompatActivity {
 
             @Override
             public void onError(String message) {
-                runOnUiThread(() -> Toast.makeText(TaskActivity.this, "Error loading profile", Toast.LENGTH_SHORT).show());
+                // >_ CAMBIO: Usamos string de recursos _<
+                runOnUiThread(() -> Toast.makeText(TaskActivity.this, getString(R.string.error_load_user), Toast.LENGTH_SHORT).show());
             }
         });
     }
@@ -141,7 +141,8 @@ public class TaskActivity extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    private void showLevelUpToast() {
+    // >_ CAMBIO: Renombrado de Toast a Dialog por precisión semántica _<
+    private void showLevelUpDialog() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_levelup_title)
                 .setMessage(getString(R.string.dialog_levelup_message, currentUser.getLevel()))

@@ -24,9 +24,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Recuperar ID
         currentUserId = getIntent().getIntExtra("USER_ID", -1);
 
+        // Protección de Navegación
         if (currentUserId == -1) {
+            // Si por error llegamos aquí sin ID, volvemos al Login
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
@@ -41,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Cada vez que esta pantalla se muestre (al inicio o al volver),
-        // recargamos los datos frescos de la BD
+        // >_ IMPORTANTE | Recarga datos al volver de Tareas o Tienda _<
+        // Así siempre vemos las bayas y XP actualizadas
         loadUserData();
     }
 
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         tvWelcome = findViewById(R.id.tvWelcome);
         tvLevel = findViewById(R.id.tvLevel);
         tvBerries = findViewById(R.id.tvBerries);
+
         btnTasks = findViewById(R.id.btnTasks);
         btnShop = findViewById(R.id.btnShop);
         btnInventory = findViewById(R.id.btnInventory);
@@ -57,15 +61,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI(User user) {
-        tvWelcome.setText(getString(R.string.main_welcome) + " " + user.getName());
-        tvLevel.setText(getString(R.string.label_level) + " " + user.getLevel());
-        tvBerries.setText(getString(R.string.label_berries) + " " + user.getBerries());
+        // >_ Usamos String Formatting para textos limpios _<
+        tvWelcome.setText(getString(R.string.main_welcome_format, user.getName()));
+        tvLevel.setText(getString(R.string.main_level_format, user.getLevel()));
+        tvBerries.setText(getString(R.string.main_berries_format, user.getBerries()));
     }
 
     private void loadUserData() {
+        // Usamos el Repositorio asíncrono
         repository.getUserById(currentUserId, new MainRepository.LoginCallback() {
             @Override
             public void onSuccess(User user) {
+                // Volvemos al hilo principal para tocar la UI
                 runOnUiThread(() -> updateUI(user));
             }
 
@@ -79,23 +86,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
+        // >_ NAVEGACIÓN A TAREAS _<
         btnTasks.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, TaskActivity.class);
             intent.putExtra("USER_ID", currentUserId);
             startActivity(intent);
         });
 
+        // >_ NAVEGACIÓN A TIENDA _<
         btnShop.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ShopActivity.class);
             intent.putExtra("USER_ID", currentUserId);
             startActivity(intent);
         });
 
+// >_ NAVEGACIÓN A INVENTARIO (Hito 5 - Futuro) _<
 //        btnInventory.setOnClickListener(v -> {
 //            Intent intent = new Intent(MainActivity.this, InventoryActivity.class);
 //            startActivity(intent);
 //        }
 
+        // >_ LOGOUT _<
         btnLogout.setOnClickListener(v -> showLogoutDialog());
     }
     // Metodo para mostrar el dialogo de logout
@@ -114,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     private void performLogout() {
         // Borra sesion
         clearSessionPreferences();
-        // Volvemos a la actividad de Login
+        // Volvemos al Login y limpiamos la pila de actividades (para no poder volver atrás)
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -128,5 +139,4 @@ public class MainActivity extends AppCompatActivity {
                 .clear()
                 .apply();
     }
-
 }

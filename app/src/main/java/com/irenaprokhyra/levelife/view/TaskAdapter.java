@@ -1,5 +1,6 @@
 package com.irenaprokhyra.levelife.view;
 
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     // Interfaz para comunicar el click a la Activity
     public interface OnTaskActionListener {
-        void onTaskClic(Task task);
+        void onTaskClick(Task task); // >_ CAMBIO: Corregido 'Clic' por 'Click' _<
     }
 
     public TaskAdapter(OnTaskActionListener listener) {
@@ -52,7 +53,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return tasks.size();
     }
 
-    public class TaskViewHolder extends RecyclerView.ViewHolder {
+    // >_ CAMBIO: Ahora es 'static' para evitar fugas de memoria (Memory Leaks) _<
+    public static class TaskViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvTitle;
         private final TextView tvCategory;
         private final TextView tvReward;
@@ -71,18 +73,29 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             tvCategory.setText(task.getCategory());
 
             // Usamos el string formateado del recurso (+%1$d XP | +%2$d 🍒)
-            String rewardText = String.format(itemView.getContext().getString(
+            String rewardText = itemView.getContext().getString(
                     R.string.item_task_reward_format,
                     task.getRewardXP(),
                     task.getRewardBerries()
-            ));
+            );
             tvReward.setText(rewardText);
+
+            // >_ MEJORA UX: Feedback Visual de Tarea Completada _<
+            if (task.isCompleted()) {
+                // Tacha el texto y lo pone un poco transparente
+                tvTitle.setPaintFlags(tvTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                tvTitle.setAlpha(0.5f);
+            } else {
+                // Quita el tachado y restaura la opacidad (vital por el reciclaje de vistas)
+                tvTitle.setPaintFlags(tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                tvTitle.setAlpha(1.0f);
+            }
 
             // Importante: Quitamos el listener temporalmente para evitar disparos falsos al hacer scroll
             cbCompleted.setOnCheckedChangeListener(null);
             cbCompleted.setChecked(task.isCompleted());
 
-            cbCompleted.setOnClickListener(v -> listener.onTaskClic(task));
+            cbCompleted.setOnClickListener(v -> listener.onTaskClick(task));
         }
     }
 }

@@ -7,22 +7,37 @@
     <string name="hint_password">Contraseña</string>
     <string name="btn_enter">Entrar</string>
     <string name="error_empty_fields">Por favor, completa todos los campos</string>
-    <string name="welcome_message">Welcome back, %1$s!</string>
-    <string name="error_login_failed">Login failed: User not found</string>
+    <string name="welcome_message">Hola de nuevo, %1$s!</string>
+    <string name="error_login_failed">Error: Usuario o contraseña incorrectos</string>
+    <string name="btn_register">Registrarse</string>
+    <string name="error_session_expired">Tu sesión ha caducado, por favor entra de nuevo.</string>
+    <string name="error_user_exists">El nombre de usuario ya existe.</string>
+    <string name="register_success">¡Usuario creado con éxito! Ahora puedes entrar.</string>
 
     <!-- >_ Strings para el MainActivity _< -->
-    <string name="main_welcome">Bienvenido a LeveLife</string>
-    <string name="label_level">Nivel:</string>
-    <string name="label_berries">Bayas:</string>
     <string name="btn_shop">Tienda</string>
     <string name="btn_tasks">Tareas</string>
-    <string name="btn_logout">Logout</string>
+    <string name="btn_logout">Cerrar Sesión</string>
     <string name="btn_inventory">Inventario</string>
     <string name="loading_data">Cargando...</string>
     <string name="error_load_user">Error al cargar el perfil de usuario</string>
-    <string name="error_session_lost">Error: User session lost</string>
+    <string name="error_session_lost">Error: Se ha perdido la sesión</string>
+    <string name="main_welcome_format">Hola, %1$s</string>
+    <string name="main_level_format">Nivel: %1$d</string>
+    <string name="main_berries_format">Bayas: %1$d</string>
 
     <!--  >_ Strings para el ShopActivity _< -->
+    <string name="shop_balance_format">Tus Bayas: %1$d 🍒</string>
+    <string name="furniture_price_format">%1$d 🍒</string>
+    <string name="toast_furniture_selected">Has seleccionado: %1$s por %2$d 🍒</string>
+    <string name="error_load_catalog">Error al cargar el catálogo</string>
+    <string name="error_load_balance">Error al cargar tu balance</string>
+    <string name="btn_buy">Comprar</string>
+
+    <string name="placeholder_furniture_name">Nombre Mueble</string>
+    <string name="placeholder_furniture_price">0 🍒</string>
+    <string name="content_desc_furniture_icon">Icono del mueble</string>
+
     <!-- >_ Strings para el TaskActivity _< -->
     <string name="reward_claimed">¡Bien! +%1$d XP y +%2$d Bayas</string>
     <string name="item_task_default_title">Tarea de ejemplo</string>
@@ -34,11 +49,9 @@
     <string name="dialog_levelup_button">¡Genial!</string>
     <string name="error_load_tasks">Error: No se pudieron cargar las tareas</string>
 
-
-
     <!-- >_ AlertDialog >_ -->
     <string name="dialog_logout_title">Cerrar Sesión</string>
-    <string name="dialog_logout_message">¿Seguro que quieres salir de LeveLife?</string>
+    <string name="dialog_logout_message">¿Estás seguro de que quieres salir?</string>
     <string name="dialog_yes">Sí, salir</string>
     <string name="dialog_no">Cancelar</string>
 </resources>
