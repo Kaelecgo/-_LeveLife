@@ -28,4 +28,9 @@ public interface UserDao {
     // Devuelve 1 si existe, 0 si no. Útil para mostrar error "El usuario ya existe"
     @Query("SELECT COUNT(*) FROM users WHERE user_name = :username")
     int checkUserExists(String username);
+
+    // >_ METODO DE INVENTARIO (N:M) _<
+    // Guarda el registro de que un usuario ha comprado un mueble
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertUserFurnitureCrossRef(UserFurnitureCrossRef crossRef);
 }

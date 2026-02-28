@@ -167,4 +167,15 @@ public class MainRepository {
             }
         });
     }
+
+    // ------------------------------------------
+    // >_ SECCIÓN DE INVENTARIO (Relación N:M) _<
+    // ------------------------------------------
+
+    public void buyFurniture(int userId, int furnitureId) {
+        executorService.execute(() -> {
+            UserFurnitureCrossRef purchaseRecord = new UserFurnitureCrossRef(userId, furnitureId);
+            userDao.insertUserFurnitureCrossRef(purchaseRecord);
+        });
+    }
 }

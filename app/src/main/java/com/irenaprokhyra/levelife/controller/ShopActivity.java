@@ -4,11 +4,9 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
@@ -54,13 +52,38 @@ public class ShopActivity extends AppCompatActivity {
         // Usamos un GridLayout de 2 columnas para que parezca una tienda
         rvFurniture.setLayoutManager(new GridLayoutManager(this, 2));
 
-        adapter = new FurnitureAdapter(furniture -> {
-            // Fase 1: Solo mostramos un mensaje al hacer click
-            // En la Fase 2, aquí restaremos las bayas y daremos el mueble.
-            String msg = getString(R.string.toast_furniture_selected, furniture.getName(), furniture.getPrice());
-            Toast.makeText(ShopActivity.this, msg, Toast.LENGTH_SHORT).show();
-        });
+        // >_ Pasamos el metodo modular como referencia _<
+        adapter = new FurnitureAdapter(this::attemptPurchase);
         rvFurniture.setAdapter(adapter);
+    }
+
+    private void attemptPurchase(Furniture furniture) {
+        // Evitamos crasheo si el usuario clica antes de que cargue la BD
+        if (currentUser == null) return;
+
+        int price = furniture.getPrice();
+
+        if (currentUser.getBerries() >= price) {
+            // Restamos las bayas
+            currentUser.setBerries(currentUser.getBerries() - price);
+
+            // Guardamos el nuevo saldo en la base de datos local
+            repository.updateUser(currentUser);
+
+            // >_ GUARDAMOS EN EL INVENTARIO _<
+            repository.buyFurniture(currentUser.getId(), furniture.getId());
+
+            // Actualizamos la UI
+            tvShopBalance.setText(getString(R.string.shop_balance_format, currentUser.getBerries()));
+
+            // Feedback de exito
+            Toast.makeText(this, getString(R.string.success_buy_furniture, furniture.getName()), Toast.LENGTH_SHORT).show();
+
+            // TODO: (Sesión 2) Añadir el mueble al inventario del usuario.
+        } else {
+            // Feedback de rechazo por falta de fondos
+            Toast.makeText(this, getString(R.string.error_not_enough_berries), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadUserData() {

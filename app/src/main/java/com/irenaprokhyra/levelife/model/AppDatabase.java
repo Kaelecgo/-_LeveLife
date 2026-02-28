@@ -10,7 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 // >_ IMPORTANTE: Subimos la versión a 2 para forzar la recreación con los nuevos índices _<
-@Database(entities = {User.class, Task.class, Furniture.class}, version = 2, exportSchema = false)
+// Agregamos UserFurnitureCrossRef.class a @Database y subimos a version 3
+@Database(entities = {User.class, Task.class, Furniture.class, UserFurnitureCrossRef.class}, version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract TaskDao taskDao();
