@@ -61,25 +61,26 @@ public class ShopActivity extends AppCompatActivity {
         // Evitamos crasheo si el usuario clica antes de que cargue la BD
         if (currentUser == null) return;
 
-        int price = furniture.getPrice();
+        // >_ MEJORA: Delegamos la lógica matemática al Modelo _<
+        // spendBerries devuelve true si hay fondos suficientes y resta el saldo automáticamente
+        if (currentUser.spendBerries(furniture.getPrice())) {
 
-        if (currentUser.getBerries() >= price) {
-            // Restamos las bayas
-            currentUser.setBerries(currentUser.getBerries() - price);
-
-            // Guardamos el nuevo saldo en la base de datos local
+            // Guardamos el nuevo saldo en la BD local
             repository.updateUser(currentUser);
 
-            // >_ GUARDAMOS EN EL INVENTARIO _<
+            // Guardamos en el inventario (Tabla Intermedia N:M)
             repository.buyFurniture(currentUser.getId(), furniture.getId());
 
             // Actualizamos la UI
             tvShopBalance.setText(getString(R.string.shop_balance_format, currentUser.getBerries()));
 
+            // >_ MEJORA UX | Avisamos al adaptador de que tenemos menos dinero _<
+            // Esto re-evaluará todos los muebles y bloqueará los que ya no podamos pagar
+            adapter.setCurrentBalance(currentUser.getBerries());
+
             // Feedback de exito
             Toast.makeText(this, getString(R.string.success_buy_furniture, furniture.getName()), Toast.LENGTH_SHORT).show();
 
-            // TODO: (Sesión 2) Añadir el mueble al inventario del usuario.
         } else {
             // Feedback de rechazo por falta de fondos
             Toast.makeText(this, getString(R.string.error_not_enough_berries), Toast.LENGTH_SHORT).show();
@@ -94,6 +95,9 @@ public class ShopActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     // Mostramos las bayas en la parte superior de la tienda
                     tvShopBalance.setText(getString(R.string.shop_balance_format, user.getBerries()));
+
+                    // >_ Al cargar el perfil, le pasamos el saldo inicial al adaptador _<
+                    adapter.setCurrentBalance(user.getBerries());
                 });
             }
             @Override

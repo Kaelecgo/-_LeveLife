@@ -18,6 +18,9 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
     private List<Furniture> furnitureList = new ArrayList<>();
     private final OnFurnitureBuyClickListener listener;
 
+    // >_ Variable para conocer el saldo actual del usuario _<
+    private int currentBalance = 0;
+
     public interface OnFurnitureBuyClickListener {
         void onBuyClick(Furniture furniture);
     }
@@ -31,10 +34,15 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
         notifyDataSetChanged();
     }
 
+    // >_ Metodo para actualizar el saldo desde la Activity _<
+    public void setCurrentBalance(int balance) {
+        this.currentBalance = balance;
+        notifyDataSetChanged(); // Refresca la lista para actualizar los botones
+    }
+
     @NonNull
     @Override
     public FurnitureViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Asumimos que crearás un layout llamado item_furniture.xml
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_furniture, parent, false);
         return new FurnitureViewHolder(view);
     }
@@ -42,7 +50,8 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
     @Override
     public void onBindViewHolder(@NonNull FurnitureViewHolder holder, int position) {
         Furniture furniture = furnitureList.get(position);
-        holder.bind(furniture, listener);
+        // Pasamos el balance actual a la vista
+        holder.bind(furniture, listener, currentBalance);
     }
 
     @Override
@@ -57,18 +66,24 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
 
         public FurnitureViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Asegúrate de usar estos IDs cuando crees tu XML
             tvName = itemView.findViewById(R.id.tvFurnitureName);
             tvPrice = itemView.findViewById(R.id.tvFurniturePrice);
             ivIcon = itemView.findViewById(R.id.ivFurnitureIcon);
             btnBuy = itemView.findViewById(R.id.btnBuyFurniture);
         }
 
-        public void bind(Furniture furniture, OnFurnitureBuyClickListener listener) {
+        public void bind(Furniture furniture, OnFurnitureBuyClickListener listener, int balance) {
             tvName.setText(furniture.getName());
             String priceText = itemView.getContext().getString(R.string.furniture_price_format, furniture.getPrice());
             tvPrice.setText(priceText);
 
+            // >_ MEJORA UX | Validación Visual de Fondos _<
+            if (balance >= furniture.getPrice()) {
+                btnBuy.setEnabled(true);
+            } else {
+                // No tiene dinero - botón deshabilitado
+                btnBuy.setEnabled(false);
+            }
 
             // Más adelante cargaremos la imagen real basada en furniture.getImageRef()
             // ivIcon.setImageResource(...);

@@ -67,6 +67,21 @@ public abstract class AppDatabase extends RoomDatabase {
                 // Asumimos que admin es ID 1 e irena es ID 2
                 taskDao.insertTask(new Task(1, "Beber agua", "Hidrátate", "Salud", 10, 5));
                 taskDao.insertTask(new Task(1, "Estudiar Android", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar BD", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar PSP", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar Cocina", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar Python", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar Piano", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar PC", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar Musica", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar Algo", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar XML", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar Programacion", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar Gaming", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar RUST", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar C", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar C++", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar Yeah", "Room Database", "Estudios", 50, 20));
 
                 // Tareas para Irena
                 taskDao.insertTask(new Task(2, "Hacer la cama", "Antes de salir", "Hogar", 15, 10));

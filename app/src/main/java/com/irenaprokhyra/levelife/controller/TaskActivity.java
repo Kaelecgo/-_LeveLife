@@ -58,33 +58,28 @@ public class TaskActivity extends AppCompatActivity {
         adapter = new TaskAdapter(task -> {
             if (currentUser == null) return; // Protección por si no ha cargado el usuario
 
-            // Cambiar estado visual (Check/Uncheck)
-            task.toggleCompleted();
+            // >_ SEGURIDAD | Como bloqueamos el uncheck en el Adapter,
+            // este clic SIEMPRE será para completar la tarea de forma definitiva. _<
+            task.setCompleted(true);
 
-            // Calcular recompensas
-            if (task.isCompleted()) {
-                // Si la completa -> GANA XP y Bayas
-                boolean leveledUp = currentUser.addExperience(task.getRewardXP());
-                currentUser.addBerries(task.getRewardBerries());
+            boolean leveledUp = currentUser.addExperience(task.getRewardXP());
+            currentUser.addBerries(task.getRewardBerries());
 
-                // Feedback al usuario
-                showRewardToast(task.getRewardXP(), task.getRewardBerries());
+            // Feedback al usuario
+            showRewardToast(task.getRewardXP(), task.getRewardBerries());
 
-                if (leveledUp) {
-                    showLevelUpDialog();
-                }
-            } else {
-                // Si la desmarca (se arrepiente) -> PIERDE lo ganado (Opcional, pero justo)
-                // Nota: Por simplicidad, ahora mismo solo restamos visualmente,
-                // implementar "restar XP" requeriría lógica extra en User.java.
-                // Lo dejamos como mejora futura.
+            if (leveledUp) {
+                showLevelUpDialog();
             }
+
             // Guardar cambios en BD
             repository.updateTask(task); // Guardamos el check de la tarea
             repository.updateUser(currentUser); // Guardamos la nueva XP/Bayas del usuario
 
-            // Refrescar la lista (para que el check se pinte bien)
-            adapter.notifyDataSetChanged();
+            // >_ MEJORA UX: Recargamos la lista desde la BD _<
+            // Al hacer esto, Room volverá a aplicar el "ORDER BY isCompleted ASC"
+            // y la tarea que acabamos de hacer se irá automáticamente al fondo de la pantalla.
+            loadTasks();
         });
         recyclerView.setAdapter(adapter);
     }

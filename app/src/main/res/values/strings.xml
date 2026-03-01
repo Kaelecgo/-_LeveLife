@@ -45,7 +45,7 @@
     <string name="item_task_default_title">Tarea de ejemplo</string>
     <string name="item_task_default_category">General</string>
     <string name="item_task_reward_format">+%1$d XP | +%2$d 🍒</string>
-    <string name="item_task_clean">"¡Todo limpio! No tienes tareas pendientes."</string>
+    <string name="item_task_clean">"¡No tienes tareas pendientes! Tómate un café ☕"</string>
     <string name="dialog_levelup_title">¡NIVEL SUBIDO! 🎉</string>
     <string name="dialog_levelup_message">¡Felicidades! Has alcanzado el Nivel %1$d.\n¡Sigue así!</string>
     <string name="dialog_levelup_button">¡Genial!</string>

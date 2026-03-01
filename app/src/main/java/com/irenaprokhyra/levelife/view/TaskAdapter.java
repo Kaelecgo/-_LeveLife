@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.irenaprokhyra.levelife.R;
@@ -72,7 +73,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             tvTitle.setText(task.getTitle());
             tvCategory.setText(task.getCategory());
 
-            // Usamos el string formateado del recurso (+%1$d XP | +%2$d 🍒)
+            // Usamos el string formateado del recurso (+%1$d XP | +%2$d)
             String rewardText = itemView.getContext().getString(
                     R.string.item_task_reward_format,
                     task.getRewardXP(),
@@ -82,20 +83,33 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
             // >_ MEJORA UX: Feedback Visual de Tarea Completada _<
             if (task.isCompleted()) {
-                // Tacha el texto y lo pone un poco transparente
-                tvTitle.setPaintFlags(tvTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                tvTitle.setAlpha(0.5f);
-            } else {
-                // Quita el tachado y restaura la opacidad (vital por el reciclaje de vistas)
+                // Cambiamos el texto y la opacidad a gris (deshabilitado)
+                int disableColor = ContextCompat.getColor(itemView.getContext(), R.color.text_secondary);
+                tvTitle.setTextColor(disableColor);
+                tvCategory.setTextColor(disableColor);
+                tvReward.setTextColor(disableColor);
+
+                // Quitamos el tachado por si venia de antes
                 tvTitle.setPaintFlags(tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-                tvTitle.setAlpha(1.0f);
+
+                // Deshabilitamos el CheckBox y anulamos el click
+                cbCompleted.setEnabled(false);
+                cbCompleted.setOnClickListener(null);
+
+            } else {
+                // Restauramos los colores originales (Vital por el reciclaje de RecyclerView)
+                tvTitle.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.black));
+                tvCategory.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.text_secondary));
+                tvReward.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.reward));
+
+                // Habilitamos el CheckBox y su listener
+                cbCompleted.setEnabled(true);
+                cbCompleted.setOnClickListener(v -> listener.onTaskClick(task));
             }
 
-            // Importante: Quitamos el listener temporalmente para evitar disparos falsos al hacer scroll
+            // Mantenemos el estado visual de la palomita
             cbCompleted.setOnCheckedChangeListener(null);
             cbCompleted.setChecked(task.isCompleted());
-
-            cbCompleted.setOnClickListener(v -> listener.onTaskClick(task));
         }
     }
 }
