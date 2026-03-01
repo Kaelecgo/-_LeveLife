@@ -116,8 +116,12 @@ public class MainRepository {
         executorService.execute(() -> taskDao.insertTask(task));
     }
 
-    public void updateTask(Task task) {
-        executorService.execute(() -> taskDao.updateTask(task));
+    // >_ FIX: Añadimos un Runnable para avisar cuando la escritura termine _<
+    public void updateTask(Task task, Runnable onComplete) {
+        executorService.execute(() -> {
+            taskDao.updateTask(task);
+            if (onComplete != null) onComplete.run(); // Avisamos a la Activity de que ya hemos guardado
+        });
     }
     // >_ METODO DE ELIMINACIÓN _<
     public void deleteTask(Task task) {

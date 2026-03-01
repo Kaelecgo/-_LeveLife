@@ -72,14 +72,13 @@ public class TaskActivity extends AppCompatActivity {
                 showLevelUpDialog();
             }
 
-            // Guardar cambios en BD
-            repository.updateTask(task); // Guardamos el check de la tarea
-            repository.updateUser(currentUser); // Guardamos la nueva XP/Bayas del usuario
+            // Guardar cambios de usuario en BD (dinero y XP)
+            repository.updateUser(currentUser);
 
-            // >_ MEJORA UX: Recargamos la lista desde la BD _<
-            // Al hacer esto, Room volverá a aplicar el "ORDER BY isCompleted ASC"
-            // y la tarea que acabamos de hacer se irá automáticamente al fondo de la pantalla.
-            loadTasks();
+            // >_ FIX CONDICIÓN DE CARRERA: Guardamos la tarea y esperamos _<
+            // Al pasarle 'this::loadTasks' como Runnable, le decimos al repositorio:
+            // "Cuando termines de guardar esto en SQLite, y ni un milisegundo antes, recarga la lista".
+            repository.updateTask(task, this::loadTasks);
         });
         recyclerView.setAdapter(adapter);
     }
