@@ -2,4 +2,40 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="text_secondary">#757575</color>
+    <color name="reward_xp">#4CAF50</color>
+    <color name="reward_berries">#FF9800</color>
+
+    <!-- Brand -->
+    <color name="primary">#7FB77E</color>
+    <color name="primary_dark">#4F7A4F</color>
+    <color name="secondary">#BFD8B8</color>
+    <color name="accent">#F2C14E</color>
+    <color name="highlight">#F7A072</color>
+
+    <!-- Backgrounds -->
+    <color name="background">#FFF8F0</color>
+    <color name="surface">#F0EAD2</color>
+    <color name="card">#FFFFFF</color>
+    <color name="cozy_shadow">#D9D4CC</color>
+
+    <!-- Feedback / Gamification -->
+    <color name="success">#6BCB77</color>
+    <color name="reward">#E6B800</color>
+    <color name="energy">#6DAEDB</color>
+    <color name="error_soft">#F28482</color>
+
+    <!-- >_ Cozy colors for the app _< -->
+    <color name="bittersweet">#ff6e61</color>
+    <color name="rum">#6c5b80</color>
+    <color name="froly">#f67481</color>
+    <color name="turkish_rose">#c06d84</color>
+    <color name="ming">#365c7d</color>
+
+    <!-- >_ Zombie Dreams _< -->
+    <color name="zombie">#e4d59b</color>
+    <color name="rainee">#bac4a1</color>
+    <color name="oxley">#7d9b8e</color>
+    <color name="cutty_sark">#4a786d</color>
+    <color name="stromboli">#2d5c4b</color>
 </resources>
