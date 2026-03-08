@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ public class TaskActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TaskAdapter adapter;
     private TextView tvEmptyState;
+    private com.google.android.material.floatingactionbutton.FloatingActionButton fabAddTask;
 
     // >_ Variable para guardar al usuario actual en memoria _<
     private User currentUser;
@@ -81,6 +83,47 @@ public class TaskActivity extends AppCompatActivity {
             repository.updateTask(task, this::loadTasks);
         });
         recyclerView.setAdapter(adapter);
+
+        // >_ CONFIGURACIÓN DEL SWIPE TO DELETE _<
+        // El '0' significa que no permitimos arrastrar (Drag & Drop) hacia arriba/abajo.
+        // LEFT | RIGHT permite deslizar la tarjeta hacia ambos lados.
+        androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback simpleCallback =
+                new androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(0, androidx.recyclerview.widget.ItemTouchHelper.LEFT | androidx.recyclerview.widget.ItemTouchHelper.RIGHT) {
+
+                    @Override
+                    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                        return false; // No hacemos nada al mover arriba o abajo
+                    }
+
+                    @Override
+                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                        // Averiguamos qué posición de la lista se ha deslizado
+                        int position = viewHolder.getAdapterPosition();
+
+                        // Rescatamos el objeto Task correspondiente
+                        Task taskToDelete = adapter.getTaskAt(position);
+
+                        // Lo borramos de la BD y, cuando termine, recargamos la lista
+                        // (Al recargar, la tarea desaparecerá visualmente y si la lista se queda vacía, saltará el Empty State automático)
+                        repository.deleteTask(taskToDelete, TaskActivity.this::loadTasks);
+                    }
+                };
+        // Enganchamos el detector de gestos a nuestra lista
+        new androidx.recyclerview.widget.ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
+
+
+        fabAddTask = findViewById(R.id.fabAddTask);
+        fabAddTask.setOnClickListener(v -> {
+            // Delegamos la creación visual a nuestra clase utilitaria
+            com.irenaprokhyra.levelife.util.DialogUtils.showCreateTaskDialog(this, taskTitle -> {
+                // Creamos la tarea con valores por defecto ágiles (MVP)
+                Task newTask = new Task(currentUserId, taskTitle, "", "General", 10, 10);
+
+                // La guardamos en la BD y esperamos confirmación para recargar
+                repository.insertTask(newTask, this ::loadTasks);
+            });
+        });
+
     }
 
     // >_ CARGA DEL PERFIL (Necesario para sumar XP) _<

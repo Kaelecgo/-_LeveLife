@@ -54,6 +54,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return tasks.size();
     }
 
+    // >_ METODO AUXILIAR PARA EL SWIPE _<
+    public Task getTaskAt(int position) {
+        return tasks.get(position);
+    }
+
     // >_ CAMBIO: Ahora es 'static' para evitar fugas de memoria (Memory Leaks) _<
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvTitle;

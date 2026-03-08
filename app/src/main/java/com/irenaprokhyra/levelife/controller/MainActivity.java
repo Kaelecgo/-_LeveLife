@@ -6,7 +6,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog; // >_ IMPORTACIÓN LIMPIA _<
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.irenaprokhyra.levelife.R;
@@ -112,18 +111,12 @@ public class MainActivity extends AppCompatActivity {
         */
 
         // >_ LOGOUT _<
-        btnLogout.setOnClickListener(v -> showLogoutDialog());
+        btnLogout.setOnClickListener(v -> {
+            // Delegamos la UI a DialogUtils. Si confirma, llamamos al metodo de borrado de sesión.
+            com.irenaprokhyra.levelife.util.DialogUtils.showLogoutConfirmationDialog(this, this::performLogout);
+        });
     }
-    // Metodo para mostrar el dialogo de logout
-    private void showLogoutDialog() {
-        // >_ USO DEL IMPORT LIMPIO _<
-        new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.dialog_logout_title))
-                .setMessage(getString(R.string.dialog_logout_message))
-                .setPositiveButton(getString(R.string.dialog_yes), (dialog, which) -> performLogout())
-                .setNegativeButton(getString(R.string.dialog_no), null)
-                .show();
-    }
+
 
     // Metodo para cerrar sesion
     private void performLogout() {

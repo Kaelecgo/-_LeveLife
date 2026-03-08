@@ -57,4 +57,9 @@
     <string name="dialog_logout_message">Are you sure you want to log out?</string>
     <string name="dialog_yes">Yes, log out</string>
     <string name="dialog_no">Cancel</string>
+    <string name="content_desc_add_task">Add new task</string>
+    <string name="dialog_new_task_title">New Task</string>
+    <string name="hint_task_title">What do you need to do?</string>
+    <string name="btn_create">Create</string>
+    <string name="error_empty_task">Title cannot be empty</string>
 </resources>

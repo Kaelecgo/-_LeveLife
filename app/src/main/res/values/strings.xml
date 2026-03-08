@@ -56,4 +56,9 @@
     <string name="dialog_logout_message">¿Estás seguro de que quieres salir?</string>
     <string name="dialog_yes">Sí, salir</string>
     <string name="dialog_no">Cancelar</string>
+    <string name="content_desc_add_task">Añadir nueva tarea</string>
+    <string name="dialog_new_task_title">Nueva Tarea</string>
+    <string name="hint_task_title">¿Qué tienes que hacer?</string>
+    <string name="btn_create">Crear</string>
+    <string name="error_empty_task">El título no puede estar vacío</string>
 </resources>

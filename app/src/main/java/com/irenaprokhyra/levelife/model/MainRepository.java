@@ -112,8 +112,11 @@ public class MainRepository {
     // -------------------------------------
 
     // >_  MÉTODOS PARA TAREAS _<
-    public void insertTask(Task task) {
-        executorService.execute(() -> taskDao.insertTask(task));
+    public void insertTask(Task task, Runnable onComplete) {
+        executorService.execute(() ->  {
+            taskDao.insertTask(task);
+            if (onComplete != null) onComplete.run(); // Avisamos cuando se haya guardado físicamente
+        });
     }
 
     // >_ FIX: Añadimos un Runnable para avisar cuando la escritura termine _<
@@ -124,8 +127,11 @@ public class MainRepository {
         });
     }
     // >_ METODO DE ELIMINACIÓN _<
-    public void deleteTask(Task task) {
-        executorService.execute(() -> taskDao.deleteTask(task));
+    public void deleteTask(Task task, Runnable onComplete) {
+        executorService.execute(() -> {
+            taskDao.deleteTask(task);
+            if (onComplete != null) onComplete.run(); // Avisamos cuando se haya borrado físicamente
+        });
     }
 
     public void getTaskForUser(int userId, TaskListCallback callback) {
