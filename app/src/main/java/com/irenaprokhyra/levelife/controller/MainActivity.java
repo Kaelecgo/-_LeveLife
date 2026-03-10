@@ -17,9 +17,14 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tvWelcome, tvLevel, tvBerries;
     private Button btnTasks, btnShop, btnInventory, btnLogout;
+    private android.widget.ProgressBar pbExperience; // >_ NUEVA VARIABLE _<
 
     private MainRepository repository;
     private int currentUserId;
+
+    // >_ VARIABLES DE ESTADO PARA ANIMACIONES _<
+    private int lastKnownLevel = -1;
+    private int lastKnownProgress = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         tvWelcome = findViewById(R.id.tvWelcome);
         tvLevel = findViewById(R.id.tvLevel);
         tvBerries = findViewById(R.id.tvBerries);
+        pbExperience = findViewById(R.id.pbExperience); // >_ VINCULACIÓN _<
 
         btnTasks = findViewById(R.id.btnTasks);
         btnShop = findViewById(R.id.btnShop);
@@ -63,10 +69,67 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI(User user) {
+        int currentLevel = user.getLevel();
+        int currentProgress = user.getProgressPercentage();
+
+
         // >_ Usamos String Formatting para textos limpios _<
         tvWelcome.setText(getString(R.string.main_welcome_format, user.getName()));
-        tvLevel.setText(getString(R.string.main_level_format, user.getLevel()));
         tvBerries.setText(getString(R.string.main_berries_format, user.getBerries()));
+
+        pbExperience.postDelayed(() -> {
+            // Estados de la Barra
+            if (lastKnownLevel == -1) {
+                // ESTADO A: Primera vez que entramos a la app (Carga sin animaciones)
+                tvLevel.setText(getString(R.string.main_level_format, currentLevel));
+                pbExperience.setProgress(currentProgress);
+
+            } else if (currentLevel > lastKnownLevel) {
+                // ESTADO B: Hemos vuelto de hacer tareas y hemos subido de nivel
+                animateLevelUp(currentLevel, currentProgress);
+            } else if (currentProgress != lastKnownProgress) {
+                // ESTADO C: Ganancia normal de XP (misma barra) o sin cambios
+                tvLevel.setText(getString(R.string.main_level_format, currentLevel));
+                android.animation.ObjectAnimator animNormal = android.animation.ObjectAnimator.ofInt(
+                        pbExperience, "progress", pbExperience.getProgress(), currentProgress);
+                animNormal.setDuration(1500); // 0.6 segundos de animación
+                animNormal.start();
+        }
+
+
+            // Actualizamos la memoria para la próxima vez
+            lastKnownLevel = currentLevel;
+            lastKnownProgress = currentProgress;
+        }, 400); // <-- 400 milisegundos de espera
+    }
+
+    // >_ SECUENCIA DE ANIMACIÓN PROFESIONAL _<
+    private void animateLevelUp(int targetLevel, int targetProgress) {
+        // Fase 1: Forzamos la barra a llenarse hasta el 100%
+        android.animation.ObjectAnimator animateTo100 = android.animation.ObjectAnimator.ofInt(pbExperience, "progress", pbExperience.getProgress(), 100);
+        animateTo100.setDuration(600); // Tarda un poco más de medio segundo
+
+        // Ponemos un listener para saber exactamente cuándo termina de llenarse
+        animateTo100.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                // Fase 2: Lanzamos el aviso al usuario usando el string que ya tenemos
+                Toast.makeText(MainActivity.this, getString(R.string.dialog_levelup_message, targetLevel),
+                        Toast.LENGTH_SHORT).show();
+
+                // Fase 3: Actualizamos el texto visualmente al nuevo nivel
+                tvLevel.setText(getString(R.string.main_level_format, targetLevel));
+
+                // Fase 4: Vaciamos la barra a cero (sin que el usuario lo note)
+                pbExperience.setProgress(0);
+
+                // Fase 5: Animamos desde 0 hasta el progreso real que ha sobrado
+                android.animation.ObjectAnimator animateToRealProgress = android.animation.ObjectAnimator.ofInt(pbExperience, "progress", 0, targetProgress);
+                animateToRealProgress.setDuration(500);
+                animateToRealProgress.start();
+            }
+        });
+        animateTo100.start();
     }
 
     private void loadUserData() {

@@ -12,7 +12,8 @@ import java.util.concurrent.Executors;
 // >_ IMPORTANTE: Subimos la versión a 2 para forzar la recreación con los nuevos índices _<
 // Agregamos UserFurnitureCrossRef.class a @Database y subimos a version 3
 // He hecho cambios en Furniture, agregando 2 atributos mas, subo a version 4
-@Database(entities = {User.class, Task.class, Furniture.class, UserFurnitureCrossRef.class}, version = 4, exportSchema = false)
+// Agrego nuevas Tareas para testear la animacion de la barra de progreso
+@Database(entities = {User.class, Task.class, Furniture.class, UserFurnitureCrossRef.class}, version = 5, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract TaskDao taskDao();
@@ -77,6 +78,12 @@ public abstract class AppDatabase extends RoomDatabase {
                 taskDao.insertTask(new Task(1, "Estudiar Musica", "Room Database", "Estudios", 50, 20));
                 taskDao.insertTask(new Task(1, "Estudiar Algo", "Room Database", "Estudios", 50, 20));
                 taskDao.insertTask(new Task(1, "Estudiar XML", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar Programacion", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar Gaming", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar RUST", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar C", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar C++", "Room Database", "Estudios", 50, 20));
+                taskDao.insertTask(new Task(1, "Estudiar Yeah", "Room Database", "Estudios", 50, 20));
                 taskDao.insertTask(new Task(1, "Estudiar Programacion", "Room Database", "Estudios", 50, 20));
                 taskDao.insertTask(new Task(1, "Estudiar Gaming", "Room Database", "Estudios", 50, 20));
                 taskDao.insertTask(new Task(1, "Estudiar RUST", "Room Database", "Estudios", 50, 20));

@@ -28,6 +28,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvWelcome" />
 
+    <ProgressBar
+        android:id="@+id/pbExperience"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:max="100"
+        android:progressTint="@color/reward_xp"
+        app:layout_constraintEnd_toStartOf="@+id/btnLogout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvLevel" />
+
     <TextView
         android:id="@+id/tvBerries"
         android:layout_width="wrap_content"
@@ -35,7 +48,7 @@
         android:text="@string/main_berries_format"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvLevel" />
+        app:layout_constraintTop_toBottomOf="@+id/pbExperience" />
 
     <View
         android:id="@+id/divider"
