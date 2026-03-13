@@ -27,9 +27,9 @@
     <string name="main_berries_format">Bayas: %1$d</string>
 
     <!--  >_ Strings para el ShopActivity _< -->
-    <string name="shop_balance_format">Tus Bayas: %1$d 🍒</string>
-    <string name="furniture_price_format">%1$d 🍒</string>
-    <string name="toast_furniture_selected">Has seleccionado: %1$s por %2$d 🍒</string>
+    <string name="shop_balance_format">Tus Bayas: %1$d 🫐</string>
+    <string name="furniture_price_format">%1$d 🫐</string>
+    <string name="toast_furniture_selected">Has seleccionado: %1$s por %2$d 🫐</string>
     <string name="success_buy_furniture">¡Has comprado: %1$s!</string>
     <string name="error_not_enough_berries">No tienes suficientes bayas para comprar esto.</string>
     <string name="error_load_catalog">Error al cargar el catálogo</string>
@@ -37,14 +37,14 @@
     <string name="btn_buy">Comprar</string>
 
     <string name="placeholder_furniture_name">Nombre Mueble</string>
-    <string name="placeholder_furniture_price">0 🍒</string>
+    <string name="placeholder_furniture_price">0 🫐</string>
     <string name="content_desc_furniture_icon">Icono del mueble</string>
 
     <!-- >_ Strings para el TaskActivity _< -->
     <string name="reward_claimed">¡Bien! +%1$d XP y +%2$d Bayas</string>
     <string name="item_task_default_title">Tarea de ejemplo</string>
     <string name="item_task_default_category">General</string>
-    <string name="item_task_reward_format">+%1$d XP | +%2$d 🍒</string>
+    <string name="item_task_reward_format">+%1$d XP | +%2$d 🫐</string>
     <string name="item_task_clean">"¡No tienes tareas pendientes! Tómate un café ☕"</string>
     <string name="dialog_levelup_title">¡NIVEL SUBIDO! 🎉</string>
     <string name="dialog_levelup_message">¡Felicidades! Has alcanzado el Nivel %1$d.\n¡Sigue así!</string>

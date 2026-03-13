@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="shop_health_quest">#BDE0FE</color>
+    <color name="grass_envirnment_quest">#ccffcc</color>
+    <color name="dialog_box">#F8FAFC</color>
+    <color name="text">#94A3B8</color>
+    <color name="rewards">#E9D5FF</color>
+    <color name="bar_circules">#FDE2E4</color>
+
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="text_secondary">#757575</color>
+    <color name="secondary_text">#757575</color>
     <color name="reward_xp">#4CAF50</color>
     <color name="reward_berries">#FF9800</color>
 

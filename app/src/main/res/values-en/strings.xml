@@ -28,9 +28,9 @@
     <string name="main_berries_format">Berries: %1$d</string>
 
     <!--  >_ ShopActivity _< -->
-    <string name="shop_balance_format">Your Berries: %1$d 🍒</string>
-    <string name="furniture_price_format">%1$d 🍒</string>
-    <string name="toast_furniture_selected">Selected: %1$s for %2$d 🍒</string>
+    <string name="shop_balance_format">Your Berries: %1$d 🫐</string>
+    <string name="furniture_price_format">%1$d 🫐</string>
+    <string name="toast_furniture_selected">Selected: %1$s for %2$d 🫐</string>
     <string name="success_buy_furniture">You bought: %1$s!</string>
     <string name="error_not_enough_berries">Not enough berries to buy this.</string>
     <string name="error_load_catalog">Error loading catalog</string>
@@ -38,14 +38,14 @@
     <string name="btn_buy">Buy</string>
 
     <string name="placeholder_furniture_name">Furniture Name</string>
-    <string name="placeholder_furniture_price">0 🍒</string>
+    <string name="placeholder_furniture_price">0 🫐</string>
     <string name="content_desc_furniture_icon">Furniture icon</string>
 
     <!-- >_ TaskActivity _< -->
     <string name="reward_claimed">Nice! +%1$d XP and +%2$d Berries</string>
     <string name="item_task_default_title">Example task</string>
     <string name="item_task_default_category">General</string>
-    <string name="item_task_reward_format">+%1$d XP | +%2$d 🍒</string>
+    <string name="item_task_reward_format">+%1$d XP | +%2$d 🫐</string>
     <string name="item_task_clean">"No pending tasks! Grab a coffee ☕"</string>
     <string name="dialog_levelup_title">LEVEL UP! 🎉</string>
     <string name="dialog_levelup_message">Congratulations! You reached Level %1$d.\nKeep it up!</string>
