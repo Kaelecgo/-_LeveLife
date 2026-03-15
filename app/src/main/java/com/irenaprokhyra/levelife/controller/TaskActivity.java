@@ -98,7 +98,7 @@ public class TaskActivity extends AppCompatActivity {
                     @Override
                     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                         // Averiguamos qué posición de la lista se ha deslizado
-                        int position = viewHolder.getAdapterPosition();
+                        int position = viewHolder.getBindingAdapterPosition();
 
                         // Rescatamos el objeto Task correspondiente
                         Task taskToDelete = adapter.getTaskAt(position);

@@ -114,7 +114,7 @@ public class User {
      */
     public int getProgressPercentage() {
         int required = getXpToNextLevel();
-        if (required == 0) return 0; // Evitar división por cero
+        if (required == 0) return 0; // Evita división por cero
         return (this.experience * 100) / required;
     }
 }

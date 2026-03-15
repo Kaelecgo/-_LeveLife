@@ -2,10 +2,13 @@ package com.irenaprokhyra.levelife.model;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.Index;
 
 // Definimos las dos columnas como clave primaria conjunta para que no compre dos veces lo mismo
 @Entity(tableName = "user_furniture_cross_ref",
         primaryKeys = {"userId", "furnitureId"},
+        indices = {@Index(value = "furnitureId")},
         foreignKeys = {
                 @ForeignKey(entity = User.class,
                         parentColumns = "id",
@@ -23,6 +26,7 @@ public class UserFurnitureCrossRef {
 
     public UserFurnitureCrossRef() {}
 
+    @Ignore
     public UserFurnitureCrossRef(int userId, int furnitureId) {
         this.userId = userId;
         this.furnitureId = furnitureId;
