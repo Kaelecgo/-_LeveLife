@@ -188,4 +188,5 @@ public class MainRepository {
             userDao.insertUserFurnitureCrossRef(purchaseRecord);
         });
     }
+    public void buyFurnitureTransaction(User user, int furnitureId, Runnable onComplete) { }
 }

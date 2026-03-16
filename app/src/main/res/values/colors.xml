@@ -7,15 +7,20 @@
     <color name="rewards">#E9D5FF</color>
     <color name="bar_circules">#FDE2E4</color>
 
+    <color name="primary_text_logo">#328661</color>
+    <color name="secondary_text_logo">#B0F58D</color>
+    <color name="third_text_logo">#8263A3</color>
+    <color name="fourth_text_logo">#413770</color>
+
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="secondary_text">#757575</color>
+    <color name="grey">#757575</color>
     <color name="reward_xp">#4CAF50</color>
     <color name="reward_berries">#FF9800</color>
 
     <!-- Brand -->
-    <color name="primary">#7FB77E</color>
+    <color name="green">#7FB77E</color>
     <color name="primary_dark">#4F7A4F</color>
     <color name="secondary">#BFD8B8</color>
     <color name="accent">#F2C14E</color>

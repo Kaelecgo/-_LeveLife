@@ -65,21 +65,24 @@ public class ShopActivity extends AppCompatActivity {
         // spendBerries devuelve true si hay fondos suficientes y resta el saldo automáticamente
         if (currentUser.spendBerries(furniture.getPrice())) {
 
-            // Guardamos el nuevo saldo en la BD local
-            repository.updateUser(currentUser);
+            // >_ PREPARACIÓN PARA A1: dejamos estructurado el metodo unificado _<
+            repository.buyFurnitureTransaction(currentUser, furniture.getId(), () -> {
 
-            // Guardamos en el inventario (Tabla Intermedia N:M)
-            repository.buyFurniture(currentUser.getId(), furniture.getId());
+                // Volvemos al hilo principal para tocar la pantalla
+                runOnUiThread(() -> {
+                    // Actualizamos el texto del saldo superior
+                    tvShopBalance.setText(getString(R.string.shop_balance_format, currentUser.getBerries()));
 
-            // Actualizamos la UI
-            tvShopBalance.setText(getString(R.string.shop_balance_format, currentUser.getBerries()));
+                    // Avisamos al adaptador de que tenemos menos dinero
+                    adapter.setCurrentBalance(currentUser.getBerries());
 
-            // >_ MEJORA UX | Avisamos al adaptador de que tenemos menos dinero _<
-            // Esto re-evaluará todos los muebles y bloqueará los que ya no podamos pagar
-            adapter.setCurrentBalance(currentUser.getBerries());
+                    // Marcamos este mueble específico como comprado al instante
+                    adapter.markAsOwned(furniture.getId());
 
-            // Feedback de exito
-            Toast.makeText(this, getString(R.string.success_buy_furniture, furniture.getName()), Toast.LENGTH_SHORT).show();
+                    // Feedback de éxito 100% seguro
+                    Toast.makeText(this, getString(R.string.success_buy_furniture, furniture.getName()), Toast.LENGTH_SHORT).show();
+                });
+            });
 
         } else {
             // Feedback de rechazo por falta de fondos

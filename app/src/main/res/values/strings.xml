@@ -29,6 +29,7 @@
     <!--  >_ Strings para el ShopActivity _< -->
     <string name="shop_balance_format">Tus Bayas: %1$d 🫐</string>
     <string name="furniture_price_format">%1$d 🫐</string>
+    <string name="furniture_owned">Comprado 🛋️ </string>
     <string name="toast_furniture_selected">Has seleccionado: %1$s por %2$d 🫐</string>
     <string name="success_buy_furniture">¡Has comprado: %1$s!</string>
     <string name="error_not_enough_berries">No tienes suficientes bayas para comprar esto.</string>

@@ -30,6 +30,7 @@
     <!--  >_ ShopActivity _< -->
     <string name="shop_balance_format">Your Berries: %1$d 🫐</string>
     <string name="furniture_price_format">%1$d 🫐</string>
+    <string name="furniture_owned">Purchased 🛋️ </string>
     <string name="toast_furniture_selected">Selected: %1$s for %2$d 🫐</string>
     <string name="success_buy_furniture">You bought: %1$s!</string>
     <string name="error_not_enough_berries">Not enough berries to buy this.</string>
