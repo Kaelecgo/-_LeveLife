@@ -43,6 +43,8 @@ public class ShopActivity extends AppCompatActivity {
         initViews();
         loadUserData();
         loadCatalog();
+        loadOwnedFurniture();
+
     }
 
     private void initViews() {
@@ -65,7 +67,7 @@ public class ShopActivity extends AppCompatActivity {
         // spendBerries devuelve true si hay fondos suficientes y resta el saldo automáticamente
         if (currentUser.spendBerries(furniture.getPrice())) {
 
-            // >_ PREPARACIÓN PARA A1: dejamos estructurado el metodo unificado _<
+            // >_ PREPARACIÓN: dejamos estructurado el metodo unificado _<
             repository.buyFurnitureTransaction(currentUser, furniture.getId(), () -> {
 
                 // Volvemos al hilo principal para tocar la pantalla
@@ -120,6 +122,27 @@ public class ShopActivity extends AppCompatActivity {
             @Override
             public void onError(String message) {
                 runOnUiThread(() -> Toast.makeText(ShopActivity.this, getString(R.string.error_load_catalog), Toast.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    // >_ CARGA DE MEMORIA DE LA TIENDA _<
+    private void loadOwnedFurniture() {
+        // Usamos el metodo que programamos en el rol A1
+        repository.getOwnedFurnitureIds(currentUserId, null, new MainRepository.OwnedIdsCallback() {
+            @Override
+            public void onSuccess(List<Integer> ownedIds) {
+                // Volvemos al hilo principal para tocar la interfaz
+                runOnUiThread(() -> {
+                    // Inyectamos la lista de IDs comprados en el adaptador
+                    adapter.setOwnedFurnitureIds(ownedIds);
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+                // Si hay error, simplemente la tienda no marcará nada como comprado
+                android.util.Log.e("ShopActivity", "Aviso Tienda: " + message);
             }
         });
     }

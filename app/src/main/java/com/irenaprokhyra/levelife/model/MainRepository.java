@@ -59,6 +59,12 @@ public class MainRepository {
         void onResult(boolean exists);
     }
 
+    public interface OwnedIdsCallback {
+        void onSuccess(List<Integer> ids);
+        void onError(String message);
+    }
+
+
     // -------------------------------------
     // >_ SECCIÓN DE USUARIOS (User) _<
     // -------------------------------------
@@ -182,11 +188,60 @@ public class MainRepository {
     // >_ SECCIÓN DE INVENTARIO (Relación N:M) _<
     // ------------------------------------------
 
+    // >_ MÉTODOS DE CONSULTA (Para Tienda e Inventario) _<
+    // Pide la lista de IDs para que la Tienda sepa qué botones bloquear
+    public void getOwnedFurnitureIds(int userId, FurnitureListCallback callback, OwnedIdsCallback idsCallback) {
+        executorService.execute(() -> {
+            try {
+                List<Integer> ownedIds = furnitureDao.getOwnedFurnitureIds(userId);
+                if (idsCallback != null) idsCallback.onSuccess(ownedIds);
+            } catch (Exception e) {
+                if (idsCallback != null) idsCallback.onError("Error cargando IDs: " + e.getMessage());
+            }
+        });
+    }
+
+    // Pide los muebles completos para mostrarlos en el Inventario (Hito 3)
+    public void getInventoryForUser(int userId, FurnitureListCallback callback) {
+        executorService.execute(() -> {
+            try {
+                List<Furniture> inventory = furnitureDao.getInventoryForUser(userId);
+                if (callback != null) callback.onSuccess(inventory);
+            } catch (Exception e) {
+                if (callback != null) callback.onError("Error cargando inventario: " + e.getMessage());
+            }
+        });
+    }
+
+    // >_ MÉTODOS DE ESCRITURA (Transacciones) _<
+
+    // >_ METODO OBSOLETO (Para borrar en el futuro) _<
     public void buyFurniture(int userId, int furnitureId) {
         executorService.execute(() -> {
             UserFurnitureCrossRef purchaseRecord = new UserFurnitureCrossRef(userId, furnitureId);
             userDao.insertUserFurnitureCrossRef(purchaseRecord);
         });
     }
-    public void buyFurnitureTransaction(User user, int furnitureId, Runnable onComplete) { }
+
+    // >_ LA TRANSACCIÓN SEGURA _<
+    // Este metodo asegura que cobrar y dar el mueble ocurra a la vez
+    public void buyFurnitureTransaction(User user, int furnitureId, Runnable onComplete) {
+        executorService.execute(() -> {
+            try {
+                // Instanciamos el registro de la tabla cruzada
+                UserFurnitureCrossRef purchaseRecord = new UserFurnitureCrossRef(user.getId(), furnitureId);
+                // Ejecutamos la transacción en la BD a través de AppDatabase
+                // (AppDatabase asegura que si falla el paso 1 o 2, se hace un "rollback" y no se guarda nada)
+                AppDatabase.getInstance(null).runInTransaction(() -> {
+                    userDao.updateUser(user); // Cobramos (el objeto User ya viene con el saldo restado de la vista)
+                    userDao.insertUserFurnitureCrossRef(purchaseRecord); // Damos el mueble
+                });
+                // Si ha ido bien, avisamos a la pantalla
+                if (onComplete != null) onComplete.run();
+            } catch (Exception e) {
+                // Si hay error, la transacción se cancela sola
+                e.printStackTrace();
+            }
+        });
+    }
 }

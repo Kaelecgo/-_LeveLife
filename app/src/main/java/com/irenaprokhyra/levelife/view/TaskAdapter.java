@@ -89,7 +89,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             // >_ MEJORA UX: Feedback Visual de Tarea Completada _<
             if (task.isCompleted()) {
                 // Cambiamos el texto y la opacidad a gris (deshabilitado)
-                int disableColor = ContextCompat.getColor(itemView.getContext(), R.color.secondary_text);
+                int disableColor = ContextCompat.getColor(itemView.getContext(), R.color.third_text_logo);
                 tvTitle.setTextColor(disableColor);
                 tvCategory.setTextColor(disableColor);
                 tvReward.setTextColor(disableColor);
@@ -104,7 +104,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             } else {
                 // Restauramos los colores originales (Vital por el reciclaje de RecyclerView)
                 tvTitle.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.black));
-                tvCategory.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.secondary_text));
+                tvCategory.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.third_text_logo));
                 tvReward.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.reward));
 
                 // Habilitamos el CheckBox y su listener
