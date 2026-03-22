@@ -1,5 +1,6 @@
 package com.irenaprokhyra.levelife.controller;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -8,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
 import com.irenaprokhyra.levelife.model.MainRepository;
@@ -41,10 +43,10 @@ public class ShopActivity extends AppCompatActivity {
         repository = MainRepository.getInstance(getApplication());
 
         initViews();
+        setupNavigation();
         loadUserData();
         loadCatalog();
         loadOwnedFurniture();
-
     }
 
     private void initViews() {
@@ -57,6 +59,49 @@ public class ShopActivity extends AppCompatActivity {
         // >_ Pasamos el metodo modular como referencia _<
         adapter = new FurnitureAdapter(this::attemptPurchase);
         rvFurniture.setAdapter(adapter);
+    }
+
+    private void setupNavigation() {
+        BottomNavigationView bottomNav= findViewById(R.id.bottomNavigationView);
+        if (bottomNav == null) return;
+
+        bottomNav.setItemIconTintList(null);
+
+        bottomNav.setSelectedItemId(R.id.nav_shop);
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_home) {
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_shop) { return true; }
+            else if (itemId == R.id.nav_inventory) {
+                Intent intent = new Intent(this, InventoryActivity.class);
+                intent.putExtra("USER_ID", currentUserId);
+                startActivity(intent);
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_tasks) {
+                Intent intent = new Intent(this, TaskActivity.class);
+                intent.putExtra("USER_ID", currentUserId);
+                startActivity(intent);
+                finish(); // Cerramos la actual
+                return true;
+            } else if (itemId == R.id.nav_logout) {
+                com.irenaprokhyra.levelife.util.DialogUtils.showLogoutConfirmationDialog(this, this::performLogout);
+                return false;
+            }
+            return false;
+        });
+    }
+
+    private void performLogout() {
+        getSharedPreferences("LeveLifeSession", MODE_PRIVATE).edit().clear().apply();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void attemptPurchase(Furniture furniture) {

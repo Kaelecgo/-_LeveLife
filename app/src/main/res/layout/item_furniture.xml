@@ -18,18 +18,21 @@
             android:id="@+id/ivFurnitureIcon"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@mipmap/ic_launcher"
-            android:contentDescription="@string/content_desc_furniture_icon"/> <TextView
-        android:id="@+id/tvFurnitureName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/placeholder_furniture_name" android:textStyle="bold"
-        android:layout_marginTop="8dp"/>
+            android:src="@drawable/logo_with_no_bg512"
+            android:contentDescription="@string/content_desc_furniture_icon"/>
+
+        <TextView
+            android:id="@+id/tvFurnitureName"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_black" android:textColor="@color/fourth_text_logo"
+            android:text="@string/placeholder_furniture_name"
+            android:layout_marginTop="8dp"/>
 
         <TextView
             android:id="@+id/tvFurniturePrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_extrabold"
             android:text="@string/placeholder_furniture_price" android:textColor="#FF9800"
             android:textStyle="bold"/>
 
@@ -37,7 +40,7 @@
             android:id="@+id/btnBuyFurniture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/btn_buy"/>
+            android:fontFamily="@font/nunito_black" android:text="@string/btn_buy" android:textColor="@color/black"
+            android:layout_marginTop="8dp"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

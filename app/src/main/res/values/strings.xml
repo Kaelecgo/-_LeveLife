@@ -2,14 +2,14 @@
     <string name="app_name">LeveLife</string>
 
     <!-- >_ Strings para el LoginActivity _< -->
-    <string name="login_title">LeveLife Login</string>
-    <string name="hint_username">Usuario</string>
-    <string name="hint_password">Contraseña</string>
-    <string name="btn_enter">Entrar</string>
+    <string name="login_title">>_LeveLife Login</string>
+    <string name="hint_username">>_Usuario</string>
+    <string name="hint_password">>_Contraseña</string>
+    <string name="btn_enter">>_Iniciar aventura</string>
     <string name="error_empty_fields">Por favor, completa todos los campos</string>
     <string name="welcome_message">Hola de nuevo, %1$s!</string>
     <string name="error_login_failed">Error: Usuario o contraseña incorrectos</string>
-    <string name="btn_register">Registrarse</string>
+    <string name="btn_register">>_Registrarse</string>
     <string name="error_session_expired">Tu sesión ha caducado, por favor entra de nuevo.</string>
     <string name="error_user_exists">El nombre de usuario ya existe.</string>
     <string name="register_success">¡Usuario creado con éxito! Ahora puedes entrar.</string>
@@ -24,7 +24,11 @@
     <string name="error_session_lost">Error: Se ha perdido la sesión</string>
     <string name="main_welcome_format">Hola, %1$s</string>
     <string name="main_level_format">Nivel: %1$d</string>
-    <string name="main_berries_format">Bayas: %1$d</string>
+    <string name="main_berries_format">🫐 Bayas: %1$d</string>
+    <string name="main_level_default">Nivel 1</string>
+    <string name="main_xp_default">&gt;_XP: 0/100</string>
+    <string name="main_berries_default">🫐 0 Bayas</string>
+    <string name="main_xp_format">&gt;_XP: %1$d / %2$d</string>
 
     <!--  >_ Strings para el ShopActivity _< -->
     <string name="shop_balance_format">Tus Bayas: %1$d 🫐</string>
@@ -51,6 +55,14 @@
     <string name="dialog_levelup_message">¡Felicidades! Has alcanzado el Nivel %1$d.\n¡Sigue así!</string>
     <string name="dialog_levelup_button">¡Genial!</string>
     <string name="error_load_tasks">Error: No se pudieron cargar las tareas</string>
+
+    <!-- >_ InventoryAdapter _< -->
+    <string name="my_room">Mi Habitación 🛋️</string>
+    <string name="action_place_furniture">Colocar 👇🏼</string>
+    <string name="empty_inventory">Tu inventario está vacío. 🎒</string>
+    <string name="error_loading_inventory">Error cargando mochila. 🎒</string>
+    <string name="success_placed_furniture">¡%1$s colocado en tu habitación! 🛋️</string>
+
 
     <!-- >_ AlertDialog >_ -->
     <string name="dialog_logout_title">Cerrar Sesión</string>

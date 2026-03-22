@@ -34,6 +34,13 @@ public class Task {
     private boolean isCompleted;
     private String frequency;
 
+    public static final String CATEGORY_HEALTH = "Salud y Fisico";
+    public static final String CATEGORY_ECO = "Sostenibilidad";
+    public static final String CATEGORY_FOCUS = "Estudio y trabajo";
+    public static final String CATEGORY_SOCIAL = "Social y Ocio";
+    public static final String CATEGORY_GENERAL = "General";
+
+
     // Constructor vacio obligatorio para Room
     public Task() {}
 

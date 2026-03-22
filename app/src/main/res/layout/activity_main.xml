@@ -1,101 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@drawable/bg_nav"
+    android:padding="4dp"
     tools:context=".controller.MainActivity">
 
-    <TextView
-        android:id="@+id/tvWelcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/main_welcome_format"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvLevel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/main_level_format"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvWelcome" />
-
-    <ProgressBar
-        android:id="@+id/pbExperience"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:max="100"
-        android:progressTint="@color/reward_xp"
-        app:layout_constraintEnd_toStartOf="@+id/btnLogout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvLevel" />
-
-    <TextView
-        android:id="@+id/tvBerries"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/main_berries_format"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pbExperience" />
-
-    <View
-        android:id="@+id/divider"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/headerCardView"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#CCCCCC"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvBerries" />
-
-    <Button
-        android:id="@+id/btnTasks"
-        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/btn_tasks"
-        android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <Button
-        android:id="@+id/btnShop"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/tvMainLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/main_level_default"
+                android:textSize="24sp"
+                android:fontFamily="@font/nunito_extrabold"
+                android:textColor="@color/fourth_text_logo" />
+
+            <FrameLayout
+                android:id="@+id/containerProgressBar"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_below="@id/tvMainLevel"
+                android:layout_marginTop="12dp">
+
+                <ProgressBar
+                    android:id="@+id/pbMainXp"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent" android:layout_height="24dp"
+                    android:progressDrawable="@drawable/custom_progressbar"
+                    android:max="100" />
+                <TextView
+                    android:id="@+id/tvMainXpText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/main_xp_default" android:textSize="12sp" android:fontFamily="@font/nunito_black"
+                    android:textColor="@color/black" android:textStyle="bold"/>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvMainBerries"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/containerProgressBar"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/nunito_regular" android:textColor="@color/third_text_logo"
+                android:text="@string/main_berries_default" android:textSize="16sp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardRoomContainer"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_shop"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@+id/headerCardView"
+        app:layout_constraintBottom_toTopOf="@+id/cardBottomNav"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnTasks" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <Button
-        android:id="@+id/btnInventory"
+        <FrameLayout
+            android:id="@+id/roomContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </FrameLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardBottomNav"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_inventory"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="64dp"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="#A0B2C6"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnShop" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- >_ Botón de logout _< -->
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_logout"
-        android:textSize="12sp"
-        android:backgroundTint="#FF6666"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            style="@style/Widget.MaterialComponents.BottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:itemIconTint="@null"
+            app:itemIconSize="32dp"
+            app:labelVisibilityMode="unlabeled"
+            app:itemBackground="@android:color/transparent"
+            app:itemRippleColor="@android:color/transparent"
+            app:paddingBottomSystemWindowInsets="false"
+            app:menu="@menu/menu_bottom_nav" />
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
