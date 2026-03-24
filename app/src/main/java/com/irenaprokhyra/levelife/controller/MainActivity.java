@@ -1,35 +1,32 @@
 package com.irenaprokhyra.levelife.controller;
 
-import android.os.Bundle;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.irenaprokhyra.levelife.R;
-import com.irenaprokhyra.levelife.model.MainRepository;
 import com.irenaprokhyra.levelife.model.User;
+import com.irenaprokhyra.levelife.util.DialogUtils;
+import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private int currentUserId;
-    private MainRepository repository;
+    private MainViewModel viewModel;
 
     private TextView tvMainLevel, tvMainBerries, tvMainXpText;
     private ProgressBar pbMainXp;
-
-    private ImageButton btnMainLogout;
     private BottomNavigationView bottomNavigationView;
 
-    // >_ VARIABLES DE ESTADO PARA ANIMACIONES _<
     private int lastKnownLevel = -1;
     private int lastKnownProgress = -1;
 
@@ -45,8 +42,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        repository = MainRepository.getInstance(getApplication());
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel.init(currentUserId);
+
         initViews();
+        setupObservers();
         setupNavigation();
         setupBackButtonBlock();
     }
@@ -54,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadUserDashboard();
-
         if (bottomNavigationView != null) {
             bottomNavigationView.setSelectedItemId(R.id.nav_home);
         }
@@ -69,6 +67,14 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setItemIconTintList(null);
+    }
+
+    private void setupObservers() {
+        viewModel.getUser().observe(this, user -> {
+            if (user != null) {
+                updateUI(user);
+            }
+        });
     }
 
     private void setupBackButtonBlock() {
@@ -93,36 +99,19 @@ public class MainActivity extends AppCompatActivity {
                 navigateTo(InventoryActivity.class);
                 return true;
             } else if (itemId == R.id.nav_tasks) {
-                Intent intent = new Intent(this, TaskActivity.class);
-                intent.putExtra("USER_ID", currentUserId);
-                startActivity(intent);
+                navigateTo(TaskActivity.class);
                 return true;
             } else if (itemId == R.id.nav_logout) {
-                com.irenaprokhyra.levelife.util.DialogUtils.showLogoutConfirmationDialog(this, this::performLogout);
+                DialogUtils.showLogoutConfirmationDialog(this, this::performLogout);
             }
                 return false;
         });
     }
 
     private void navigateTo(Class<?> destinationClass) {
-        Intent intent = new Intent(MainActivity.this, destinationClass);
+        Intent intent = new Intent(this, destinationClass);
         intent.putExtra("USER_ID", currentUserId);
         startActivity(intent);
-    }
-
-    private void loadUserDashboard() {
-        repository.getUserById(currentUserId, new MainRepository.LoginCallback() {
-            @Override
-            public void onSuccess(User user) {
-                if (user == null) return;
-                runOnUiThread(() -> updateUI(user));
-            }
-
-            @Override
-            public void onError(String message) {
-                runOnUiThread(() -> Toast.makeText(MainActivity.this, getString(R.string.error_load_user), Toast.LENGTH_SHORT).show());
-            }
-        });
     }
 
     private void updateUI(User user) {
@@ -137,30 +126,27 @@ public class MainActivity extends AppCompatActivity {
 
             tvMainBerries.setText(getString(R.string.main_berries_format, user.getBerries()));
 
-            pbMainXp.postDelayed(() -> {
-                if (lastKnownLevel == -1) {
-                    tvMainLevel.setText(getString(R.string.main_level_format, currentLevel));
-                    pbMainXp.setProgress(currentProgress);
-                } else if (currentLevel > lastKnownLevel) {
-                    animateLevelUp(currentLevel, currentProgress);
-                } else if (currentProgress != lastKnownProgress) {
-                    tvMainLevel.setText(getString(R.string.main_level_format, currentLevel));
-                    android.animation.ObjectAnimator animNormal = android.animation.ObjectAnimator.ofInt(
-                            pbMainXp, "progress", pbMainXp.getProgress(), currentProgress);
-                    animNormal.setDuration(1500);
-                    animNormal.start();
-                }
+            if (lastKnownLevel == -1) {
+                tvMainLevel.setText(getString(R.string.main_level_format, currentLevel));
+                pbMainXp.setProgress(currentProgress);
+            } else if (currentLevel > lastKnownLevel) {
+                animateLevelUp(currentLevel, currentProgress);
+            } else if (currentProgress != lastKnownProgress) {
+                tvMainLevel.setText(getString(R.string.main_level_format, currentLevel));
+                android.animation.ObjectAnimator animNormal = android.animation.ObjectAnimator.ofInt(
+                        pbMainXp, "progress", pbMainXp.getProgress(), currentProgress);
+                animNormal.setDuration(1500);
+                animNormal.start();
+            }
 
-                lastKnownLevel = currentLevel;
-                lastKnownProgress = currentProgress;
-            }, 400);
+            lastKnownLevel = currentLevel;
+            lastKnownProgress = currentProgress;
 
         } catch (Exception e) {
             Log.e("MainActivity", "Error actualizando UI: " + e.getMessage());
         }
     }
 
-    // >_ SECUENCIA DE ANIMACIÓN PROFESIONAL _<
     private void animateLevelUp(int targetLevel, int targetProgress) {
         android.animation.ObjectAnimator animateTo100 = android.animation.ObjectAnimator.ofInt(pbMainXp, "progress", pbMainXp.getProgress(), 100);
         animateTo100.setDuration(600);
