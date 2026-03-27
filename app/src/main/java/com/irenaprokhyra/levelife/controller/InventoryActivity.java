@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,12 +14,14 @@ import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
 import com.irenaprokhyra.levelife.model.MainRepository;
 import com.irenaprokhyra.levelife.view.InventoryAdapter;
+import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
+
 import java.util.List;
 
 public class InventoryActivity extends AppCompatActivity {
 
     private int currentUserId;
-    private MainRepository repository;
+    private MainViewModel viewModel;
     private RecyclerView rvInventory;
     private InventoryAdapter adapter;
 
@@ -35,11 +38,12 @@ public class InventoryActivity extends AppCompatActivity {
             return;
         }
 
-        repository = MainRepository.getInstance(getApplication());
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel.init(currentUserId);
 
         initViews();
         setupNavigation();
-        loadInventory();
+        setupObservers();
     }
 
     private void initViews () {
@@ -49,6 +53,15 @@ public class InventoryActivity extends AppCompatActivity {
         // >_ PASAMOS EL METODO COMO REFERENCIA PARA LA LÓGICA DE A3 _<
         adapter = new InventoryAdapter(this::placeFurnitureInRoom);
         rvInventory.setAdapter(adapter);
+    }
+
+    private void setupObservers() {
+        viewModel.getInventory().observe(this, furnitureList -> {
+            if (furnitureList == null || furnitureList.isEmpty()) {
+                Toast.makeText(this, getString(R.string.empty_inventory), Toast.LENGTH_SHORT).show();
+            }
+            adapter.setInventoryList(furnitureList);
+        });
     }
 
     // >_ LA LÓGICA (Colocar el mueble) _<
@@ -65,25 +78,7 @@ public class InventoryActivity extends AppCompatActivity {
 
     }
 
-    private void loadInventory() {
-        // Ejecutamos la consulta relacional (JOIN) del repositorio
-        repository.getInventoryForUser(currentUserId, new MainRepository.FurnitureListCallback() {
-            @Override
-            public void onSuccess(List<Furniture> furnitureList) {
-                runOnUiThread(() -> {
-                    if (furnitureList.isEmpty()) {
-                        Toast.makeText(InventoryActivity.this, getString(R.string.empty_inventory), Toast.LENGTH_SHORT).show();
-                    }
-                    adapter.setInventoryList(furnitureList);
-                });
-            }
 
-            @Override
-            public void onError(String message) {
-                runOnUiThread(() -> Toast.makeText(InventoryActivity.this, "Error cargando mochila", Toast.LENGTH_SHORT).show());
-            }
-        });
-    }
 
     private void setupNavigation() {
         BottomNavigationView bottomNav= findViewById(R.id.bottomNavigationView);

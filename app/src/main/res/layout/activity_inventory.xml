@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_nav"
+    android:background="@drawable/zombie_dreams_bg"
     tools:context=".controller.InventoryActivity">
 
     <TextView
@@ -12,8 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/nunito_extrabold"
-        android:text="@string/my_room" android:textSize="24sp" android:textColor="@color/text"
+        android:text="@string/my_room" android:textSize="24sp" android:textColor="@color/fourth_text_logo"
         android:gravity="center"
+        android:padding="16dp"
         android:paddingBottom="16dp"
         app:layout_constraintTop_toTopOf="parent"/>
 

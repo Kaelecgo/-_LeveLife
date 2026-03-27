@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@drawable/bg_nav"
+    android:background="@drawable/zombie_dreams_bg"
     android:padding="4dp"
     tools:context=".controller.MainActivity">
 
@@ -75,7 +75,7 @@
         app:cardElevation="6dp"
         app:cardBackgroundColor="#FFFFFF"
         app:layout_constraintTop_toBottomOf="@+id/headerCardView"
-        app:layout_constraintBottom_toTopOf="@+id/cardBottomNav"
+        app:layout_constraintBottom_toTopOf="@+id/includeBottomNav"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -87,30 +87,13 @@
 
     </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardBottomNav"
+    <include
+        android:id="@+id/includeBottomNav"
+        layout="@layout/component_bottom_nav"
         android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="32dp"
-        app:cardElevation="8dp"
-        app:cardBackgroundColor="#A0B2C6"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigationView"
-            style="@style/Widget.MaterialComponents.BottomNavigationView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            app:itemIconTint="@null"
-            app:itemIconSize="32dp"
-            app:labelVisibilityMode="unlabeled"
-            app:itemBackground="@android:color/transparent"
-            app:itemRippleColor="@android:color/transparent"
-            app:paddingBottomSystemWindowInsets="false"
-            app:menu="@menu/menu_bottom_nav" />
-    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

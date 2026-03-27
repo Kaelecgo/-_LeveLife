@@ -24,6 +24,9 @@ public interface FurnitureDao {
     @Query("SELECT furnitureId FROM user_furniture_cross_ref WHERE userId = :userId")
     List<Integer> getOwnedFurnitureIds(int userId);
 
+    @Query("SELECT COUNT(*) FROM user_furniture_cross_ref WHERE userId = :userId AND furnitureId = :furnitureId")
+    int countUserFurniture(int userId, int furnitureId);
+
     @Query("SELECT f.* FROM furniture f " +
             "INNER JOIN user_furniture_cross_ref crossRef ON f.id = crossRef.furnitureId " +
             "WHERE crossRef.userId = :userId")

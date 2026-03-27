@@ -7,13 +7,14 @@ import java.util.concurrent.ExecutorService;
 
 public class MainRepository {
     private static volatile MainRepository instance;
+    private final AppDatabase db;
     private final UserDao userDao;
     private final TaskDao taskDao;
     private final FurnitureDao furnitureDao;
     private final ExecutorService executor;
 
     private MainRepository(Application application) {
-        AppDatabase db = AppDatabase.getInstance(application);
+        db = AppDatabase.getInstance(application);
         userDao = db.userDao();
         taskDao = db.taskDao();
         furnitureDao = db.furnitureDao();
@@ -78,6 +79,48 @@ public class MainRepository {
         executor.execute(() -> taskDao.updateTask(task));
     }
 
+    /**
+     * Completa una tarea de forma atómica, otorgando recompensas al usuario.
+     */
+    public void completeTask(int taskId, int userId, TaskCompleteCallback callback) {
+        executor.execute(() -> {
+            try {
+                Boolean result = db.runInTransaction(() -> {
+                    // 1. Obtener la tarea y validar
+                    Task task = taskDao.getTaskById(taskId);
+                    if (task == null || task.isCompleted()) {
+                        return false;
+                    }
+
+                    // 2. Obtener el usuario
+                    User user = userDao.getUserById(userId);
+                    if (user == null) {
+                        return false;
+                    }
+
+                    // 3. Aplicar recompensas y marcar como completada
+                    user.addExperience(task.getRewardXP());
+                    user.addBerries(task.getRewardBerries());
+                    task.setCompleted(true);
+
+                    // 4. Guardar cambios
+                    userDao.updateUser(user);
+                    taskDao.updateTask(task);
+
+                    return true;
+                });
+
+                if (result != null && result) {
+                    if (callback != null) callback.onSuccess();
+                } else {
+                    if (callback != null) callback.onError("La tarea ya estaba completada o no existe");
+                }
+            } catch (Exception e) {
+                if (callback != null) callback.onError("Error al completar la tarea: " + e.getMessage());
+            }
+        });
+    }
+
     // --- SECCIÓN TIENDA E INVENTARIO ---
     public LiveData<List<Furniture>> getShopCatalog() {
         return furnitureDao.getAllFurnitureLiveData();
@@ -87,16 +130,44 @@ public class MainRepository {
         return furnitureDao.getInventoryForUserLiveData(userId);
     }
 
-    public void purchaseFurniture(User user, int furnitureId, Runnable onSuccess) {
+    /**
+     * Realiza la compra de un mueble de forma atómica.
+     * Valida existencia previa y saldo dentro de una transacción.
+     */
+    public void purchaseFurniture(int userId, Furniture furniture, PurchaseCallback callback) {
         executor.execute(() -> {
             try {
-                AppDatabase.getInstance(null).runInTransaction(() -> {
+                // Usamos runInTransaction con un Callable para retornar el resultado de la operación
+                Boolean result = db.runInTransaction(() -> {
+                    // 1. Comprobar si el usuario ya posee el mueble
+                    if (furnitureDao.countUserFurniture(userId, furniture.getId()) > 0) {
+                        return false; 
+                    }
+
+                    // 2. Obtener datos frescos del usuario para validar saldo
+                    User user = userDao.getUserById(userId);
+                    if (user == null) return false;
+
+                    // 3. Comprobar si tiene saldo suficiente
+                    if (user.getBerries() < furniture.getPrice()) {
+                        return false;
+                    }
+
+                    // 4. Restar bayas y guardar la relación
+                    user.setBerries(user.getBerries() - furniture.getPrice());
                     userDao.updateUser(user);
-                    userDao.insertUserFurnitureCrossRef(new UserFurnitureCrossRef(user.getId(), furnitureId));
+                    userDao.insertUserFurnitureCrossRef(new UserFurnitureCrossRef(userId, furniture.getId()));
+                    
+                    return true;
                 });
-                if (onSuccess != null) onSuccess.run();
+
+                if (result != null && result) {
+                    if (callback != null) callback.onSuccess();
+                } else {
+                    if (callback != null) callback.onError("No se pudo realizar la compra (saldo insuficiente o ya posees el objeto)");
+                }
             } catch (Exception e) {
-                e.printStackTrace();
+                if (callback != null) callback.onError("Error en la base de datos: " + e.getMessage());
             }
         });
     }
@@ -108,5 +179,15 @@ public class MainRepository {
 
     public interface BooleanCallback {
         void onResult(boolean result);
+    }
+
+    public interface PurchaseCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    public interface TaskCompleteCallback {
+        void onSuccess();
+        void onError(String message);
     }
 }

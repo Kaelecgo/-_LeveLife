@@ -19,15 +19,18 @@ public interface TaskDao {
     @Delete
     void deleteTask(Task task);
 
-    @Query("SELECT * FROM tasks WHERE userId = :userId ORDER BY isCompleted ASC")
+    @Query("SELECT * FROM tasks WHERE id = :id LIMIT 1")
+    Task getTaskById(int id);
+
+    @Query("SELECT * FROM tasks WHERE user_id = :userId ORDER BY isCompleted ASC")
     LiveData<List<Task>> getTasksByUserIdLiveData(int userId);
 
     @Query("SELECT * FROM tasks WHERE category = :categoryName")
     List<Task> getTasksByCategory(String categoryName);
 
-    @Query("SELECT COUNT(*) FROM tasks WHERE userId = :userId AND isCompleted = 1")
+    @Query("SELECT COUNT(*) FROM tasks WHERE user_id = :userId AND isCompleted = 1")
     int countCompletedTasks(int userId);
 
-    @Query("SELECT COUNT(*) FROM tasks WHERE userId = :userId AND isCompleted = 0")
+    @Query("SELECT COUNT(*) FROM tasks WHERE user_id = :userId AND isCompleted = 0")
     int countPendingTasks(int userId);
 }

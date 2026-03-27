@@ -61,14 +61,12 @@ public class TaskActivity extends AppCompatActivity {
         adapter = new TaskAdapter(task -> {
             if (currentUser == null) return;
             
-            boolean leveledUp = currentUser.addExperience(task.getRewardXP());
-            showRewardToast(task.getRewardXP(), task.getRewardBerries());
-
-            if (leveledUp) {
-                showLevelUpDialog();
-            }
-
-            viewModel.completeTask(task, currentUser);
+            // Ya no restamos ni sumamos nada aquí localmente.
+            // El repositorio se encarga de la lógica atómica.
+            viewModel.completeTask(task);
+            
+            // Opcional: Mostrar feedback visual inmediato si quieres,
+            // pero el LevelUpDialog debería dispararse cuando el Observer del User detecte el cambio de nivel.
         });
         recyclerView.setAdapter(adapter);
 
@@ -98,7 +96,13 @@ public class TaskActivity extends AppCompatActivity {
 
     private void setupObservers() {
         viewModel.getUser().observe(this, user -> {
-            this.currentUser = user;
+            if (user != null) {
+                // Si el nivel ha subido respecto al que teníamos guardado, mostramos el diálogo
+                if (currentUser != null && user.getLevel() > currentUser.getLevel()) {
+                    showLevelUpDialog(user.getLevel());
+                }
+                this.currentUser = user;
+            }
         });
 
         viewModel.getUserTasks().observe(this, tasks -> {
@@ -109,6 +113,12 @@ public class TaskActivity extends AppCompatActivity {
                 recyclerView.setVisibility(View.VISIBLE);
                 tvEmptyState.setVisibility(View.GONE);
                 adapter.setTasks(tasks);
+            }
+        });
+
+        viewModel.getErrorMessages().observe(this, message -> {
+            if (message != null) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -156,15 +166,10 @@ public class TaskActivity extends AppCompatActivity {
         finish();
     }
 
-    private void showRewardToast(int xp, int berries) {
-        String msg = getString(R.string.reward_claimed, xp, berries);
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
-    private void showLevelUpDialog() {
+    private void showLevelUpDialog(int newLevel) {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_levelup_title)
-                .setMessage(getString(R.string.dialog_levelup_message, currentUser.getLevel()))
+                .setMessage(getString(R.string.dialog_levelup_message, newLevel))
                 .setPositiveButton(R.string.dialog_levelup_button, null)
                 .show();
     }

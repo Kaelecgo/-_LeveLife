@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.irenaprokhyra.levelife"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -45,7 +45,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
 
-    val roomVersion = "2.6.1"
+    val roomVersion = "2.8.4"
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
 }

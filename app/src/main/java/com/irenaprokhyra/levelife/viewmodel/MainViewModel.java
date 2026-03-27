@@ -3,6 +3,9 @@ package com.irenaprokhyra.levelife.viewmodel;
 import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
+import com.irenaprokhyra.levelife.model.Furniture;
 import com.irenaprokhyra.levelife.model.MainRepository;
 import com.irenaprokhyra.levelife.model.User;
 import com.irenaprokhyra.levelife.model.Task;
@@ -12,6 +15,9 @@ public class MainViewModel extends AndroidViewModel {
     private final MainRepository repository;
     private LiveData<User> user;
     private LiveData<List<Task>> userTasks;
+    private LiveData<List<Furniture>> inventory;
+    private LiveData<List<Furniture>> shopCatalog;
+    private final MutableLiveData<String> errorMessages = new MutableLiveData<>();
 
     public MainViewModel(Application application) {
         super(application);
@@ -22,19 +28,34 @@ public class MainViewModel extends AndroidViewModel {
         if (this.user == null) {
             user = repository.getUserLiveData(userId);
             userTasks = repository.getTasksLiveData(userId);
+            inventory = repository.getUserInventory(userId);
+            shopCatalog = repository.getShopCatalog();
         }
     }
 
     public LiveData<User> getUser() { return user; }
     public LiveData<List<Task>> getUserTasks() { return userTasks; }
+    public LiveData<List<Furniture>> getInventory() { return inventory; }
+    public LiveData<List<Furniture>> getShopCatalog() { return shopCatalog; }
+    public LiveData<String> getErrorMessages() { return errorMessages; }
 
-    public void completeTask(Task task, User currentUser) {
-        task.setCompleted(true);
-        currentUser.addExperience(task.getRewardXP());
-        currentUser.addBerries(task.getRewardBerries());
-        
-        repository.updateUser(currentUser);
-        repository.updateTask(task);
+    public void completeTask(Task task) {
+        if (task == null || task.isCompleted()) return;
+
+        User currentUser = user.getValue();
+        if (currentUser == null) return;
+
+        repository.completeTask(task.getId(), currentUser.getId(), new MainRepository.TaskCompleteCallback() {
+            @Override
+            public void onSuccess() {
+                // La UI se actualizará sola gracias a los LiveData observados
+            }
+
+            @Override
+            public void onError(String message) {
+                errorMessages.postValue(message);
+            }
+        });
     }
 
     public void deleteTask(Task task) {
@@ -43,5 +64,22 @@ public class MainViewModel extends AndroidViewModel {
 
     public void insertTask(Task task) {
         repository.insertTask(task);
+    }
+
+    public void purchaseFurniture(Furniture furniture, Runnable onSuccess) {
+        User currentUser = user.getValue();
+        if (currentUser == null) return;
+
+        repository.purchaseFurniture(currentUser.getId(), furniture, new MainRepository.PurchaseCallback() {
+            @Override
+            public void onSuccess() {
+                if (onSuccess != null) onSuccess.run();
+            }
+
+            @Override
+            public void onError(String message) {
+                errorMessages.postValue(message);
+            }
+        });
     }
 }
