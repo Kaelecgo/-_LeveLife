@@ -45,4 +45,15 @@ public class DialogUtils {
                 .setNegativeButton(R.string.dialog_no, null)
                 .show();// Null cierra el diálogo sin hacer nada
     }
+
+    /**
+     * Muestra un diálogo de felicitación cuando el usuario sube de nivel.
+     */
+    public static void showLevelUpDialog(Context context, int newLevel) {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.dialog_levelup_title)
+                .setMessage(context.getString(R.string.dialog_levelup_message, newLevel))
+                .setPositiveButton(R.string.dialog_levelup_button, null)
+                .show();
+    }
 }

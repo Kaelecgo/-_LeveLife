@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
 import com.irenaprokhyra.levelife.model.MainRepository;
 import com.irenaprokhyra.levelife.model.User;
@@ -18,6 +19,7 @@ public class MainViewModel extends AndroidViewModel {
     private LiveData<List<Furniture>> inventory;
     private LiveData<List<Furniture>> shopCatalog;
     private final MutableLiveData<String> errorMessages = new MutableLiveData<>();
+    private final MutableLiveData<String> rewardMessage = new MutableLiveData<>();
 
     public MainViewModel(Application application) {
         super(application);
@@ -38,6 +40,7 @@ public class MainViewModel extends AndroidViewModel {
     public LiveData<List<Furniture>> getInventory() { return inventory; }
     public LiveData<List<Furniture>> getShopCatalog() { return shopCatalog; }
     public LiveData<String> getErrorMessages() { return errorMessages; }
+    public LiveData<String> getRewardMessage() { return rewardMessage; }
 
     public void completeTask(Task task) {
         if (task == null || task.isCompleted()) return;
@@ -47,8 +50,9 @@ public class MainViewModel extends AndroidViewModel {
 
         repository.completeTask(task.getId(), currentUser.getId(), new MainRepository.TaskCompleteCallback() {
             @Override
-            public void onSuccess() {
-                // La UI se actualizará sola gracias a los LiveData observados
+            public void onSuccess(int rewardXP, int rewardBerries, boolean leveledUp) {
+                String message = getApplication().getString(R.string.reward_claimed, rewardXP, rewardBerries);
+                rewardMessage.postValue(message);
             }
 
             @Override
@@ -56,6 +60,10 @@ public class MainViewModel extends AndroidViewModel {
                 errorMessages.postValue(message);
             }
         });
+    }
+
+    public void clearTaskCompletionMessage() {
+        rewardMessage.setValue(null);
     }
 
     public void deleteTask(Task task) {

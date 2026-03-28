@@ -67,7 +67,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
                 // CREAR TAREAS
                 // Asumimos que admin es ID 1 e irena es ID 2
-                taskDao.insertTask(new Task(1, "Beber agua", "Hidrátate", "Salud", 10, 5));
+                taskDao.insertTask(new Task(1, "Beber agua", "Hidrátate", "Salud y Fisico", 10, 5));
                 taskDao.insertTask(new Task(1, "Estudiar Android", "Room Database", "Estudios", 50, 20));
                 taskDao.insertTask(new Task(1, "Estudiar BD", "Room Database", "Estudios", 50, 20));
                 taskDao.insertTask(new Task(1, "Estudiar PSP", "Room Database", "Estudios", 50, 20));

@@ -85,6 +85,10 @@ public class MainRepository {
     public void completeTask(int taskId, int userId, TaskCompleteCallback callback) {
         executor.execute(() -> {
             try {
+                final int[] rewardXP = {0};
+                final int[] rewardBerries = {0};
+                final boolean[] leveledUp = {false};
+
                 Boolean result = db.runInTransaction(() -> {
                     // 1. Obtener la tarea y validar
                     Task task = taskDao.getTaskById(taskId);
@@ -98,12 +102,16 @@ public class MainRepository {
                         return false;
                     }
 
-                    // 3. Aplicar recompensas y marcar como completada
-                    user.addExperience(task.getRewardXP());
-                    user.addBerries(task.getRewardBerries());
+                    // 3. Capturar valores de recompensa
+                    rewardXP[0] = task.getRewardXP();
+                    rewardBerries[0] = task.getRewardBerries();
+
+                    // 4. Aplicar recompensas y marcar como completada
+                    leveledUp[0] = user.addExperience(rewardXP[0]);
+                    user.addBerries(rewardBerries[0]);
                     task.setCompleted(true);
 
-                    // 4. Guardar cambios
+                    // 5. Guardar cambios
                     userDao.updateUser(user);
                     taskDao.updateTask(task);
 
@@ -111,12 +119,18 @@ public class MainRepository {
                 });
 
                 if (result != null && result) {
-                    if (callback != null) callback.onSuccess();
+                    if (callback != null) {
+                        callback.onSuccess(rewardXP[0], rewardBerries[0], leveledUp[0]);
+                    }
                 } else {
-                    if (callback != null) callback.onError("La tarea ya estaba completada o no existe");
+                    if (callback != null) {
+                        callback.onError("La tarea ya estaba completada o no existe");
+                    }
                 }
             } catch (Exception e) {
-                if (callback != null) callback.onError("Error al completar la tarea: " + e.getMessage());
+                if (callback != null) {
+                    callback.onError("Error al completar la tarea: " + e.getMessage());
+                }
             }
         });
     }
@@ -187,7 +201,7 @@ public class MainRepository {
     }
 
     public interface TaskCompleteCallback {
-        void onSuccess();
+        void onSuccess(int rewardXP, int rewardBerries, boolean leveledUp);
         void onError(String message);
     }
 }

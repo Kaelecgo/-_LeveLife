@@ -7,7 +7,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -61,12 +60,8 @@ public class TaskActivity extends AppCompatActivity {
         adapter = new TaskAdapter(task -> {
             if (currentUser == null) return;
             
-            // Ya no restamos ni sumamos nada aquí localmente.
-            // El repositorio se encarga de la lógica atómica.
+            // La lógica atómica ahora devuelve las recompensas a través del ViewModel
             viewModel.completeTask(task);
-            
-            // Opcional: Mostrar feedback visual inmediato si quieres,
-            // pero el LevelUpDialog debería dispararse cuando el Observer del User detecte el cambio de nivel.
         });
         recyclerView.setAdapter(adapter);
 
@@ -99,7 +94,7 @@ public class TaskActivity extends AppCompatActivity {
             if (user != null) {
                 // Si el nivel ha subido respecto al que teníamos guardado, mostramos el diálogo
                 if (currentUser != null && user.getLevel() > currentUser.getLevel()) {
-                    showLevelUpDialog(user.getLevel());
+                    DialogUtils.showLevelUpDialog(this, user.getLevel());
                 }
                 this.currentUser = user;
             }
@@ -113,6 +108,15 @@ public class TaskActivity extends AppCompatActivity {
                 recyclerView.setVisibility(View.VISIBLE);
                 tvEmptyState.setVisibility(View.GONE);
                 adapter.setTasks(tasks);
+            }
+        });
+
+        // Nuevo observador para el mensaje de éxito de la tarea
+        viewModel.getRewardMessage().observe(this, message -> {
+            if (message != null && !message.isEmpty()) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                // Limpiamos el mensaje para que no se repita al rotar la pantalla
+                viewModel.clearTaskCompletionMessage();
             }
         });
 
@@ -164,13 +168,5 @@ public class TaskActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
-    }
-
-    private void showLevelUpDialog(int newLevel) {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.dialog_levelup_title)
-                .setMessage(getString(R.string.dialog_levelup_message, newLevel))
-                .setPositiveButton(R.string.dialog_levelup_button, null)
-                .show();
     }
 }
