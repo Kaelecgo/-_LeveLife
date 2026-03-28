@@ -51,7 +51,7 @@
     <string name="item_task_default_title">Example task</string>
     <string name="item_task_default_category">General</string>
     <string name="item_task_reward_format">+%1$d XP | +%2$d 🫐</string>
-    <string name="item_task_clean">"No pending tasks! Grab a coffee ☕"</string>
+    <string name="item_task_clean">"No pending tasks! Grab a coffee ☕ or create one 👇🏼"</string>
     <string name="dialog_levelup_title">LEVEL UP! 🎉</string>
     <string name="dialog_levelup_message">Congratulations! You reached Level %1$d.\nKeep it up!</string>
     <string name="dialog_levelup_button">Awesome!</string>

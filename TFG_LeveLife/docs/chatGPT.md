@@ -156,3 +156,16 @@ Objetivo actual:
 
 Pendientes:
 - [pega el backlog o resumen]
+
+
+Observación importante
+
+Aquí hay un detalle que luego tendremos que decidir bien en la narrativa final:
+
+En tu documentación inicial de FASE 1 aparece la idea de que la tabla de inventario pueda tener un campo isPlaced, mientras que en el estado actual que hemos venido trabajando el foco real está en la relación UserFurnitureCrossRef básica y en un inventario funcional persistente.
+Eso no es un problema ahora. Solo significa que, cuando cerremos FASE 4, tendremos que dejar claro si:
+
+esa parte quedó como ampliación futura
+o si finalmente la implementáis
+
+Y eso lo controlaremos juntos para que no haya contradicciones entre memoria, fase y defensa.

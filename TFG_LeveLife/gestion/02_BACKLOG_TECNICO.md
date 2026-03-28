@@ -15,8 +15,7 @@
 - [x] Confirmar que el inventario sigue mostrando los muebles tras reinicio
 
 ## Alto
-- [ ] Restaurar el Toast de recompensa al completar tarea
-- [ ] Decidir si el feedback de recompensa será Toast, Snackbar o diálogo breve
+- [x] Restaurar el Toast de recompensa al completar tarea
 - [ ] Formalizar mensaje visual del inventario vacío más allá del Toast actual
 - [ ] Revisar mensajes de error y feedback visual en UI
 - [ ] Verificar comportamiento con varios usuarios de prueba
@@ -33,6 +32,7 @@
 - [x] Confirmar que no hay recompensas dobles por pulsaciones repetidas
 
 ## Medio
+- [ ] Mover el texto del feedback de recompensa a strings.xml si aún queda algún literal pendiente
 - [ ] Documentar en memoria la validación del flujo extremo a extremo
 - [ ] Añadir tabla de casos de prueba con resultado esperado y resultado real
 - [ ] Documentar el uso de SplashActivity y sesión persistente en memoria

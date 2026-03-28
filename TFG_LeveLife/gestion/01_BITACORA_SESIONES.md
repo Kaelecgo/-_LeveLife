@@ -110,8 +110,17 @@ La persistencia local de sesión, saldo e inventario funciona correctamente.
 El flujo de usuario nuevo también se comporta correctamente desde el registro hasta la primera compra.
 
 ### Incidencias detectadas
-- Tras el refactor de completeTask(), ya no se muestra el Toast con la XP y las bayas obtenidas al completar una tarea.
-- La lógica funcional sigue siendo correcta, pero se ha perdido feedback inmediato de UX.
+
+### Corrección aplicada
+- Se restauró el feedback visual de recompensa al completar tareas.
+- MainRepository devuelve ahora los valores reales de XP y bayas obtenidos tras una operación exitosa.
+- MainViewModel expone un LiveData específico de mensaje de recompensa.
+- TaskActivity observa ese mensaje, muestra el Toast correspondiente y limpia el evento para evitar repeticiones tras cambios de configuración.
+
+### Resultado tras corrección
+- El usuario vuelve a recibir feedback inmediato al completar una tarea.
+- El mensaje mostrado refleja los valores reales confirmados por la operación de base de datos.
+- El diálogo de subida de nivel sigue funcionando correctamente sin interferencias.
 
 ### Pruebas realizadas
 - Caso 1: Subida de nivel -> correcto ✅

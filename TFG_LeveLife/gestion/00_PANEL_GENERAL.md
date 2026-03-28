@@ -19,6 +19,7 @@ Cierre de consistencia del núcleo y validación funcional del flujo principal.
 - Se evita la deducción local de bayas desde el ViewModel.
 - La finalización de tareas se ejecuta de forma atómica en el repositorio.
 - Se centralizan mensajes de error en el ViewModel mediante LiveData.
+- Se restauró el feedback visual de recompensa al completar tareas mediante un evento observable desde el ViewModel.
 
 ## Validaciones realizadas
 - Completar tarea normal: correcto ✅
@@ -32,9 +33,10 @@ Cierre de consistencia del núcleo y validación funcional del flujo principal.
 - Flujo de usuario nuevo desde registro hasta primera compra: correcto ✅
 - Recuperación de sesión desde SplashActivity: correcta ✅
 - Inventario vacío: comportamiento comprensible y funcional.
+- Toast de recompensa al completar tarea: restaurado y funcional.
 
 ## Próxima sesión
-Corregir la regresión del feedback de recompensa al completar tareas y trasladar las pruebas funcionales a la memoria técnica.
+Trasladar el estado actual del proyecto a la memoria técnica base y empezar los apartados de requisitos, arquitectura y modelo de datos.
 
 ## Pendientes mayores
 - Validar subida de nivel tras varias tareas con acumulación de XP.
