@@ -4,8 +4,12 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 import androidx.room.Ignore; // Importante para métodos que no son columnas
+import androidx.room.Index;
 
-@Entity(tableName = "users")
+@Entity(
+        tableName = "users",
+        indices = {@Index(value = "user_name", unique = true)}
+)
 public class User {
 
     // >_ CONSTANTES DE EQUILIBRIO DEL JUEGO _<
@@ -18,7 +22,7 @@ public class User {
     private String name;
 
     @ColumnInfo(name = "password")
-    private String password;
+    private String passwordHash;
 
     private int level;
     private int experience;
@@ -29,9 +33,9 @@ public class User {
     // Añadimos @Ignore para que Room ignore este constructor
     // (Este lo usamos manualmente para crear usuarios nuevos)
     @Ignore
-    public User(String name, String password) {
+    public User(String name, String passwordHash) {
         this.name = name;
-        this.password = password;
+        this.passwordHash = passwordHash;
         this.level = 1;
         this.experience = 0;
         this.berries = 0;
@@ -43,8 +47,8 @@ public class User {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
     public int getLevel() { return level; }
     public void setLevel(int level) { this.level = level; }

@@ -110,6 +110,7 @@ La persistencia local de sesión, saldo e inventario funciona correctamente.
 El flujo de usuario nuevo también se comporta correctamente desde el registro hasta la primera compra.
 
 ### Incidencias detectadas
+- Se detectó una regresión temporal en el feedback visual de recompensa al completar tareas.
 
 ### Corrección aplicada
 - Se restauró el feedback visual de recompensa al completar tareas.
@@ -133,4 +134,45 @@ El flujo de usuario nuevo también se comporta correctamente desde el registro h
 - Se realizaron capturas del flujo principal para memoria y defensa.
 
 ### Próximo paso
-Corregir la regresión del feedback de recompensa al completar tareas y trasladar las pruebas validadas a la memoria técnica.
+Reforzar autenticación y persistencia local, y trasladar las pruebas validadas a la memoria técnica.
+
+## Sesión 3 - Refuerzo de autenticación y persistencia de datos
+
+### Objetivo
+Reducir riesgos técnicos del proyecto reforzando el sistema de autenticación, el flujo de registro y la persistencia de datos ante cambios de esquema.
+
+### Problemas detectados
+- Las contraseñas se almacenaban y validaban en texto plano.
+- El flujo de registro dependía demasiado de validaciones desde la capa de aplicación.
+- La recuperación de sesión presentaba una incoherencia entre la clave guardada por login y la clave consultada por SplashActivity.
+- La base de datos seguía dependiendo de migración destructiva, con riesgo de pérdida de progreso del usuario.
+- Se seguían sembrando usuarios demo en la base de datos para instalaciones nuevas.
+
+### Tareas realizadas
+- Se sustituyó la validación en texto plano por un sistema de hash de contraseñas.
+- Se reforzó el registro para evitar inconsistencias y mejorar la fiabilidad del alta.
+- Se corrigió SplashActivity para que use la misma clave persistida por el login (`saved_user_id`).
+- Se reemplazó la migración destructiva por migraciones explícitas de Room.
+- Se dejó de generar usuarios demo hardcodeados en instalaciones nuevas.
+- Se añadió una prueba unitaria para el helper de contraseñas.
+
+### Archivos afectados
+- User.java
+- UserDao.java
+- PasswordUtils.java
+- MainRepository.java
+- LoginActivity.java
+- AppDatabase.java
+- PasswordUtilsTest.java
+
+### Resultado
+El sistema de autenticación queda reforzado, la sesión persistente funciona de forma coherente desde el arranque y la persistencia del progreso deja de depender de una estrategia destructiva de migración.
+
+### Pruebas realizadas
+- Verificación del login con hash de contraseña.
+- Verificación del auto-login tras registro.
+- Validación del acceso directo desde SplashActivity con sesión persistida.
+- Ejecución de tests unitarios del módulo (`testDebugUnitTest`).
+
+### Próximo paso
+Limpiar deuda heredada de datos demo antiguos y ampliar cobertura de pruebas sobre flujos críticos reales.

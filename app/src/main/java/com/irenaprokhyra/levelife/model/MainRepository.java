@@ -1,12 +1,18 @@
 package com.irenaprokhyra.levelife.model;
 
 import android.app.Application;
+
 import androidx.lifecycle.LiveData;
+
+import com.irenaprokhyra.levelife.util.PasswordUtils;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public class MainRepository {
+    private static final int WELCOME_BERRIES = 50;
     private static volatile MainRepository instance;
+
     private final AppDatabase db;
     private final UserDao userDao;
     private final TaskDao taskDao;
@@ -22,28 +28,39 @@ public class MainRepository {
     }
 
     public static synchronized MainRepository getInstance(Application application) {
-        if (instance == null) instance = new MainRepository(application);
+        if (instance == null) { instance = new MainRepository(application); }
         return instance;
     }
 
-    // --- SECCIÓN USUARIO ---
     public LiveData<User> getUserLiveData(int userId) {
         return userDao.getUserByIdLiveData(userId);
     }
 
     public void loginUser(String username, String password, LoginCallback callback) {
         executor.execute(() -> {
-            User user = userDao.login(username, password);
-            if (user != null) callback.onSuccess(user);
-            else callback.onError("Usuario o contraseña incorrectos");
+            User user = userDao.getUserByUsername(username);
+            if (user == null || !PasswordUtils.verifyPassword(password, user.getPasswordHash())) {
+                callback.onError("Usuario o contrasena incorrectos");
+                return;
+            }
+
+            if (PasswordUtils.needsUpgrade(user.getPasswordHash())) {
+                user.setPasswordHash(PasswordUtils.hashPassword(password));
+                userDao.updateUser(user);
+            }
+
+            callback.onSuccess(user);
         });
     }
 
     public void getUserById(int userId, LoginCallback callback) {
         executor.execute(() -> {
             User user = userDao.getUserById(userId);
-            if (user != null) callback.onSuccess(user);
-            else callback.onError("Usuario no encontrado");
+            if (user != null) {
+                callback.onSuccess(user);
+            } else {
+                callback.onError("Usuario no encontrado");
+            }
         });
     }
 
@@ -55,14 +72,49 @@ public class MainRepository {
     }
 
     public void insertUser(User user) {
-        executor.execute(() -> userDao.insertUser(user));
+        executor.execute(() -> {
+            if (user.getPasswordHash() != null && PasswordUtils.needsUpgrade(user.getPasswordHash())) {
+                user.setPasswordHash(PasswordUtils.hashPassword(user.getPasswordHash()));
+            }
+            userDao.insertUser(user);
+        });
     }
 
     public void updateUser(User user) {
         executor.execute(() -> userDao.updateUser(user));
     }
 
-    // --- SECCIÓN TAREAS ---
+    public void registerUser(String username, String rawPassword, RegistrationCallback callback) {
+        executor.execute(() -> {
+            try {
+                Integer createdUserId = db.runInTransaction(() -> {
+                    if (userDao.getUserByUsername(username) != null) {
+                        return -1;
+                    }
+
+                    User newUser = new User(username, PasswordUtils.hashPassword(rawPassword));
+                    newUser.setBerries(WELCOME_BERRIES);
+
+                    long insertedId = userDao.insertUser(newUser);
+                    if (insertedId <= 0) {
+                        throw new IllegalStateException("No se pudo crear el usuario");
+                    }
+
+                    seedStarterTasks((int) insertedId);
+                    return (int) insertedId;
+                });
+
+                if (createdUserId != null && createdUserId > 0) {
+                    callback.onSuccess(createdUserId);
+                } else {
+                    callback.onError("El nombre de usuario ya existe.");
+                }
+            } catch (Exception e) {
+                callback.onError("No se pudo completar el registro. Intentalo de nuevo.");
+            }
+        });
+    }
+
     public LiveData<List<Task>> getTasksLiveData(int userId) {
         return taskDao.getTasksByUserIdLiveData(userId);
     }
@@ -79,9 +131,6 @@ public class MainRepository {
         executor.execute(() -> taskDao.updateTask(task));
     }
 
-    /**
-     * Completa una tarea de forma atómica, otorgando recompensas al usuario.
-     */
     public void completeTask(int taskId, int userId, TaskCompleteCallback callback) {
         executor.execute(() -> {
             try {
@@ -90,28 +139,23 @@ public class MainRepository {
                 final boolean[] leveledUp = {false};
 
                 Boolean result = db.runInTransaction(() -> {
-                    // 1. Obtener la tarea y validar
                     Task task = taskDao.getTaskById(taskId);
                     if (task == null || task.isCompleted()) {
                         return false;
                     }
 
-                    // 2. Obtener el usuario
                     User user = userDao.getUserById(userId);
                     if (user == null) {
                         return false;
                     }
 
-                    // 3. Capturar valores de recompensa
                     rewardXP[0] = task.getRewardXP();
                     rewardBerries[0] = task.getRewardBerries();
 
-                    // 4. Aplicar recompensas y marcar como completada
                     leveledUp[0] = user.addExperience(rewardXP[0]);
                     user.addBerries(rewardBerries[0]);
                     task.setCompleted(true);
 
-                    // 5. Guardar cambios
                     userDao.updateUser(user);
                     taskDao.updateTask(task);
 
@@ -122,10 +166,8 @@ public class MainRepository {
                     if (callback != null) {
                         callback.onSuccess(rewardXP[0], rewardBerries[0], leveledUp[0]);
                     }
-                } else {
-                    if (callback != null) {
-                        callback.onError("La tarea ya estaba completada o no existe");
-                    }
+                } else if (callback != null) {
+                    callback.onError("La tarea ya estaba completada o no existe");
                 }
             } catch (Exception e) {
                 if (callback != null) {
@@ -135,7 +177,6 @@ public class MainRepository {
         });
     }
 
-    // --- SECCIÓN TIENDA E INVENTARIO ---
     public LiveData<List<Furniture>> getShopCatalog() {
         return furnitureDao.getAllFurnitureLiveData();
     }
@@ -144,46 +185,48 @@ public class MainRepository {
         return furnitureDao.getInventoryForUserLiveData(userId);
     }
 
-    /**
-     * Realiza la compra de un mueble de forma atómica.
-     * Valida existencia previa y saldo dentro de una transacción.
-     */
     public void purchaseFurniture(int userId, Furniture furniture, PurchaseCallback callback) {
         executor.execute(() -> {
             try {
-                // Usamos runInTransaction con un Callable para retornar el resultado de la operación
                 Boolean result = db.runInTransaction(() -> {
-                    // 1. Comprobar si el usuario ya posee el mueble
                     if (furnitureDao.countUserFurniture(userId, furniture.getId()) > 0) {
-                        return false; 
+                        return false;
                     }
 
-                    // 2. Obtener datos frescos del usuario para validar saldo
                     User user = userDao.getUserById(userId);
-                    if (user == null) return false;
+                    if (user == null) {
+                        return false;
+                    }
 
-                    // 3. Comprobar si tiene saldo suficiente
                     if (user.getBerries() < furniture.getPrice()) {
                         return false;
                     }
 
-                    // 4. Restar bayas y guardar la relación
                     user.setBerries(user.getBerries() - furniture.getPrice());
                     userDao.updateUser(user);
                     userDao.insertUserFurnitureCrossRef(new UserFurnitureCrossRef(userId, furniture.getId()));
-                    
                     return true;
                 });
 
                 if (result != null && result) {
-                    if (callback != null) callback.onSuccess();
-                } else {
-                    if (callback != null) callback.onError("No se pudo realizar la compra (saldo insuficiente o ya posees el objeto)");
+                    if (callback != null) {
+                        callback.onSuccess();
+                    }
+                } else if (callback != null) {
+                    callback.onError("No se pudo realizar la compra (saldo insuficiente o ya posees el objeto)");
                 }
             } catch (Exception e) {
-                if (callback != null) callback.onError("Error en la base de datos: " + e.getMessage());
+                if (callback != null) {
+                    callback.onError("Error en la base de datos: " + e.getMessage());
+                }
             }
         });
+    }
+
+    private void seedStarterTasks(int userId) {
+        taskDao.insertTask(new Task(userId, "Beber agua", "Empieza el dia cuidandote", Task.CATEGORY_HEALTH, 10, 5));
+        taskDao.insertTask(new Task(userId, "Planificar el dia", "Anota tus 3 prioridades", Task.CATEGORY_GENERAL, 15, 8));
+        taskDao.insertTask(new Task(userId, "Mover el cuerpo", "Da un paseo corto o estira", Task.CATEGORY_HEALTH, 20, 10));
     }
 
     public interface LoginCallback {
@@ -193,6 +236,11 @@ public class MainRepository {
 
     public interface BooleanCallback {
         void onResult(boolean result);
+    }
+
+    public interface RegistrationCallback {
+        void onSuccess(int userId);
+        void onError(String message);
     }
 
     public interface PurchaseCallback {
