@@ -17,18 +17,23 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        // Retardo para mostrar el logo de la aplicación
         new Handler(Looper.getMainLooper()).postDelayed(this::routeUser, 3400);
     }
 
     private void routeUser() {
         SharedPreferences prefs = getSharedPreferences("LeveLifeSession", MODE_PRIVATE);
-        int savedUserId = prefs.getInt("USER_ID", -1);
+        
+        // CORRECCIÓN: Usar la misma clave que LoginActivity ("saved_user_id")
+        int savedUserId = prefs.getInt("saved_user_id", -1);
 
         Intent intent;
         if (savedUserId != -1) {
+            // Si hay sesión guardada, vamos directo al Home pasándole el ID
             intent = new Intent(SplashActivity.this, MainActivity.class);
             intent.putExtra("USER_ID", savedUserId);
         } else {
+            // Si no hay sesión, vamos a la pantalla de Login
             intent = new Intent(SplashActivity.this, LoginActivity.class);
         }
 
