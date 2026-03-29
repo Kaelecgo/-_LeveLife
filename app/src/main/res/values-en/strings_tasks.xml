@@ -29,23 +29,23 @@
     <string name="task_meta_format">%1$s | %2$s</string>
 
     <string-array name="task_categories">
-        <item>General 📋</item>
-        <item>Health &amp; Fitness 💪</item>
-        <item>Study &amp; Work 📚</item>
-        <item>Social &amp; Leisure 🎮</item>
-        <item>Sustainability 🌱</item>
+        <item>General</item>
+        <item>Health &amp; Fitness</item>
+        <item>Study &amp; Work</item>
+        <item>Social &amp; Leisure</item>
+        <item>Sustainability</item>
     </string-array>
 
     <string-array name="task_difficulties">
-        <item>Easy ✨</item>
-        <item>Medium ⚡</item>
-        <item>Hard 🔥</item>
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
     </string-array>
 
     <string-array name="task_frequencies">
-        <item>Once 📌</item>
-        <item>Daily 🔄</item>
-        <item>Weekly 🗓️</item>
-        <item>Monthly 📅</item>
+        <item>Once</item>
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
     </string-array>
 </resources>

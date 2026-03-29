@@ -152,28 +152,28 @@ public class Task {
 
     public static String normalizeCategory(String category) {
         String normalized = normalizeLabel(category);
-        if (CATEGORY_HEALTH.equals(normalized)) return CATEGORY_HEALTH;
-        if (CATEGORY_ECO.equals(normalized)) return CATEGORY_ECO;
-        if (CATEGORY_FOCUS.equals(normalized)) return CATEGORY_FOCUS;
-        if (CATEGORY_SOCIAL.equals(normalized)) return CATEGORY_SOCIAL;
-        if (CATEGORY_GENERAL.equals(normalized)) return CATEGORY_GENERAL;
+        if (startsWithLabel(normalized, CATEGORY_HEALTH) || startsWithLabel(normalized, "Health")) return CATEGORY_HEALTH;
+        if (startsWithLabel(normalized, CATEGORY_ECO) || startsWithLabel(normalized, "Sustainability")) return CATEGORY_ECO;
+        if (startsWithLabel(normalized, CATEGORY_FOCUS) || startsWithLabel(normalized, "Study")) return CATEGORY_FOCUS;
+        if (startsWithLabel(normalized, CATEGORY_SOCIAL) || startsWithLabel(normalized, "Social")) return CATEGORY_SOCIAL;
+        if (startsWithLabel(normalized, CATEGORY_GENERAL) || startsWithLabel(normalized, "General")) return CATEGORY_GENERAL;
         return normalized;
     }
 
     public static String normalizeDifficulty(String difficulty) {
         String normalized = normalizeLabel(difficulty);
-        if (DIFFICULTY_EASY.equals(normalized)) return DIFFICULTY_EASY;
-        if (DIFFICULTY_MEDIUM.equals(normalized)) return DIFFICULTY_MEDIUM;
-        if (DIFFICULTY_HARD.equals(normalized)) return DIFFICULTY_HARD;
+        if (startsWithLabel(normalized, DIFFICULTY_EASY) || startsWithLabel(normalized, "Easy")) return DIFFICULTY_EASY;
+        if (startsWithLabel(normalized, DIFFICULTY_MEDIUM) || startsWithLabel(normalized, "Medium")) return DIFFICULTY_MEDIUM;
+        if (startsWithLabel(normalized, DIFFICULTY_HARD) || startsWithLabel(normalized, "Hard")) return DIFFICULTY_HARD;
         return normalized;
     }
 
     public static String normalizeFrequency(String frequency) {
         String normalized = normalizeLabel(frequency);
-        if (FREQUENCY_DAILY.equals(normalized)) return FREQUENCY_DAILY;
-        if (FREQUENCY_WEEKLY.equals(normalized)) return FREQUENCY_WEEKLY;
-        if (FREQUENCY_MONTHLY.equals(normalized)) return FREQUENCY_MONTHLY;
-        if (FREQUENCY_ONCE.equals(normalized) || normalized.isEmpty()) return FREQUENCY_ONCE;
+        if (startsWithLabel(normalized, FREQUENCY_DAILY) || startsWithLabel(normalized, "Daily")) return FREQUENCY_DAILY;
+        if (startsWithLabel(normalized, FREQUENCY_WEEKLY) || startsWithLabel(normalized, "Weekly")) return FREQUENCY_WEEKLY;
+        if (startsWithLabel(normalized, FREQUENCY_MONTHLY) || startsWithLabel(normalized, "Monthly")) return FREQUENCY_MONTHLY;
+        if (startsWithLabel(normalized, FREQUENCY_ONCE) || startsWithLabel(normalized, "Once") || normalized.isEmpty()) return FREQUENCY_ONCE;
         return normalized;
     }
 
@@ -186,5 +186,9 @@ public class Task {
                 .replaceAll("[^\\p{L}\\p{Nd} ]", "")
                 .replaceAll("\\s+", " ")
                 .trim();
+    }
+
+    private static boolean startsWithLabel(String value, String prefix) {
+        return value.regionMatches(true, 0, prefix, 0, prefix.length());
     }
 }

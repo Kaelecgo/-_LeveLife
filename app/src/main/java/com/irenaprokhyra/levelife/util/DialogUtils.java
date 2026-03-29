@@ -1,6 +1,8 @@
 package com.irenaprokhyra.levelife.util;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -14,6 +16,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.irenaprokhyra.levelife.R;
+import com.irenaprokhyra.levelife.model.Task;
 import com.irenaprokhyra.levelife.model.TaskDraft;
 import com.irenaprokhyra.levelife.model.TaskReward;
 
@@ -61,12 +64,12 @@ public class DialogUtils {
         actTaskFrequency.setText(frequencyAdapter.getItem(0), false);
 
         Runnable updateRewardPreview = () -> {
-            String selectedCategory = actTaskCategory.getText() != null
-                    ? actTaskCategory.getText().toString().trim()
-                    : "";
-            String selectedDifficulty = actTaskDifficulty.getText() != null
-                    ? actTaskDifficulty.getText().toString().trim()
-                    : "";
+            String selectedCategory = Task.normalizeCategory(
+                    actTaskCategory.getText() != null ? actTaskCategory.getText().toString().trim() : ""
+            );
+            String selectedDifficulty = Task.normalizeDifficulty(
+                    actTaskDifficulty.getText() != null ? actTaskDifficulty.getText().toString().trim() : ""
+            );
 
             TaskReward reward = TaskRewardCalculator.calculateRewards(selectedDifficulty, selectedCategory);
             if (reward.getEcoReward() > 0) {
@@ -92,15 +95,25 @@ public class DialogUtils {
         actTaskCategory.setOnItemClickListener((parent, view1, position, id) -> updateRewardPreview.run());
         actTaskDifficulty.setOnItemClickListener((parent, view12, position, id) -> updateRewardPreview.run());
         actTaskFrequency.setOnItemClickListener((parent, view13, position, id) -> updateRewardPreview.run());
+        TextWatcher rewardPreviewWatcher = new SimpleTextWatcher(updateRewardPreview);
+        actTaskCategory.addTextChangedListener(rewardPreviewWatcher);
+        actTaskDifficulty.addTextChangedListener(rewardPreviewWatcher);
+        actTaskFrequency.addTextChangedListener(rewardPreviewWatcher);
 
         updateRewardPreview.run();
 
         btnCreateTask.setOnClickListener(v -> {
             String title = etTaskTitle.getText() != null ? etTaskTitle.getText().toString().trim() : "";
             String description = etTaskDescription.getText() != null ? etTaskDescription.getText().toString().trim() : "";
-            String category = actTaskCategory.getText() != null ? actTaskCategory.getText().toString().trim() : "";
-            String difficulty = actTaskDifficulty.getText() != null ? actTaskDifficulty.getText().toString().trim() : "";
-            String frequency = actTaskFrequency.getText() != null ? actTaskFrequency.getText().toString().trim() : "";
+            String category = Task.normalizeCategory(
+                    actTaskCategory.getText() != null ? actTaskCategory.getText().toString().trim() : ""
+            );
+            String difficulty = Task.normalizeDifficulty(
+                    actTaskDifficulty.getText() != null ? actTaskDifficulty.getText().toString().trim() : ""
+            );
+            String frequency = Task.normalizeFrequency(
+                    actTaskFrequency.getText() != null ? actTaskFrequency.getText().toString().trim() : ""
+            );
 
             if (title.isEmpty() || category.isEmpty() || difficulty.isEmpty() || frequency.isEmpty()) {
                 Toast.makeText(context, R.string.error_invalid_task_form, Toast.LENGTH_SHORT).show();
@@ -134,5 +147,28 @@ public class DialogUtils {
                 .setMessage(context.getString(R.string.dialog_levelup_message, newLevel))
                 .setPositiveButton(R.string.dialog_levelup_button, null)
                 .show();
+    }
+
+    private static final class SimpleTextWatcher implements TextWatcher {
+        private final Runnable onTextChanged;
+
+        private SimpleTextWatcher(Runnable onTextChanged) {
+            this.onTextChanged = onTextChanged;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (onTextChanged != null) {
+                onTextChanged.run();
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+        }
     }
 }
