@@ -1,0 +1,51 @@
+<resources>
+    <!-- Tasks & Habits -->
+    <string name="item_task_clean">"No pending tasks! Grab a coffee ☕ or create one 👇🏼"</string>
+    <string name="error_load_tasks">Error: Could not load tasks ⚠️</string>
+    <string name="content_desc_add_task">Add new task ➕</string>
+
+    <!-- Preview Strings for Layout -->
+    <string name="item_task_default_title">Example Task 📝</string>
+    <string name="item_task_default_category">Category 📋</string>
+
+    <!-- Creation Form (BottomSheet) -->
+    <string name="dialog_new_task_title">New Task 📝</string>
+    <string name="hint_task_title">What do you need to do?</string>
+    <string name="dialog_task_description_hint">Add a brief description 💬</string>
+    <string name="dialog_task_category_hint">Category 📋</string>
+    <string name="dialog_task_difficulty_hint">Difficulty ⚡</string>
+    <string name="dialog_task_frequency_hint">Frequency 🔄</string>
+
+    <string name="dialog_task_reward_preview_title">Reward Preview 💎</string>
+    <string name="dialog_task_reward_preview">%1$d XP | %2$d Berries 🫐</string>
+    <string name="dialog_task_reward_preview_with_eco">%1$d XP | %2$d Berries 🫐 | %3$d EcoCoins 🌱</string>
+
+    <string name="btn_create">Create ✨</string>
+    <string name="error_empty_task">Title cannot be empty ❗</string>
+    <string name="error_invalid_task_form">Please fill in Title, Category, Difficulty, and Frequency.</string>
+
+    <string name="item_task_reward_format">+%1$d XP | +%2$d 🫐</string>
+    <string name="item_task_reward_with_eco_format">+%1$d XP | +%2$d 🫐 | +%3$d Eco 🌱</string>
+    <string name="task_meta_format">%1$s | %2$s</string>
+
+    <string-array name="task_categories">
+        <item>General 📋</item>
+        <item>Health &amp; Fitness 💪</item>
+        <item>Study &amp; Work 📚</item>
+        <item>Social &amp; Leisure 🎮</item>
+        <item>Sustainability 🌱</item>
+    </string-array>
+
+    <string-array name="task_difficulties">
+        <item>Easy ✨</item>
+        <item>Medium ⚡</item>
+        <item>Hard 🔥</item>
+    </string-array>
+
+    <string-array name="task_frequencies">
+        <item>Once 📌</item>
+        <item>Daily 🔄</item>
+        <item>Weekly 🗓️</item>
+        <item>Monthly 📅</item>
+    </string-array>
+</resources>

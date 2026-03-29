@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 
 @Database(
         entities = {User.class, Task.class, Furniture.class, UserFurnitureCrossRef.class},
-        version = 6,
+        version = 7,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -81,6 +81,17 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE `tasks` ADD COLUMN `eco_reward` INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("ALTER TABLE `tasks` ADD COLUMN `is_eco_task` INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("ALTER TABLE `tasks` ADD COLUMN `last_completed_at` INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("ALTER TABLE `tasks` ADD COLUMN `difficulty` TEXT");
+            database.execSQL("ALTER TABLE `users` ADD COLUMN `eco_coins` INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
     public abstract UserDao userDao();
 
     public abstract TaskDao taskDao();
@@ -96,12 +107,14 @@ public abstract class AppDatabase extends RoomDatabase {
                                     AppDatabase.class,
                                     "levelife_db"
                             )
+                            .fallbackToDestructiveMigrationOnDowngrade()
                             .addMigrations(
                                     MIGRATION_1_2,
                                     MIGRATION_2_3,
                                     MIGRATION_3_4,
                                     MIGRATION_4_5,
-                                    MIGRATION_5_6
+                                    MIGRATION_5_6,
+                                    MIGRATION_6_7
                             )
                             .addCallback(sRoomDatabaseCallback)
                             .build();
@@ -160,22 +173,42 @@ public abstract class AppDatabase extends RoomDatabase {
         return candidate;
     }
 
-    private static void seedFurnitureCatalog(FurnitureDao furnitureDao) {
-        furnitureDao.insertFurniture(new Furniture("Silla Madera", 50, "Basico", "furn_chair_wood"));
-        furnitureDao.insertFurniture(new Furniture("Planta", 30, "Decoracion", "furn_plant_small"));
-        furnitureDao.insertFurniture(new Furniture("PC Gamer", 500, "Tecnologia", "furn_pc_gamer"));
-        furnitureDao.insertFurniture(new Furniture("Lampara", 80, "Iluminacion", "furn_lamp_desk"));
+    private static void seedFurnitureCatalog(SupportSQLiteDatabase db) {
+        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Silla Madera', 50, 'Basico', 'furn_chair_wood', NULL, NULL)");
+        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Planta', 30, 'Decoracion', 'furn_plant_small', NULL, NULL)");
+        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('PC Gamer', 500, 'Tecnologia', 'furn_pc_gamer', NULL, NULL)");
+        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Lampara', 80, 'Iluminacion', 'furn_lamp_desk', NULL, NULL)");
+        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Estanteria', 120, 'Almacenaje', 'furn_shelf', NULL, NULL)");
+        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Cama Comoda', 300, 'Descanso', 'furn_bed', NULL, NULL)");
+        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Alfombra', 40, 'Decoracion', 'furn_rug', NULL, NULL)");
+        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Ventilador Eco', 150, 'Sostenibilidad', 'furn_fan_eco', NULL, NULL)");
+    }
+
+    private static void ensureFurnitureCatalogSeeded(SupportSQLiteDatabase db) {
+        Cursor cursor = db.query("SELECT COUNT(*) FROM furniture");
+        try {
+            if (cursor.moveToFirst() && cursor.getInt(0) == 0) {
+                seedFurnitureCatalog(db);
+            }
+        } finally {
+            cursor.close();
+        }
     }
 
     private static final RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
-
             databaseWriteExecutor.execute(() -> {
-                if (INSTANCE != null) {
-                    seedFurnitureCatalog(INSTANCE.furnitureDao());
-                }
+                ensureFurnitureCatalogSeeded(db);
+            });
+        }
+
+        @Override
+        public void onOpen(@NonNull SupportSQLiteDatabase db) {
+            super.onOpen(db);
+            databaseWriteExecutor.execute(() -> {
+                ensureFurnitureCatalogSeeded(db);
             });
         }
     };

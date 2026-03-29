@@ -50,8 +50,18 @@ public class MainViewModel extends AndroidViewModel {
 
         repository.completeTask(task.getId(), currentUser.getId(), new MainRepository.TaskCompleteCallback() {
             @Override
-            public void onSuccess(int rewardXP, int rewardBerries, boolean leveledUp) {
-                String message = getApplication().getString(R.string.reward_claimed, rewardXP, rewardBerries);
+            public void onSuccess(int rewardXP, int rewardBerries, int ecoReward, boolean leveledUp) {
+                String message;
+                if (ecoReward > 0) {
+                    message = getApplication().getString(
+                            R.string.reward_claimed_with_eco,
+                            rewardXP,
+                            rewardBerries,
+                            ecoReward
+                    );
+                } else {
+                    message = getApplication().getString(R.string.reward_claimed, rewardXP, rewardBerries);
+                }
                 rewardMessage.postValue(message);
             }
 

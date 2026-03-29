@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private int currentUserId;
     private MainViewModel viewModel;
 
-    private TextView tvMainLevel, tvMainBerries, tvMainXpText;
+    private TextView tvMainLevel, tvMainBerries, tvMainEcoCoins, tvMainXpText;
     private ProgressBar pbMainXp;
     private BottomNavigationView bottomNavigationView;
 
@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private void initViews() {
         tvMainLevel = findViewById(R.id.tvMainLevel);
         tvMainBerries = findViewById(R.id.tvMainBerries);
+        tvMainEcoCoins = findViewById(R.id.tvMainEcoCoins);
         tvMainXpText = findViewById(R.id.tvMainXpText);
         pbMainXp = findViewById(R.id.pbMainXp);
 
@@ -125,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
             tvMainXpText.setText(xpText);
 
             tvMainBerries.setText(getString(R.string.main_berries_format, user.getBerries()));
+            tvMainEcoCoins.setText(getString(R.string.main_eco_format, user.getEcoCoins()));
 
             if (lastKnownLevel == -1) {
                 tvMainLevel.setText(getString(R.string.main_level_format, currentLevel));

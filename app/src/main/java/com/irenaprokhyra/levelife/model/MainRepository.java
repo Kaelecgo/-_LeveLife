@@ -1,11 +1,9 @@
 package com.irenaprokhyra.levelife.model;
 
 import android.app.Application;
-
 import androidx.lifecycle.LiveData;
-
 import com.irenaprokhyra.levelife.util.PasswordUtils;
-
+import com.irenaprokhyra.levelife.util.TaskRecurrenceUtils;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -136,11 +134,12 @@ public class MainRepository {
             try {
                 final int[] rewardXP = {0};
                 final int[] rewardBerries = {0};
+                final int[] ecoReward = {0};
                 final boolean[] leveledUp = {false};
 
                 Boolean result = db.runInTransaction(() -> {
                     Task task = taskDao.getTaskById(taskId);
-                    if (task == null || task.isCompleted()) {
+                    if (task == null || TaskRecurrenceUtils.isCompletedForCurrentPeriod(task)) {
                         return false;
                     }
 
@@ -151,10 +150,13 @@ public class MainRepository {
 
                     rewardXP[0] = task.getRewardXP();
                     rewardBerries[0] = task.getRewardBerries();
+                    ecoReward[0] = task.getEcoReward();
 
                     leveledUp[0] = user.addExperience(rewardXP[0]);
                     user.addBerries(rewardBerries[0]);
-                    task.setCompleted(true);
+                    user.addEcoCoins(ecoReward[0]);
+                    task.setLastCompletedAt(System.currentTimeMillis());
+                    task.setCompleted(!task.isRecurring());
 
                     userDao.updateUser(user);
                     taskDao.updateTask(task);
@@ -164,10 +166,10 @@ public class MainRepository {
 
                 if (result != null && result) {
                     if (callback != null) {
-                        callback.onSuccess(rewardXP[0], rewardBerries[0], leveledUp[0]);
+                        callback.onSuccess(rewardXP[0], rewardBerries[0], ecoReward[0], leveledUp[0]);
                     }
                 } else if (callback != null) {
-                    callback.onError("La tarea ya estaba completada o no existe");
+                    callback.onError("La tarea ya estaba completada para este periodo o no existe");
                 }
             } catch (Exception e) {
                 if (callback != null) {
@@ -249,7 +251,7 @@ public class MainRepository {
     }
 
     public interface TaskCompleteCallback {
-        void onSuccess(int rewardXP, int rewardBerries, boolean leveledUp);
+        void onSuccess(int rewardXP, int rewardBerries, int ecoReward, boolean leveledUp);
         void onError(String message);
     }
 }

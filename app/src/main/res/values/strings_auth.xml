@@ -1,0 +1,14 @@
+<resources>
+    <!-- Strings para el Login y Registro -->
+    <string name="login_title">>_LeveLife Login</string>
+    <string name="hint_username">>_Usuario</string>
+    <string name="hint_password">>_Contraseña</string>
+    <string name="btn_enter">>_Iniciar aventura 🚀</string>
+    <string name="error_empty_fields">Por favor, completa todos los campos❗</string>
+    <string name="welcome_message">Hola de nuevo, %1$s! 👋</string>
+    <string name="error_login_failed">Error: Usuario o contraseña incorrectos ❌</string>
+    <string name="btn_register">>_Registrarse 📝</string>
+    <string name="error_session_expired">Tu sesión ha caducado, por favor entra de nuevo 🔐</string>
+    <string name="error_user_exists">El nombre de usuario ya existe ⚠️</string>
+    <string name="register_success">¡Usuario creado con éxito! Ahora puedes entrar 🎉</string>
+</resources>

@@ -2,76 +2,19 @@
 <resources>
     <string name="app_name">LeveLife</string>
 
-    <!-- >_ LoginActivity _< -->
-    <string name="login_title">>_LeveLife Login</string>
-    <string name="hint_username">>_Username</string>
-    <string name="hint_password">>_Password</string>
-    <string name="btn_enter">>_Start the adventure</string>
-    <string name="error_empty_fields">Please fill in all fields</string>
-    <string name="welcome_message">Welcome back, %1$s!</string>
-    <string name="error_login_failed">Error: Incorrect username or password</string>
-    <string name="btn_register">>_Register</string>
-    <string name="error_session_expired">Your session has expired, please log in again.</string>
-    <string name="error_user_exists">Username already exists.</string>
-    <string name="register_success">User successfully created! You can now log in.</string>
+    <!-- Globals / Common -->
+    <string name="loading_data">Loading... ⏳</string>
+    <string name="error_session_lost">Error: Session lost 🔐</string>
+    <string name="main_welcome_format">Hello, %1$s 👋</string>
 
-    <!-- >_ MainActivity _< -->
-    <string name="btn_shop">Shop</string>
-    <string name="btn_tasks">Tasks</string>
-    <string name="btn_logout">Log Out</string>
-    <string name="btn_inventory">Inventory</string>
-    <string name="loading_data">Loading...</string>
-    <string name="error_load_user">Error loading user profile</string>
-    <string name="error_session_lost">Error: Session lost</string>
-    <string name="main_welcome_format">Hello, %1$s</string>
-    <string name="main_level_format">Level: %1$d</string>
-    <string name="main_berries_format">🫐 Berries: %1$d</string>
-    <string name="main_level_default">Level 1</string>
-    <string name="main_xp_default">&gt;_XP: 0/100</string>
-    <string name="main_berries_default">🫐 0 Berries</string>
-    <string name="main_xp_format">&gt;_XP: %1$d / %2$d</string>
+    <string name="dialog_yes">Yes ✅</string>
+    <string name="dialog_no">No ❌</string>
+    <string name="dialog_logout_title">Logout 🚪</string>
+    <string name="dialog_logout_message">Are you sure you want to exit?</string>
 
-    <!--  >_ ShopActivity _< -->
-    <string name="shop_balance_format">Your Berries: %1$d 🫐</string>
-    <string name="furniture_price_format">%1$d 🫐</string>
-    <string name="furniture_owned">Purchased 🛋️ </string>
-    <string name="toast_furniture_selected">Selected: %1$s for %2$d 🫐</string>
-    <string name="success_buy_furniture">You bought: %1$s!</string>
-    <string name="error_not_enough_berries">Not enough berries to buy this.</string>
-    <string name="error_load_catalog">Error loading catalog</string>
-    <string name="error_load_balance">Error loading balance</string>
-    <string name="btn_buy">Buy</string>
-
-    <string name="placeholder_furniture_name">Furniture Name</string>
-    <string name="placeholder_furniture_price">0 🫐</string>
-    <string name="content_desc_furniture_icon">Furniture icon</string>
-
-    <!-- >_ TaskActivity _< -->
-    <string name="reward_claimed">Nice! +%1$d XP and +%2$d Berries</string>
-    <string name="item_task_default_title">Example task</string>
-    <string name="item_task_default_category">General</string>
-    <string name="item_task_reward_format">+%1$d XP | +%2$d 🫐</string>
-    <string name="item_task_clean">"No pending tasks! Grab a coffee ☕ or create one 👇🏼"</string>
-    <string name="dialog_levelup_title">LEVEL UP! 🎉</string>
-    <string name="dialog_levelup_message">Congratulations! You reached Level %1$d.\nKeep it up!</string>
-    <string name="dialog_levelup_button">Awesome!</string>
-    <string name="error_load_tasks">Error: Could not load tasks</string>
-
-    <!-- >_ InventoryAdapter _< -->
-    <string name="my_room">My Room 🛋️</string>
-    <string name="action_place_furniture">Place 👇🏼</string>
-    <string name="empty_inventory">Your inventory is empty. 🎒</string>
-    <string name="error_loading_inventory">Error loading backpack. 🎒</string>
-    <string name="success_placed_furniture">%1$s placed in your room! 🛋️</string>
-
-    <!-- >_ AlertDialog >_ -->
-    <string name="dialog_logout_title">Log Out</string>
-    <string name="dialog_logout_message">Are you sure you want to log out?</string>
-    <string name="dialog_yes">Yes, log out</string>
-    <string name="dialog_no">Cancel</string>
-    <string name="content_desc_add_task">Add new task</string>
-    <string name="dialog_new_task_title">New Task</string>
-    <string name="hint_task_title">What do you need to do?</string>
-    <string name="btn_create">Create</string>
-    <string name="error_empty_task">Title cannot be empty</string>
+    <!-- Navigation -->
+    <string name="btn_shop">Shop 🛒</string>
+    <string name="btn_tasks">Tasks 📝</string>
+    <string name="btn_logout">Logout 🚪</string>
+    <string name="btn_inventory">Inventory 🎒</string>
 </resources>

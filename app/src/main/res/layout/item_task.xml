@@ -8,38 +8,62 @@
     app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:padding="16dp">
 
         <CheckBox
             android:id="@+id/cbTaskCompleted"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvTaskTitle"
-            android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:fontFamily="@font/nunito_black" android:text="@string/item_task_default_title" android:textSize="18sp" android:textColor="@color/fourth_text_logo"
+            android:fontFamily="@font/nunito_black"
+            android:text="@string/item_task_default_title"
+            android:textColor="@color/fourth_text_logo"
+            android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/tvTaskReward"
             app:layout_constraintStart_toEndOf="@+id/cbTaskCompleted"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvTaskCategory"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/nunito_light"
-            android:text="@string/item_task_default_category" android:textColor="@color/highlight" android:textSize="12sp"
+            android:text="@string/item_task_default_category"
+            android:textColor="@color/highlight"
+            android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@+id/tvTaskTitle"
             app:layout_constraintTop_toBottomOf="@+id/tvTaskTitle" />
 
         <TextView
+            android:id="@+id/tvTaskMeta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/nunito_regular"
+            android:textColor="@color/third_text_logo"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/tvTaskTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvTaskCategory" />
+
+        <TextView
             android:id="@+id/tvTaskReward"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_black"
             android:gravity="end"
-            android:fontFamily="@font/nunito_black" android:text="@string/item_task_reward_format" android:textColor="@color/reward_berries" android:textSize="14sp"
+            android:text="@string/item_task_reward_with_eco_format"
+            android:textColor="@color/reward_berries"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

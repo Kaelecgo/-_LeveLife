@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.irenaprokhyra.levelife.R;
+import com.irenaprokhyra.levelife.model.TaskDraft;
 import com.irenaprokhyra.levelife.model.Task;
 import com.irenaprokhyra.levelife.model.User;
 import com.irenaprokhyra.levelife.util.DialogUtils;
@@ -82,11 +83,26 @@ public class TaskActivity extends AppCompatActivity {
 
         fabAddTask = findViewById(R.id.fabAddTask);
         fabAddTask.setOnClickListener(v -> {
-            DialogUtils.showCreateTaskDialog(this, taskTitle -> {
-                Task newTask = new Task(currentUserId, taskTitle, "", "General", 10, 10);
+            DialogUtils.showCreateTaskDialog(this, draft -> {
+                Task newTask = buildTaskFromDraft(draft);
                 viewModel.insertTask(newTask);
             });
         });
+    }
+
+    private Task buildTaskFromDraft(TaskDraft draft) {
+        return new Task(
+                currentUserId,
+                draft.getTitle(),
+                draft.getDescription(),
+                draft.getCategory(),
+                draft.getReward().getRewardXP(),
+                draft.getReward().getRewardBerries(),
+                draft.getReward().getEcoReward(),
+                draft.getDifficulty(),
+                draft.getFrequency(),
+                draft.isEcoTask()
+        );
     }
 
     private void setupObservers() {

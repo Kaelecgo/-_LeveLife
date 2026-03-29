@@ -3,7 +3,7 @@ package com.irenaprokhyra.levelife.model;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
-import androidx.room.Ignore; // Importante para métodos que no son columnas
+import androidx.room.Ignore;
 import androidx.room.Index;
 
 @Entity(
@@ -12,7 +12,6 @@ import androidx.room.Index;
 )
 public class User {
 
-    // >_ CONSTANTES DE EQUILIBRIO DEL JUEGO _<
     private static final int BASE_XP_PER_LEVEL = 100;
 
     @PrimaryKey(autoGenerate = true)
@@ -28,10 +27,11 @@ public class User {
     private int experience;
     private int berries;
 
+    @ColumnInfo(name = "eco_coins", defaultValue = "0")
+    private int ecoCoins;
+
     public User() {}
 
-    // Añadimos @Ignore para que Room ignore este constructor
-    // (Este lo usamos manualmente para crear usuarios nuevos)
     @Ignore
     public User(String name, String passwordHash) {
         this.name = name;
@@ -39,6 +39,7 @@ public class User {
         this.level = 1;
         this.experience = 0;
         this.berries = 0;
+        this.ecoCoins = 0;
     }
 
     public int getId() { return id; }
@@ -59,66 +60,50 @@ public class User {
     public int getBerries() { return berries; }
     public void setBerries(int berries) { this.berries = berries; }
 
-    // >_ LÓGICA DE NEGOCIO (GAMIFICACIÓN) _<
-    /**
-     * Calcula la XP necesaria para pasar al siguiente nivel.
-     * Nivel Actual * 100 (Ej: Nivel 1 necesita 100, Nivel 2 necesita 200).
-     */
+    public int getEcoCoins() { return ecoCoins; }
+    public void setEcoCoins(int ecoCoins) { this.ecoCoins = ecoCoins; }
+
     public int getXpToNextLevel() {
         return this.level * BASE_XP_PER_LEVEL;
     }
 
-    /**
-     * Añade XP y gestiona la subida de nivel.
-     * @param amount Cantidad de XP ganada.
-     * @return true si el usuario ha subido de nivel (para lanzar fuegos artificiales).
-     */
     public boolean addExperience(int amount) {
-        if (amount < 0) return false; // // Protección contra XP negativa
-
+        if (amount < 0) return false;
         this.experience += amount;
         int required = getXpToNextLevel();
         boolean leveledUp = false;
-
-        // Bucle para subir múltiples niveles si la XP es muy grande
         while (this.experience >= required) {
-            this.experience -= required; // Restamos lo usado
-            this.level++;                // Subimos nivel
-            required = getXpToNextLevel(); // Recalcula para el siguiente
+            this.experience -= required;
+            this.level++;
+            required = getXpToNextLevel();
             leveledUp = true;
         }
         return leveledUp;
     }
-    /**
-     * Añade bayas al monedero.
-     */
+
     public void addBerries(int amount) {
         if (amount > 0) {
             this.berries += amount;
         }
     }
 
-    /**
-     * MEJORA -> PREPARACIÓN TIENDA
-     * Intenta gastar monedas.
-     * @param amount Cantidad a gastar.
-     * @return true si la compra tuvo éxito, false si no hay saldo suficiente.
-     */
+    public void addEcoCoins(int amount) {
+        if (amount > 0) {
+            this.ecoCoins += amount;
+        }
+    }
+
     public boolean spendBerries(int amount) {
         if (amount > 0 && this.berries >= amount) {
             this.berries -= amount;
-            return true; // Compra exitosa
+            return true;
         }
-        return false;   // Fondos insuficientes
+        return false;
     }
-    /**
-     * MEJORA -> BARRA DE PROGRESO
-     * Calcula el porcentaje de completado del nivel actual (0 a 100).
-     * Útil para poner una ProgressBar en el futuro.
-     */
+
     public int getProgressPercentage() {
         int required = getXpToNextLevel();
-        if (required == 0) return 0; // Evita división por cero
+        if (required == 0) return 0;
         return (this.experience * 100) / required;
     }
 }
