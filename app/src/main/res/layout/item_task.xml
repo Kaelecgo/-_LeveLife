@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    android:layout_margin="@dimen/spacing_small"
+    app:cardCornerRadius="@dimen/corner_radius_medium"
+    app:cardElevation="@dimen/elevation_medium">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="@dimen/spacing_medium">
 
         <CheckBox
             android:id="@+id/cbTaskCompleted"
@@ -24,11 +24,11 @@
             android:id="@+id/tvTaskTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/spacing_small"
             android:fontFamily="@font/nunito_black"
             android:text="@string/item_task_default_title"
             android:textColor="@color/fourth_text_logo"
-            android:textSize="18sp"
+            android:textSize="@dimen/text_size_title"
             app:layout_constraintEnd_toStartOf="@+id/tvTaskReward"
             app:layout_constraintStart_toEndOf="@+id/cbTaskCompleted"
             app:layout_constraintTop_toTopOf="parent" />
@@ -40,7 +40,7 @@
             android:fontFamily="@font/nunito_light"
             android:text="@string/item_task_default_category"
             android:textColor="@color/highlight"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_size_small"
             app:layout_constraintStart_toStartOf="@+id/tvTaskTitle"
             app:layout_constraintTop_toBottomOf="@+id/tvTaskTitle" />
 
@@ -48,10 +48,10 @@
             android:id="@+id/tvTaskMeta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/spacing_tiny"
             android:fontFamily="@font/nunito_regular"
             android:textColor="@color/third_text_logo"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_size_small"
             app:layout_constraintStart_toStartOf="@+id/tvTaskTitle"
             app:layout_constraintTop_toBottomOf="@+id/tvTaskCategory" />
 
@@ -63,7 +63,7 @@
             android:gravity="end"
             android:text="@string/item_task_reward_with_eco_format"
             android:textColor="@color/reward_berries"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_body"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"> <androidx.cardview.widget.CardView
     android:id="@+id/cardBottomNav"
-    android:layout_width="0dp"
-    android:layout_height="64dp"
-    android:layout_margin="10dp"
-    app:cardCornerRadius="17dp"
-    app:cardElevation="8dp"
-    app:cardBackgroundColor="@color/highlight"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent">
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    app:cardBackgroundColor="@color/bottom_nav_bg"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="3dp">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
@@ -21,14 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
-        app:itemIconTint="@null"
-        app:itemIconSize="32dp"
-        app:labelVisibilityMode="unlabeled"
-        app:itemBackground="@android:color/transparent"
+
+        app:itemBackground="@drawable/bg_bottom_nav_item"
+        app:itemHorizontalTranslationEnabled="false"
+        app:itemIconSize="24dp"
+        app:itemIconTint="@color/nav_icon_selector"
         app:itemRippleColor="@android:color/transparent"
-        app:paddingBottomSystemWindowInsets="false"
+        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/menu_bottom_nav" />
 
 </androidx.cardview.widget.CardView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>

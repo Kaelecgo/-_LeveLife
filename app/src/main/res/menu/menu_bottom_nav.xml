@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_nav_home"
-        android:title="Home"/>
+        android:title="@string/nav_home" />
+
     <item
         android:id="@+id/nav_tasks"
-        android:icon="@drawable/ic_nav_tasks" android:title="Tareas"/>
+        android:icon="@drawable/ic_nav_tasks"
+        android:title="@string/nav_tasks" />
+
     <item
         android:id="@+id/nav_shop"
-        android:icon="@drawable/ic_nav_shop" android:title="Tienda"/>
+        android:icon="@drawable/ic_nav_shop"
+        android:title="@string/nav_shop" />
+
     <item
         android:id="@+id/nav_inventory"
-        android:icon="@drawable/ic_nav_inventory" android:title="Inventario"/>
+        android:icon="@drawable/ic_nav_inventory"
+        android:title="@string/nav_inventory" />
 
     <item
         android:id="@+id/nav_logout"
-        android:icon="@drawable/ic_nav_logout" android:title="Log Out"/>
+        android:icon="@drawable/ic_nav_logout"
+        android:title="@string/nav_logout" />
+
 </menu>

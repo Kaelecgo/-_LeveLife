@@ -1,13 +1,13 @@
 <resources>
     <!-- Gamification: Levels, XP, Berries & EcoCoins -->
-    <string name="main_level_format">Level %1$d 🏆</string>
+    <string name="main_level_format">Level %1$d</string>
     <string name="main_level_default">Level 1</string>
     <string name="main_xp_default">>_XP: 0/100</string>
     <string name="main_xp_format">>_XP: %1$d / %2$d</string>
-    <string name="main_berries_format">🫐 Berries: %1$d</string>
-    <string name="main_berries_default">🫐 0 Berries</string>
-    <string name="main_eco_default">🌱 EcoCoins: 0</string>
-    <string name="main_eco_format">🌱 EcoCoins: %1$d</string>
+    <string name="main_berries_format">%1$d</string>
+    <string name="main_berries_default">0 Berries</string>
+    <string name="main_eco_default">EcoCoins: 0</string>
+    <string name="main_eco_format">%1$d</string>
 
     <string name="dialog_levelup_title">LEVEL UP! 🎉</string>
     <string name="dialog_levelup_message">Congratulations! You reached Level %1$d.\nKeep it up! ✨</string>

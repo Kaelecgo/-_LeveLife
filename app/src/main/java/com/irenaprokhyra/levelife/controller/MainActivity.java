@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.nav_logout) {
                 DialogUtils.showLogoutConfirmationDialog(this, this::performLogout);
+                return false;
             }
                 return false;
         });
@@ -122,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
             pbMainXp.setMax(100);
 
+            // Sincronización con strings_gamification.xml
             String xpText = getString(R.string.main_xp_format, user.getExperience(), user.getXpToNextLevel());
             tvMainXpText.setText(xpText);
 

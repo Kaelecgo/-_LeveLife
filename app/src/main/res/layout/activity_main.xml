@@ -3,114 +3,179 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@drawable/zombie_dreams_bg"
-    android:padding="4dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface_app"
+    android:fitsSystemWindows="true"
     tools:context=".controller.MainActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/headerCardView"
-        android:layout_width="match_parent"
+        style="@style/LeveLife.Card.Header"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="6dp"
-        app:cardBackgroundColor="#FFFFFF"
-        app:layout_constraintTop_toTopOf="parent"
+        app:cardCornerRadius="@dimen/corner_radius_xlarge"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_medium">
+
+            <TextView
+                android:id="@+id/tvMainSectionLabel"
+                style="@style/LeveLife.Text.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/main_dashboard_label" />
 
             <TextView
                 android:id="@+id/tvMainLevel"
+                style="@style/LeveLife.Text.Headline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_tiny"
                 android:text="@string/main_level_default"
-                android:textSize="24sp"
-                android:fontFamily="@font/nunito_extrabold"
-                android:textColor="@color/fourth_text_logo" />
+                tools:text="Nivel 3" />
+
+            <TextView
+                android:id="@+id/tvMainProgressLabel"
+                style="@style/LeveLife.Text.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:text="@string/main_progress_label" />
 
             <FrameLayout
                 android:id="@+id/containerProgressBar"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_below="@id/tvMainLevel"
-                android:layout_marginTop="12dp">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small">
 
                 <ProgressBar
                     android:id="@+id/pbMainXp"
                     style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="match_parent" android:layout_height="24dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/spacing_large"
+                    android:max="100"
+                    android:minHeight="@dimen/spacing_large"
                     android:progressDrawable="@drawable/custom_progressbar"
-                    android:max="100" />
+                    tools:progress="65" />
+
                 <TextView
                     android:id="@+id/tvMainXpText"
+                    style="@style/LeveLife.Text.Progress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/main_xp_default" android:textSize="12sp" android:fontFamily="@font/nunito_black"
-                    android:textColor="@color/black" android:textStyle="bold"/>
+                    android:fontFamily="@font/nunito_bold"
+                    android:text="@string/main_xp_default"
+                    android:textColor="@color/text_primary"
+                    tools:text="65 / 100 XP" />
             </FrameLayout>
 
             <LinearLayout
+                android:id="@+id/layoutStatsRow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/containerProgressBar"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/spacing_medium"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tvMainBerries"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/nunito_regular"
-                    android:textColor="@color/third_text_logo"
-                    android:text="@string/main_berries_default"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="|"
-                    android:textColor="@color/third_text_logo"
-                    android:textSize="16sp" />
+                    style="@style/LeveLife.StatChip"
+                    android:background="@drawable/bg_stat_chip_berries"
+                    android:drawableStart="@drawable/ic_berry_small"
+                    android:text="@string/main_berries_format"
+                    tools:text="120" />
 
                 <TextView
                     android:id="@+id/tvMainEcoCoins"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/nunito_regular"
-                    android:text="@string/main_eco_default"
-                    android:textColor="@color/primary_text_logo"
-                    android:textSize="16sp" />
+                    style="@style/LeveLife.StatChip"
+                    android:layout_marginStart="@dimen/spacing_small"
+                    android:background="@drawable/bg_stat_chip_eco"
+                    android:drawableStart="@drawable/ic_leaf_small"
+                    android:text="@string/main_eco_format"
+                    tools:text="40" />
             </LinearLayout>
 
-        </RelativeLayout>
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardRoomContainer"
+        style="@style/LeveLife.Card.Room"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="6dp"
-        app:cardBackgroundColor="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@+id/headerCardView"
-        app:layout_constraintBottom_toTopOf="@+id/includeBottomNav"
+        app:layout_constraintBottom_toTopOf="@id/includeBottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/headerCardView">
 
-        <FrameLayout
-            android:id="@+id/roomContainer"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </FrameLayout>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_medium">
+
+            <TextView
+                android:id="@+id/tvRoomTitle"
+                style="@style/LeveLife.Text.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/main_room_title" />
+
+            <TextView
+                android:id="@+id/tvRoomSubtitle"
+                style="@style/LeveLife.Text.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_tiny"
+                android:text="@string/main_room_subtitle" />
+
+            <FrameLayout
+                android:id="@+id/roomContainer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:layout_weight="1"
+                android:background="@drawable/bg_room_surface">
+
+                <LinearLayout
+                    android:id="@+id/layoutRoomEmptyState"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_large">
+
+                    <TextView
+                        android:id="@+id/tvRoomEmptyTitle"
+                        style="@style/LeveLife.Text.Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/main_room_empty_title" />
+
+                    <TextView
+                        android:id="@+id/tvRoomEmptyDescription"
+                        style="@style/LeveLife.Text.Label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:gravity="center"
+                        android:lineSpacingExtra="2dp"
+                        android:text="@string/main_room_empty_description"
+                        android:textSize="@dimen/text_size_body" />
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
@@ -119,6 +184,9 @@
         layout="@layout/component_bottom_nav"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginEnd="@dimen/spacing_medium"
+        android:layout_marginBottom="@dimen/spacing_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

@@ -53,4 +53,21 @@
     <color name="stromboli">#2d5c4b</color>
 
     <color name="bg_">#F8FAFC</color>
+
+    <color name="surface_app">#F6F1E8</color>
+    <color name="surface_card">#FFFDF8</color>
+    <color name="text_primary">#4E4036</color>
+    <color name="text_secondary">#7B6D63</color>
+    <color name="chip_berries_bg">#F3E7D3</color>
+    <color name="chip_eco_bg">#E3EFE4</color>
+    <color name="room_surface_top">#F7F0E5</color>
+    <color name="room_surface_bottom">#EEDFCB</color>
+    <color name="room_border">#E5D5BF</color>
+
+    <color name="bottom_nav_bg">#C9D2AE</color>
+    <color name="nav_icon_active">#4E4036</color>
+    <color name="nav_icon_inactive">#F6F3EC</color>
+    <color name="nav_item_active_bg">#E8ECD8</color>
+
+
 </resources>

@@ -84,7 +84,7 @@ public class InventoryActivity extends AppCompatActivity {
         BottomNavigationView bottomNav= findViewById(R.id.bottomNavigationView);
         if (bottomNav == null) return;
 
-        bottomNav.setItemIconTintList(null);
+        //bottomNav.setItemIconTintList(null);
         bottomNav.setSelectedItemId(R.id.nav_inventory);
 
         bottomNav.setOnItemSelectedListener(item -> {

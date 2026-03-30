@@ -12,9 +12,25 @@
     <string name="dialog_logout_title">Logout 🚪</string>
     <string name="dialog_logout_message">Are you sure you want to exit?</string>
 
-    <!-- Navigation -->
+    <!-- Navegación -->
     <string name="btn_shop">Shop 🛒</string>
-    <string name="btn_tasks">Tasks 📝</string>
+    <string name="btn_tasks">Task 📝</string>
     <string name="btn_logout">Logout 🚪</string>
     <string name="btn_inventory">Inventory 🎒</string>
+
+    <!-- MainActivity Labels -->
+    <string name="main_dashboard_label">Your Progress 📊</string>
+    <string name="main_progress_label">Current Progress ✨</string>
+    <string name="main_room_title">Your Room 🏠</string>
+    <string name="main_room_subtitle">Your personalized space will be shown here ✨</string>
+    <string name="main_room_empty_title">No furniture placed yet 🛋️</string>
+    <string name="main_room_empty_description">Buy items in the shop and get ready to decorate your room! 🛒</string>
+
+
+    <!-- Navigation -->
+    <string name="nav_home">Home 🏠</string>
+    <string name="nav_tasks">Tasks 📝</string>
+    <string name="nav_shop">Shop 🛒</string>
+    <string name="nav_inventory">Inventory 🎒</string>
+    <string name="nav_logout">Logout 🚪</string>
 </resources>

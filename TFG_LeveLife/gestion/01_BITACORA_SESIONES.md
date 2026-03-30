@@ -13,11 +13,11 @@ Corregir errores de consistencia en la lógica de compra de muebles y en la entr
 
 ### Tareas realizadas
 - Se añadió una referencia persistente a AppDatabase dentro de MainRepository.
-- Se implementó purchaseFurniture(int userId, Furniture furniture, PurchaseCallback callback) en el repositorio.
-- Se validó propiedad previa del mueble mediante countUserFurniture().
+- Se implementó `purchaseFurniture(int userId, Furniture furniture, PurchaseCallback callback)` en el repositorio.
+- Se validó propiedad previa del mueble mediante `countUserFurniture()`.
 - Se validó saldo dentro de la transacción antes de actualizar berries e inventario.
-- Se refactorizó completeTask() para ejecutarse en el repositorio de forma atómica.
-- Se añadió canal de errores con MutableLiveData en MainViewModel.
+- Se refactorizó `completeTask()` para ejecutarse en el repositorio de forma atómica.
+- Se añadió canal de errores con `MutableLiveData` en MainViewModel.
 - Se actualizó ShopActivity para observar mensajes de error.
 - Se actualizó TaskActivity para trabajar con el nuevo flujo de finalización de tareas.
 
@@ -43,6 +43,8 @@ La UI responde correctamente a estados de compra bloqueada y a tareas ya complet
 
 ### Próximo paso
 Revisar InventoryActivity y validar el flujo completo de usuario.
+
+---
 
 ## Sesión 1 - Revisión de inventario y validación de interfaz
 
@@ -79,6 +81,11 @@ El mueble siguió figurando como comprado y permaneció visible en el inventario
 - El saldo del usuario se mantuvo correctamente actualizado tras reinicio.
 - El mueble comprado siguió apareciendo en el inventario tras reinicio.
 
+### Próximo paso
+Validar formalmente los flujos principales del sistema y recopilar evidencias reutilizables.
+
+---
+
 ## Sesión 2 - Pruebas funcionales y evidencias
 
 ### Objetivo
@@ -101,8 +108,8 @@ Validar formalmente los flujos principales del sistema y recopilar evidencias re
 - MainActivity.java
 - SplashActivity.java
 - InventoryActivity.java
-- flujo de registro/login
-- flujo de tienda e inventario
+- Flujo de registro/login
+- Flujo de tienda e inventario
 
 ### Resultado
 Los flujos críticos del sistema quedan validados de extremo a extremo.
@@ -134,7 +141,9 @@ El flujo de usuario nuevo también se comporta correctamente desde el registro h
 - Se realizaron capturas del flujo principal para memoria y defensa.
 
 ### Próximo paso
-Reforzar autenticación y persistencia local, y trasladar las pruebas validadas a la memoria técnica.
+Reforzar autenticación y persistencia local.
+
+---
 
 ## Sesión 3 - Refuerzo de autenticación y persistencia de datos
 
@@ -149,10 +158,12 @@ Reducir riesgos técnicos del proyecto reforzando el sistema de autenticación, 
 - Se seguían sembrando usuarios demo en la base de datos para instalaciones nuevas.
 
 ### Tareas realizadas
-- Se sustituyó la validación en texto plano por un sistema de hash de contraseñas.
+- Se implementó `PasswordUtils.java` con hashing de contraseñas mediante PBKDF2 y salt aleatoria.
+- Se añadió lógica de actualización transparente para usuarios antiguos durante el login.
 - Se reforzó el registro para evitar inconsistencias y mejorar la fiabilidad del alta.
 - Se corrigió SplashActivity para que use la misma clave persistida por el login (`saved_user_id`).
 - Se reemplazó la migración destructiva por migraciones explícitas de Room.
+- Se añadió `fallbackToDestructiveMigrationOnDowngrade()` como protección en entorno de desarrollo.
 - Se dejó de generar usuarios demo hardcodeados en instalaciones nuevas.
 - Se añadió una prueba unitaria para el helper de contraseñas.
 
@@ -162,11 +173,12 @@ Reducir riesgos técnicos del proyecto reforzando el sistema de autenticación, 
 - PasswordUtils.java
 - MainRepository.java
 - LoginActivity.java
+- SplashActivity.java
 - AppDatabase.java
 - PasswordUtilsTest.java
 
 ### Resultado
-El sistema de autenticación queda reforzado, la sesión persistente funciona de forma coherente desde el arranque y la persistencia del progreso deja de depender de una estrategia destructiva de migración.
+El sistema de autenticación queda reforzado, la sesión persistente funciona de forma coherente desde el arranque y la persistencia del progreso deja de depender de una estrategia destructiva como mecanismo principal.
 
 ### Pruebas realizadas
 - Verificación del login con hash de contraseña.
@@ -175,4 +187,83 @@ El sistema de autenticación queda reforzado, la sesión persistente funciona de
 - Ejecución de tests unitarios del módulo (`testDebugUnitTest`).
 
 ### Próximo paso
-Limpiar deuda heredada de datos demo antiguos y ampliar cobertura de pruebas sobre flujos críticos reales.
+Estabilizar la nueva versión del esquema e integrar el sistema avanzado de hábitos sobre master.
+
+---
+
+## Sesión 4 - Consolidación técnica del sistema de hábitos y migración v7
+
+### Objetivo
+Estabilizar la aplicación tras la sincronización con master, alinear el esquema de Room con el modelo real y consolidar el nuevo sistema de hábitos enriquecidos.
+
+### Problemas detectados
+- La aplicación llegó a crashear por inconsistencias entre el esquema real de la base de datos y las entidades de Room.
+- Parte del trabajo funcional avanzado no estaba presente en el estado remoto principal y tuvo que recuperarse.
+- El sistema avanzado de tareas presentaba desajustes entre los valores visibles en UI y la lógica interna.
+- Una tarea recién creada podía otorgar recompensa sin quedar correctamente marcada o deshabilitada.
+- La categoría ecológica y el cálculo por dificultad no siempre recalculaban las recompensas de forma correcta.
+
+### Tareas realizadas
+- Se estabilizó la base de datos en versión 7.
+- Se completó la migración `6 -> 7`, añadiendo correctamente los nuevos campos:
+    - `eco_coins`
+    - `eco_reward`
+    - `difficulty`
+    - `frequency`
+    - `last_completed_at`
+- Se ajustaron `defaultValue` para que Room validase correctamente la migración.
+- Se corrigió el repoblado automático del catálogo cuando la tabla `furniture` está vacía.
+- Se recuperó e integró sobre master el sistema avanzado de creación de tareas.
+- Se restauró el flujo del FAB para abrir un `BottomSheetDialog`.
+- Se incorporó el layout `bottom_sheet_create_task.xml`.
+- Se integraron clases auxiliares como:
+    - `TaskDraft`
+    - `TaskReward`
+    - `TaskRewardCalculator`
+    - `TaskRecurrenceUtils`
+- Se amplió `Task` con atributos de dificultad, frecuencia y recompensa ecológica.
+- Se añadió `eco_coins` al modelo de usuario y a la interfaz principal.
+- Se reforzó la normalización de categorías, dificultad y frecuencia para desacoplar la lógica de negocio de textos visibles, emojis o traducciones.
+- Se hizo que la vista previa de recompensas se recalcule automáticamente al cambiar selectores.
+- Se ajustó el comportamiento de completado para que las tareas puntuales queden marcadas, deshabilitadas y movidas al final de la lista.
+- Se dejó la recurrencia básica resuelta como MVP mediante control por periodo actual.
+- Se actualizó TaskAdapter para ordenar según el estado de completado en el periodo vigente.
+- Se añadieron y ejecutaron pruebas unitarias para recompensas, recurrencia y normalización.
+
+### Archivos afectados
+- AppDatabase.java
+- User.java
+- Task.java
+- MainRepository.java
+- MainViewModel.java
+- MainActivity.java
+- TaskActivity.java
+- TaskAdapter.java
+- DialogUtils.java
+- bottom_sheet_create_task.xml
+- TaskDraft.java
+- TaskReward.java
+- TaskRewardCalculator.java
+- TaskRecurrenceUtils.java
+
+### Resultado
+La aplicación vuelve a arrancar de forma estable.
+El sistema de hábitos queda enriquecido con dificultad, frecuencia, recompensa ecológica y recurrencia básica.
+EcoCoins pasa a formar parte real del flujo de gamificación.
+La creación de tareas mejora notablemente en claridad y feedback.
+Se corrige el exploit funcional relacionado con el completado de tareas.
+
+### Pruebas realizadas
+- Ejecución repetida de `.\gradlew.bat testDebugUnitTest`.
+- Validación de recompensas dinámicas según dificultad.
+- Validación de EcoCoins en tareas ecológicas.
+- Validación de bloqueo por periodo en tareas recurrentes.
+- Validación del reward preview en el BottomSheet.
+- Verificación del arranque correcto tras alinear esquema y migración.
+- Verificación del repoblado automático del catálogo de tienda.
+
+### Estado actual del bloque
+La recurrencia queda funcional en estado MVP, basada en el periodo actual. Todavía no existe un historial completo de completados mediante una entidad separada.
+
+### Próximo paso
+Formalizar casos de prueba, preparar evidencias visuales y decidir el alcance final de la acción "Colocar" antes de cerrar documentalmente FASE 3.
