@@ -99,6 +99,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/btn_create" />
+            android:text="@string/common_action_create" />
     </LinearLayout>
 </ScrollView>

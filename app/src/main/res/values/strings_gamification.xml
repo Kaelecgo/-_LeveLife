@@ -2,10 +2,10 @@
     <!-- Gamificación: Niveles, XP, Bayas y EcoCoins -->
     <string name="main_level_default">Nivel 1</string>
     <string name="main_xp_default">>_XP: 0/100</string>
-    <string name="main_berries_format">%1$d</string>
+    <string name="main_berries_short">%1$d</string>
     <string name="main_berries_default">0 Bayas</string>
     <string name="main_eco_default">EcoCoins: 0</string>
-    <string name="main_eco_format">%1$d</string>
+    <string name="main_eco_short">%1$d</string>
 
     <string name="dialog_levelup_title">¡NIVEL SUBIDO! 🎉</string>
     <string name="dialog_levelup_message">¡Felicidades! Has alcanzado el Nivel %1$d.\n¡Sigue así! ✨</string>

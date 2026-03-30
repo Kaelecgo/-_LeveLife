@@ -20,7 +20,7 @@
     <string name="dialog_task_reward_preview">%1$d XP | %2$d bayas 🫐</string>
     <string name="dialog_task_reward_preview_with_eco">%1$d XP | %2$d bayas 🫐 | %3$d EcoCoins 🌱</string>
 
-    <string name="btn_create">Crear ✨</string>
+
     <string name="error_empty_task">El título no puede estar vacío ❗</string>
     <string name="error_invalid_task_form">Completa título, categoría, dificultad y frecuencia ❗</string>
 

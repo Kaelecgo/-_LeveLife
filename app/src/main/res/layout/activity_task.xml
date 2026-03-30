@@ -4,25 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@color/surface_app"
+    android:background="@color/app_background"
     android:fitsSystemWindows="true"
     tools:context=".controller.TaskActivity">
 
     <TextView
         android:id="@+id/tvTitleTasks"
+        style="@style/LeveLife.Text.Headline"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:fontFamily="@font/nunito_black"
-        android:text="@string/btn_tasks" android:textSize="24sp" android:textColor="@color/fourth_text_logo"
-        android:layout_marginStart="16dp" android:layout_marginTop="16dp"
+        android:text="@string/btn_tasks"
+        android:layout_marginStart="@dimen/spacing_medium" android:layout_marginTop="@dimen/spacing_medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvEmptyState"
+        style="@style/LeveLife.Text.Body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/nunito_regular"
-        android:text="@string/item_task_clean" android:textSize="16sp" android:textColor="@color/third_text_logo"
+        android:text="@string/item_task_clean"
+        android:textColor="@color/app_text_accent"
+        android:gravity="center"
+        android:padding="@dimen/spacing_large"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,8 +35,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTasks"
         android:layout_width="0dp" android:layout_height="0dp"
-        android:fontFamily="@font/nunito_black"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/spacing_medium"
         app:layout_constraintTop_toBottomOf="@+id/tvTitleTasks"
         app:layout_constraintBottom_toTopOf="@+id/includeBottomNav"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,11 +45,12 @@
         android:id="@+id/fabAddTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/nunito_extrabold"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="@dimen/spacing_medium"
+        android:layout_marginBottom="@dimen/spacing_medium"
         android:contentDescription="@string/content_desc_add_task"
         android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/app_button_primary"
+        app:tint="@color/neutral_white"
         app:layout_constraintBottom_toTopOf="@+id/includeBottomNav"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -56,9 +59,9 @@
         layout="@layout/component_bottom_nav"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginEnd="@dimen/spacing_medium"
+        android:layout_marginBottom="@dimen/spacing_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

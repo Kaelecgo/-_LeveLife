@@ -8,7 +8,7 @@
     <string name="error_not_enough_berries">Not enough berries to buy this 😅</string>
     <string name="error_load_catalog">Error loading catalog ⚠️</string>
     <string name="error_load_balance">Error loading balance 📉</string>
-    <string name="btn_buy">Buy 🛒</string>
+
 
     <string name="placeholder_furniture_name">Item Name</string>
     <string name="placeholder_furniture_price">0 🫐</string>

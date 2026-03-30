@@ -8,7 +8,7 @@
     <string name="error_not_enough_berries">No tienes suficientes bayas para comprar esto 😅</string>
     <string name="error_load_catalog">Error al cargar el catálogo ⚠️</string>
     <string name="error_load_balance">Error al cargar tu balance 📉</string>
-    <string name="btn_buy">Comprar 🛒</string>
+
 
     <string name="placeholder_furniture_name">Nombre Mueble</string>
     <string name="placeholder_furniture_price">0 🫐</string>
@@ -19,4 +19,6 @@
     <string name="empty_inventory">Tu inventario está vacío. 🎒</string>
     <string name="error_loading_inventory">Error cargando mochila. 🎒</string>
     <string name="success_placed_furniture">¡%1$s colocado en tu habitación! 🛋️</string>
+    <string name="main_dashboard_label">Tu progreso 📊</string>
+    <string name="main_progress_label">Progreso actual ✨</string>
 </resources>

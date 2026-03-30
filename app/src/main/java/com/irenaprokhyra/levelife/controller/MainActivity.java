@@ -127,8 +127,8 @@ public class MainActivity extends AppCompatActivity {
             String xpText = getString(R.string.main_xp_format, user.getExperience(), user.getXpToNextLevel());
             tvMainXpText.setText(xpText);
 
-            tvMainBerries.setText(getString(R.string.main_berries_format, user.getBerries()));
-            tvMainEcoCoins.setText(getString(R.string.main_eco_format, user.getEcoCoins()));
+            tvMainBerries.setText(getString(R.string.main_berries_short, user.getBerries()));
+            tvMainEcoCoins.setText(getString(R.string.main_eco_short, user.getEcoCoins()));
 
             if (lastKnownLevel == -1) {
                 tvMainLevel.setText(getString(R.string.main_level_format, currentLevel));

@@ -102,11 +102,11 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
                 btnBuy.setText(R.string.furniture_owned);
             } else if (balance >= furniture.getPrice()) {
                 btnBuy.setEnabled(true);
-                btnBuy.setText(R.string.btn_buy);
+                btnBuy.setText(R.string.common_action_buy);
             } else {
                 // No tiene dinero - botón deshabilitado
                 btnBuy.setEnabled(false);
-                btnBuy.setText(R.string.btn_buy);
+                btnBuy.setText(R.string.common_action_buy);
             }
 
             // Más adelante cargaremos la imagen real basada en furniture.getImageRef()

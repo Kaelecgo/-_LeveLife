@@ -40,7 +40,7 @@ public class TaskActivity extends AppCompatActivity {
 
         currentUserId = getIntent().getIntExtra("USER_ID", -1);
         if (currentUserId == -1) {
-            Toast.makeText(this, getString(R.string.error_session_lost), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.common_error_session_lost), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_app"
+    android:background="@color/app_background"
     android:fitsSystemWindows="true"
     tools:context=".controller.MainActivity">
 
@@ -73,7 +73,7 @@
                     android:layout_gravity="center"
                     android:fontFamily="@font/nunito_bold"
                     android:text="@string/main_xp_default"
-                    android:textColor="@color/text_primary"
+                    android:textColor="@color/app_text_primary"
                     tools:text="65 / 100 XP" />
             </FrameLayout>
 
@@ -89,7 +89,7 @@
                     style="@style/LeveLife.StatChip"
                     android:background="@drawable/bg_stat_chip_berries"
                     android:drawableStart="@drawable/ic_berry_small"
-                    android:text="@string/main_berries_format"
+                    android:text="@string/main_berries_short"
                     tools:text="120" />
 
                 <TextView
@@ -98,7 +98,7 @@
                     android:layout_marginStart="@dimen/spacing_small"
                     android:background="@drawable/bg_stat_chip_eco"
                     android:drawableStart="@drawable/ic_leaf_small"
-                    android:text="@string/main_eco_format"
+                    android:text="@string/main_eco_short"
                     tools:text="40" />
             </LinearLayout>
 

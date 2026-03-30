@@ -20,7 +20,7 @@
     <string name="dialog_task_reward_preview">%1$d XP | %2$d Berries 🫐</string>
     <string name="dialog_task_reward_preview_with_eco">%1$d XP | %2$d Berries 🫐 | %3$d EcoCoins 🌱</string>
 
-    <string name="btn_create">Create ✨</string>
+
     <string name="error_empty_task">Title cannot be empty ❗</string>
     <string name="error_invalid_task_form">Please fill in Title, Category, Difficulty, and Frequency.</string>
 

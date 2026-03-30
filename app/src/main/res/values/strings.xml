@@ -1,14 +1,17 @@
 <resources>
     <string name="app_name">LeveLife</string>
 
-    <!-- Globales / Comunes -->
-    <string name="loading_data">Cargando...⏳</string>
-    <string name="error_session_lost">Error: Se ha perdido la sesión 🔐</string>
-    <string name="main_welcome_format">Hola, %1$s 👋</string>
+    <string name="common_loading">Cargando...⏳</string>
 
-    <string name="dialog_yes">Sí ✅</string>
-    <string name="dialog_no">No ❌</string>
-    <string name="dialog_logout_title">Cerrar Sesión 🚪</string>
+    <string name="common_action_yes">Sí ✅</string>
+    <string name="common_action_no">No ❌</string>
+    <string name="common_action_create">Crear ✨</string>
+    <string name="common_action_buy">Comprar 🛒</string>
+    <string name="common_action_logout">Cerrar Sesión 🚪</string>
+
+    <string name="common_error_session_lost">Error: Se ha perdido la sesión 🔐</string>
+
+    <string name="main_welcome_format">Hola, %1$s 👋</string>
     <string name="dialog_logout_message">¿Estás seguro de que quieres salir?</string>
 
     <!-- Navegación -->
@@ -17,8 +20,7 @@
     <string name="btn_logout">Cerrar Sesión 🚪</string>
     <string name="btn_inventory">Inventario 🎒</string>
 
-    <string name="main_dashboard_label">Tu progreso 📊</string>
-    <string name="main_progress_label">Progreso actual ✨</string>
+    <!-- Pantalla Principal (Home/Dashboard) -->
     <string name="main_room_title">Tu habitación 🏠</string>
     <string name="main_room_subtitle">Aquí se mostrará tu espacio personalizado ✨</string>
     <string name="main_room_empty_title">Todavía no has colocado muebles 🛋️</string>

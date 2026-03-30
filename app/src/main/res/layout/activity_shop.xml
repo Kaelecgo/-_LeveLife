@@ -5,18 +5,17 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_app"
+    android:background="@color/app_background"
     android:fitsSystemWindows="true"
     tools:context=".controller.ShopActivity">
 
     <TextView
         android:id="@+id/tvShopBalance"
+        style="@style/LeveLife.Text.Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/nunito_black"
-        android:text="@string/loading_data"
-        android:textSize="@dimen/text_size_title"
-        android:textColor="@color/fourth_text_logo"
+        android:text="@string/common_loading"
+        android:textColor="@color/app_text_accent"
         android:gravity="center"
         android:padding="@dimen/spacing_medium"
         app:layout_constraintTop_toTopOf="parent"

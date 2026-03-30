@@ -130,14 +130,14 @@ public class DialogUtils {
 
     public static void showLogoutConfirmationDialog(Context context, Runnable onConfirm) {
         new AlertDialog.Builder(context)
-                .setTitle(R.string.dialog_logout_title)
+                .setTitle(R.string.common_action_logout)
                 .setMessage(R.string.dialog_logout_message)
-                .setPositiveButton(R.string.dialog_yes, (dialog, which) -> {
+                .setPositiveButton(R.string.common_action_yes, (dialog, which) -> {
                     if (onConfirm != null) {
                         onConfirm.run();
                     }
                 })
-                .setNegativeButton(R.string.dialog_no, null)
+                .setNegativeButton(R.string.common_action_no, null)
                 .show();
     }
 

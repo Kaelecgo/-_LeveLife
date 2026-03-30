@@ -1,73 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="shop_health_quest">#BDE0FE</color>
-    <color name="grass_envirnment_quest">#ccffcc</color>
-    <color name="dialog_box">#F8FAFC</color>
-    <color name="text">#94A3B8</color>
-    <color name="rewards">#E9D5FF</color>
-    <color name="bar_circules">#FDE2E4</color>
+    <!-- PALETA BASE (Colores "Físicos") -->
 
-    <color name="primary_text_logo">#328661</color>
-    <color name="secondary_text_logo">#B0F58D</color>
-    <color name="third_text_logo">#8263A3</color>
-    <color name="fourth_text_logo">#413770</color>
+    <!-- Marca / Logo -->
+    <color name="brand_green_dark">#328661</color>
+    <color name="brand_green_light">#B0F58D</color>
+    <color name="brand_purple_light">#8263A3</color>
+    <color name="brand_purple_dark">#413770</color>
 
+    <!-- Gamificación -->
+    <color name="game_xp">#4CAF50</color>
+    <color name="game_berries">#FF9800</color>
+    <color name="game_eco">#6BCB77</color>
 
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="grey">#757575</color>
-    <color name="reward_xp">#4CAF50</color>
-    <color name="reward_berries">#FF9800</color>
+    <!-- Neutros -->
+    <color name="neutral_white">#FFFFFF</color>
+    <color name="neutral_black">#000000</color>
+    <color name="neutral_grey_dark">#4E4036</color>
+    <color name="neutral_grey_medium">#7B6D63</color>
+    <color name="neutral_grey_light">#94A3B8</color>
 
-    <!-- Brand -->
-    <color name="green">#7FB77E</color>
-    <color name="primary_dark">#4F7A4F</color>
-    <color name="secondary">#BFD8B8</color>
-    <color name="accent">#F2C14E</color>
+    <!-- Cozy Palette (Tu estética principal) -->
+    <color name="cozy_beige_bg">#F6F1E8</color>
+    <color name="cozy_white_card">#FFFDF8</color>
+    <color name="cozy_tan">#F3E7D3</color>
+    <color name="cozy_green_soft">#E3EFE4</color>
+    <color name="cozy_green_nav">#C9D2AE</color>
+
+    <!-- COLORES SEMÁNTICOS (Los que usamos en la App) -->
+
+    <!-- Fondos y Superficies -->
+    <color name="app_background">@color/cozy_beige_bg</color>
+    <color name="app_surface_card">@color/cozy_white_card</color>
+
+    <!-- Textos -->
+    <color name="app_text_primary">@color/neutral_grey_dark</color>
+    <color name="app_text_secondary">@color/neutral_grey_medium</color>
+    <color name="app_text_accent">@color/brand_purple_dark</color>
+
+    <!-- Componentes -->
+    <color name="app_button_primary">@color/brand_purple_dark</color>
+    <color name="app_chip_berries">@color/cozy_tan</color>
+    <color name="app_chip_eco">@color/cozy_green_soft</color>
+    <color name="app_nav_bg">@color/cozy_green_nav</color>
+
+    <!-- COMPATIBILIDAD (Para que compilen los drawables y layouts antiguos) -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="surface_app">@color/app_background</color>
+    <color name="surface_card">@color/app_surface_card</color>
+    <color name="text_primary">@color/app_text_primary</color>
+    <color name="text_secondary">@color/app_text_secondary</color>
+    <color name="fourth_text_logo">@color/brand_purple_dark</color>
+    <color name="third_text_logo">@color/brand_purple_light</color>
     <color name="highlight">#F7A072</color>
-
-    <!-- Backgrounds -->
-    <color name="background">#FFF8F0</color>
-    <color name="surface">#F0EAD2</color>
-    <color name="card">#FFFFFF</color>
-    <color name="cozy_shadow">#D9D4CC</color>
-
-    <!-- Feedback / Gamification -->
-    <color name="success">#6BCB77</color>
-    <color name="reward">#E6B800</color>
-    <color name="energy">#6DAEDB</color>
-    <color name="error_soft">#F28482</color>
-
-    <!-- >_ Cozy colors for the app _< -->
-    <color name="bittersweet">#ff6e61</color>
-    <color name="rum">#6c5b80</color>
-    <color name="froly">#f67481</color>
-    <color name="turkish_rose">#c06d84</color>
-    <color name="ming">#365c7d</color>
-
-    <!-- >_ Zombie Dreams _< -->
-    <color name="zombie">#e4d59b</color>
-    <color name="rainee">#bac4a1</color>
-    <color name="oxley">#7d9b8e</color>
-    <color name="cutty_sark">#4a786d</color>
-    <color name="stromboli">#2d5c4b</color>
-
-    <color name="bg_">#F8FAFC</color>
-
-    <color name="surface_app">#F6F1E8</color>
-    <color name="surface_card">#FFFDF8</color>
-    <color name="text_primary">#4E4036</color>
-    <color name="text_secondary">#7B6D63</color>
-    <color name="chip_berries_bg">#F3E7D3</color>
-    <color name="chip_eco_bg">#E3EFE4</color>
+    <color name="reward">@color/game_berries</color>
+    <color name="reward_berries">@color/game_berries</color>
+    <color name="reward_xp">@color/game_xp</color>
+    <color name="chip_berries_bg">@color/app_chip_berries</color>
+    <color name="chip_eco_bg">@color/app_chip_eco</color>
+    <color name="bottom_nav_bg">@color/app_nav_bg</color>
+    <color name="nav_icon_active">@color/neutral_grey_dark</color>
+    <color name="nav_icon_inactive">#F6F3EC</color>
+    <color name="nav_item_active_bg">#E8ECD8</color>
     <color name="room_surface_top">#F7F0E5</color>
     <color name="room_surface_bottom">#EEDFCB</color>
     <color name="room_border">#E5D5BF</color>
-
-    <color name="bottom_nav_bg">#C9D2AE</color>
-    <color name="nav_icon_active">#4E4036</color>
-    <color name="nav_icon_inactive">#F6F3EC</color>
-    <color name="nav_item_active_bg">#E8ECD8</color>
-
 
 </resources>
