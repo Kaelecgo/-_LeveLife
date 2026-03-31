@@ -246,3 +246,52 @@ Tras esta fase, LeveLife queda en un estado significativamente más maduro:
 - validación técnica reforzada mediante pruebas unitarias
 
 En conjunto, esta iteración no solo añadió funcionalidad, sino que elevó la calidad interna del proyecto en seguridad, consistencia, mantenibilidad y capacidad de crecimiento.
+
+---
+
+## 11. Preparación de la base para historial real de completados
+
+### Implementación realizada
+- Se creó la entidad `TaskCompletion.java` como soporte inicial para un historial persistido de completados.
+- Se definió un modelo mínimo con:
+  - `id`
+  - `taskId`
+  - `userId`
+  - `completedAt`
+- Se añadieron claves foráneas hacia las entidades de tarea y usuario para mantener coherencia relacional.
+- Se prepararon índices orientados a consultas futuras por tarea y por rango temporal.
+- Se creó `TaskCompletionDao.java` con operaciones base de inserción y lectura del historial.
+
+### Problema que empieza a resolver
+El enfoque MVP basado en `lastCompletedAt` permite bloquear completados por periodo, pero se queda corto para auditar historial real, calcular rachas o construir estadísticas más ricas.
+
+### Estado real de esta iteración
+Esta iteración no modifica todavía la lógica de negocio existente ni sustituye el flujo actual de recurrencia.
+La nueva capa se ha preparado como base técnica compilable para su integración posterior en Room y en el caso de uso de completado.
+
+### Próximo paso técnico
+- Registrar la nueva entidad y su DAO en `AppDatabase`.
+- Integrar el historial en `MainRepository`.
+- Evolucionar la recurrencia desde el MVP actual hacia un modelo apoyado en completados persistidos.
+
+---
+
+## 12. Evolución del esquema a versión 8 para historial real de completados
+
+### Implementación realizada
+- Se integró `TaskCompletion` dentro del conjunto de entidades gestionadas por `AppDatabase`.
+- Se declaró `TaskCompletionDao` como nuevo punto de acceso a la tabla de historial.
+- Se elevó la versión del esquema de Room de `7` a `8`.
+- Se creó la migración explícita `MIGRATION_7_8`.
+- Se registró la nueva migración dentro del builder de Room mediante `.addMigrations(...)`.
+
+### Problema que empieza a resolver
+La solución MVP basada en `lastCompletedAt` permite bloquear repetición por periodo, pero no deja trazabilidad histórica real de cada completado. Sin una tabla específica, el sistema no puede evolucionar de forma sólida hacia estadísticas, rachas o auditoría temporal detallada.
+
+### Justificación técnica
+Este cambio desacopla la futura lógica de historial del modelo simplificado actual y prepara una evolución controlada del dominio sin romper la persistencia existente. Además, mantiene la política de migraciones explícitas como estrategia principal de evolución del esquema.
+
+### Estado real tras esta iteración
+- **Implementado:** infraestructura de persistencia del historial dentro de Room.
+- **Validado:** pendiente de verificación práctica de compilación y migración real.
+- **Pendiente:** integración del historial en la lógica de completado, recurrencia y presentación.

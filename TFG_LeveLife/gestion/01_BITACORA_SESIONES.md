@@ -355,3 +355,33 @@ El tema visual queda más consistente y entendible, `DialogUtils` pasa a ser una
 
 ### Próximo paso
 Realizar validación manual completa del BottomSheet de tareas, cerrar la tabla de casos de prueba y decidir el alcance final de `Colocar` antes del cierre documental de FASE 3.
+
+---
+
+## Sesión 7 - Evolución de Room a v8 para historial de completados
+
+### Objetivo
+Preparar la base persistente del historial real de completados sin refactorizar todavía la lógica de negocio.
+
+### Tareas realizadas
+- Se creó la entidad `TaskCompletion`.
+- Se creó `TaskCompletionDao`.
+- Room evolucionó de la versión `7` a la versión `8`.
+- Se añadió la tabla `task_completions` al esquema.
+- Se registraron índices orientados a consultas por tarea y por periodo.
+- Se integró la nueva tabla en `AppDatabase` mediante la migración `7 -> 8`.
+
+### Archivos afectados
+- `TaskCompletion.java`
+- `TaskCompletionDao.java`
+- `AppDatabase.java`
+
+### Resultado
+La base de datos queda preparada para soportar historial real de completados a nivel de esquema y acceso a datos.
+
+### Límites de esta iteración
+- Todavía no se ha refactorizado `completeTask(...)`.
+- La lógica funcional del sistema sigue apoyándose en el enfoque MVP actual.
+
+### Próximo paso
+Integrar el historial en la lógica de negocio y decidir cómo convivirá con el mecanismo actual basado en `lastCompletedAt`.

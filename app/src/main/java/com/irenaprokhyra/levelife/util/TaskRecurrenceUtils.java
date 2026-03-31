@@ -61,4 +61,31 @@ public final class TaskRecurrenceUtils {
         return first.get(Calendar.YEAR) == second.get(Calendar.YEAR)
                 && first.get(Calendar.DAY_OF_YEAR) == second.get(Calendar.DAY_OF_YEAR);
     }
+
+    public static long getCurrentPeriodStart(String frequency, long now) {
+        String normalizedFrequency = Task.normalizeFrequency(frequency);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(now);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        if (Task.FREQUENCY_DAILY.equals(normalizedFrequency)) {
+            return calendar.getTimeInMillis();
+        }
+
+        if (Task.FREQUENCY_WEEKLY.equals(normalizedFrequency)) {
+            calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+            return calendar.getTimeInMillis();
+        }
+
+        if (Task.FREQUENCY_MONTHLY.equals(normalizedFrequency)) {
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            return calendar.getTimeInMillis();
+        }
+
+        return 0L;
+    }
 }

@@ -37,10 +37,17 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 
 - [x] Lógica MVP de periodo actual en `TaskRecurrenceUtils.java`.
 - [x] Integración de `lastCompletedAt` en el flujo de completado.
-- [ ] Crear entidad `TaskCompletion`.
-- [ ] Crear `TaskCompletionDao`.
+- [x] Crear entidad `TaskCompletion`.
+- [x] Crear `TaskCompletionDao`.
+- [x] Integrar `TaskCompletion` en `AppDatabase.java`.
+- [x] Exponer `TaskCompletionDao` desde `AppDatabase.java`.
+- [x] Crear migración Room `7 -> 8` para soportar la nueva tabla de historial.
 - [ ] Refactorizar `MainRepository` para registrar historial de completados.
+- [ ] Adaptar `TaskRecurrenceUtils` para apoyarse en historial real.
+- [ ] Revisar impacto en `TaskAdapter` y `MainViewModel`.
 - [ ] Implementar rachas y estadísticas basadas en historial real.
+
+**Nota de estado:** en esta iteración ya se ha integrado la nueva tabla de historial en el esquema Room y se ha preparado su acceso mediante DAO, pero la lógica de negocio del sistema sigue funcionando con el enfoque MVP actual hasta completar el refactor del caso de uso.
 
 ## 🔄 Fase 5: Reflejo en la UI (Parcialmente realizado)
 **Objetivo:** Mostrar la riqueza de información de las tareas y estabilizar la experiencia visual.

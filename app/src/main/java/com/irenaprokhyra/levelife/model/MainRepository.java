@@ -15,6 +15,7 @@ public class MainRepository {
     private final UserDao userDao;
     private final TaskDao taskDao;
     private final FurnitureDao furnitureDao;
+    private final TaskCompletionDao taskCompletionDao;
     private final ExecutorService executor;
 
     private MainRepository(Application application) {
@@ -22,6 +23,7 @@ public class MainRepository {
         userDao = db.userDao();
         taskDao = db.taskDao();
         furnitureDao = db.furnitureDao();
+        taskCompletionDao = db.taskCompletionDao();
         executor = AppDatabase.databaseWriteExecutor;
     }
 
@@ -137,14 +139,21 @@ public class MainRepository {
                 final int[] ecoReward = {0};
                 final boolean[] leveledUp = {false};
 
+                final long now = System.currentTimeMillis();
+
                 Boolean result = db.runInTransaction(() -> {
                     Task task = taskDao.getTaskById(taskId);
-                    if (task == null || TaskRecurrenceUtils.isCompletedForCurrentPeriod(task)) {
-                        return false;
-                    }
+                    if (task == null || task.getUserId() != userId) return false;
 
                     User user = userDao.getUserById(userId);
-                    if (user == null) {
+                    if (user == null) return false;
+
+                    if (task.isRecurring()) {
+                        long periodStart = TaskRecurrenceUtils.getCurrentPeriodStart(task.getFrequency(), now);
+                        if (taskCompletionDao.hasCompletionSince(task.getId(), periodStart)) {
+                            return false;
+                        }
+                    } else if (task.isCompleted()) {
                         return false;
                     }
 
@@ -155,8 +164,11 @@ public class MainRepository {
                     leveledUp[0] = user.addExperience(rewardXP[0]);
                     user.addBerries(rewardBerries[0]);
                     user.addEcoCoins(ecoReward[0]);
-                    task.setLastCompletedAt(System.currentTimeMillis());
-                    task.setCompleted(!task.isRecurring());
+
+                    taskCompletionDao.insertCompletion(new TaskCompletion(task.getId(), userId, now));
+
+                    task.setLastCompletedAt(now);
+                    if (!task.isRecurring()) task.setCompleted(true);
 
                     userDao.updateUser(user);
                     taskDao.updateTask(task);
