@@ -108,12 +108,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             "`user_id` INTEGER NOT NULL, " +
                             "`completed_at` INTEGER NOT NULL, " +
                             "FOREIGN KEY(`task_id`) REFERENCES `tasks`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE, " +
-                            "FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE)"
-            );
-
-            database.execSQL(
-                    "CREATE INDEX IF NOT EXISTS `index_task_completions_task_id` " +
-                            "ON `task_completions` (`task_id`)"
+                            "FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE" +
+                            ")"
             );
 
             database.execSQL(
@@ -122,7 +118,7 @@ public abstract class AppDatabase extends RoomDatabase {
             );
 
             database.execSQL(
-                    "CREATE INDEX IF NOT EXISTS `index_task_completions_completed_at` " +
+                    "CREATE INDEX IF NOT EXISTS `index_task_completions_task_id_completed_at` " +
                             "ON `task_completions` (`task_id`, `completed_at`)"
             );
         }

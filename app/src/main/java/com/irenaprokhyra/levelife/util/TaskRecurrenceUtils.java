@@ -7,22 +7,20 @@ public final class TaskRecurrenceUtils {
 
     private TaskRecurrenceUtils() {}
 
-    /**
-     * Determina si una tarea está completada para el periodo actual basándose en su caché
-     * 'lastCompletedAt'. Ideal para uso rápido en la UI (Adapters).
-     */
     public static boolean isCompletedForCurrentPeriod(Task task) {
         if (task == null) return false;
         if (!task.isRecurring()) return task.isCompleted();
 
-        long periodStart = getCurrentPeriodStart(task.getFrequency(), System.currentTimeMillis());
-        return task.getLastCompletedAt() >= periodStart;
+        return wasCompletedInCurrentPeriod(task.getFrequency(), task.getLastCompletedAt(), System.currentTimeMillis());
     }
 
-    /**
-     * Calcula el timestamp (ms) exacto en el que comenzó el periodo actual
-     * (día, semana o mes) para una frecuencia dada.
-     */
+
+    public static boolean wasCompletedInCurrentPeriod(String frequency, long lastCompletedAt, long now) {
+        long periodStart = getCurrentPeriodStart(frequency, now);
+        if (periodStart == 0L) return false;
+        return lastCompletedAt >= periodStart;
+    }
+
     public static long getCurrentPeriodStart(String frequency, long now) {
         String normalized = Task.normalizeFrequency(frequency);
         Calendar cal = Calendar.getInstance();
