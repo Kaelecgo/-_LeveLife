@@ -37,6 +37,15 @@
 - [ ] Mejorar la documentación de arquitectura para la defensa.
 - [ ] Preparar material de defensa asociado al refactor técnico y a la evolución del sistema de hábitos.
 
+### En progreso
+- [~] Integrar historial real de completados mediante `TaskCompletion`.
+- [~] Registrar `TaskCompletion` dentro del esquema Room con versión 8 y migración explícita `7 -> 8`.
+- [~] Exponer `TaskCompletionDao` desde `AppDatabase`.
+- [ ] Refactorizar `MainRepository` para registrar completados en historial real.
+- [ ] Adaptar `TaskRecurrenceUtils` para apoyarse progresivamente en historial persistido.
+- [ ] Revisar impacto en `TaskAdapter` y `MainViewModel`.
+- [ ] Validar migración real `7 -> 8` sobre base existente.
+
 ## Cerrado recientemente
 - [x] Documentar el endurecimiento de autenticación y migraciones explícitas.
 - [x] Documentar el sistema enriquecido de `Task`, `TaskRewardCalculator` y EcoCoins.

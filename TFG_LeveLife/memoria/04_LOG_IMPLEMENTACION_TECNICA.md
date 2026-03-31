@@ -246,3 +246,21 @@ Tras esta fase, LeveLife queda en un estado significativamente más maduro:
 - validación técnica reforzada mediante pruebas unitarias
 
 En conjunto, esta iteración no solo añadió funcionalidad, sino que elevó la calidad interna del proyecto en seguridad, consistencia, mantenibilidad y capacidad de crecimiento.
+
+---
+
+## 11. Nota técnica - evolución de Room a v8 para historial de completados
+
+### Implementación realizada
+- Room evoluciona de la versión `7` a la versión `8`.
+- Se añade la tabla `task_completions`.
+- Se registran índices orientados a consultas por tarea y por periodo.
+- Se expone `TaskCompletionDao` desde `AppDatabase`.
+- Se registra la migración explícita `7 -> 8`.
+
+### Estado actual
+Esta iteración deja preparada la base persistente del historial real de completados a nivel de esquema y acceso a datos.
+
+### Límite actual
+Todavía no se ha refactorizado `completeTask(...)`, por lo que la lógica funcional del sistema sigue apoyándose en el enfoque MVP actual.
+

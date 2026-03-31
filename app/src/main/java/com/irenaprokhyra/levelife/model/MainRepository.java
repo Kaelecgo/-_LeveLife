@@ -15,6 +15,7 @@ public class MainRepository {
     private final UserDao userDao;
     private final TaskDao taskDao;
     private final FurnitureDao furnitureDao;
+    private final TaskCompletionDao taskCompletionDao;
     private final ExecutorService executor;
 
     private MainRepository(Application application) {
@@ -22,6 +23,7 @@ public class MainRepository {
         userDao = db.userDao();
         taskDao = db.taskDao();
         furnitureDao = db.furnitureDao();
+        taskCompletionDao = db.taskCompletionDao();
         executor = AppDatabase.databaseWriteExecutor;
     }
 
@@ -132,33 +134,48 @@ public class MainRepository {
     public void completeTask(int taskId, int userId, TaskCompleteCallback callback) {
         executor.execute(() -> {
             try {
-                final int[] rewardXP = {0};
-                final int[] rewardBerries = {0};
-                final int[] ecoReward = {0};
+                final int[] rewards = {0, 0, 0}; // XP, Berries, Eco
                 final boolean[] leveledUp = {false};
 
                 Boolean result = db.runInTransaction(() -> {
+                    long now = System.currentTimeMillis();
                     Task task = taskDao.getTaskById(taskId);
-                    if (task == null || TaskRecurrenceUtils.isCompletedForCurrentPeriod(task)) {
-                        return false;
+
+                    if (task == null || task.getUserId() != userId) return false;
+
+                    // 1. VALIDACIÓN: Usamos el historial real de la DB
+                    if (task.isRecurring()) {
+                        long periodStart = TaskRecurrenceUtils.getCurrentPeriodStart(task.getFrequency(), now);
+                        if (taskCompletionDao.hasCompletionSince(taskId, periodStart)) {
+                            return false; // Ya se completó en este periodo (día/semana/mes)
+                        }
+                    } else if (task.isCompleted()) {
+                        return false; // Tarea única ya terminada
                     }
 
                     User user = userDao.getUserById(userId);
-                    if (user == null) {
-                        return false;
-                    }
+                    if (user == null) return false;
 
-                    rewardXP[0] = task.getRewardXP();
-                    rewardBerries[0] = task.getRewardBerries();
-                    ecoReward[0] = task.getEcoReward();
+                    // 2. RECOMPENSAS
+                    rewards[0] = task.getRewardXP();
+                    rewards[1] = task.getRewardBerries();
+                    rewards[2] = task.getEcoReward();
 
-                    leveledUp[0] = user.addExperience(rewardXP[0]);
-                    user.addBerries(rewardBerries[0]);
-                    user.addEcoCoins(ecoReward[0]);
-                    task.setLastCompletedAt(System.currentTimeMillis());
-                    task.setCompleted(!task.isRecurring());
+                    leveledUp[0] = user.addExperience(rewards[0]);
+                    user.addBerries(rewards[1]);
+                    user.addEcoCoins(rewards[2]);
 
+                    // 3. PERSISTENCIA
                     userDao.updateUser(user);
+
+                    // Insertamos registro en el historial
+                    taskCompletionDao.insertCompletion(new TaskCompletion(taskId, userId, now));
+
+                    // Actualizamos la "caché" en la tarea para la UI
+                    task.setLastCompletedAt(now);
+                    if (!task.isRecurring()) {
+                        task.setCompleted(true);
+                    }
                     taskDao.updateTask(task);
 
                     return true;
@@ -166,15 +183,13 @@ public class MainRepository {
 
                 if (result != null && result) {
                     if (callback != null) {
-                        callback.onSuccess(rewardXP[0], rewardBerries[0], ecoReward[0], leveledUp[0]);
+                        callback.onSuccess(rewards[0], rewards[1], rewards[2], leveledUp[0]);
                     }
                 } else if (callback != null) {
-                    callback.onError("La tarea ya estaba completada para este periodo o no existe");
+                    callback.onError("La tarea ya está completada o no tienes permiso");
                 }
             } catch (Exception e) {
-                if (callback != null) {
-                    callback.onError("Error al completar la tarea: " + e.getMessage());
-                }
+                if (callback != null) callback.onError("Error: " + e.getMessage());
             }
         });
     }

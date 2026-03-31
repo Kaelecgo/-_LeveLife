@@ -16,8 +16,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Database(
-        entities = {User.class, Task.class, Furniture.class, UserFurnitureCrossRef.class},
-        version = 7,
+        entities = {
+                User.class,
+                Task.class,
+                Furniture.class,
+                UserFurnitureCrossRef.class,
+                TaskCompletion.class
+        },
+        version = 8,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -92,11 +98,39 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_7_8 = new Migration(7, 8) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `task_completions` (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`task_id` INTEGER NOT NULL, " +
+                            "`user_id` INTEGER NOT NULL, " +
+                            "`completed_at` INTEGER NOT NULL, " +
+                            "FOREIGN KEY(`task_id`) REFERENCES `tasks`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE, " +
+                            "FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE" +
+                            ")"
+            );
+
+            database.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_task_completions_user_id` " +
+                            "ON `task_completions` (`user_id`)"
+            );
+
+            database.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_task_completions_task_id_completed_at` " +
+                            "ON `task_completions` (`task_id`, `completed_at`)"
+            );
+        }
+    };
+
     public abstract UserDao userDao();
 
     public abstract TaskDao taskDao();
 
     public abstract FurnitureDao furnitureDao();
+
+    public abstract TaskCompletionDao taskCompletionDao();
 
     public static AppDatabase getInstance(final Context context) {
         if (INSTANCE == null) {
@@ -114,7 +148,8 @@ public abstract class AppDatabase extends RoomDatabase {
                                     MIGRATION_3_4,
                                     MIGRATION_4_5,
                                     MIGRATION_5_6,
-                                    MIGRATION_6_7
+                                    MIGRATION_6_7,
+                                    MIGRATION_7_8
                             )
                             .addCallback(sRoomDatabaseCallback)
                             .build();
