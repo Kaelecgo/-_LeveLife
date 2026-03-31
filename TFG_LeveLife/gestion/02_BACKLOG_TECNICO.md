@@ -21,20 +21,6 @@
 - [ ] Confirmar si existen caracteres mal codificados visibles en recursos o documentación y corregirlos si afloran en runtime.
 
 ## Medio
-## En progreso
-- [~] Integrar historial real de completados mediante `TaskCompletion`.
-- [~] Registrar `TaskCompletion` dentro del esquema Room con versión 8 y migración explícita `7 -> 8`.
-- [~] Exponer `TaskCompletionDao` desde `AppDatabase`.
-- [ ] Refactorizar `MainRepository` para registrar completados en historial real.
-- [ ] Adaptar `TaskRecurrenceUtils` para apoyarse progresivamente en historial persistido.
-- [ ] Revisar impacto en `TaskAdapter` y `MainViewModel`.
-- [ ] Validar migración real `7 -> 8` sobre base existente.
-- [~] Preparar historial real de completados con nueva entidad `TaskCompletion`.
-- [~] Preparar `TaskCompletionDao` con consultas base por tarea y por periodo.
-- [ ] Registrar `TaskCompletion` y `TaskCompletionDao` en `AppDatabase`.
-- [ ] Refactorizar `MainRepository` para registrar completados en historial real.
-- [ ] Adaptar `TaskRecurrenceUtils` para apoyarse progresivamente en historial persistido.
-- [ ] Revisar impacto en `TaskAdapter` y `MainViewModel`.
 - [ ] Añadir pruebas manuales de flujo real para login, sesión persistente, registro y creación de tareas.
 - [ ] Documentar en memoria la validación extremo a extremo con evidencias.
 - [ ] Justificar en memoria el uso de datos seed para pruebas.
@@ -50,6 +36,15 @@
 - [ ] Separar `Repository` y `ViewModel` por features cuando el núcleo esté completamente estabilizado.
 - [ ] Mejorar la documentación de arquitectura para la defensa.
 - [ ] Preparar material de defensa asociado al refactor técnico y a la evolución del sistema de hábitos.
+
+### En progreso
+- [~] Integrar historial real de completados mediante `TaskCompletion`.
+- [~] Registrar `TaskCompletion` dentro del esquema Room con versión 8 y migración explícita `7 -> 8`.
+- [~] Exponer `TaskCompletionDao` desde `AppDatabase`.
+- [ ] Refactorizar `MainRepository` para registrar completados en historial real.
+- [ ] Adaptar `TaskRecurrenceUtils` para apoyarse progresivamente en historial persistido.
+- [ ] Revisar impacto en `TaskAdapter` y `MainViewModel`.
+- [ ] Validar migración real `7 -> 8` sobre base existente.
 
 ## Cerrado recientemente
 - [x] Documentar el endurecimiento de autenticación y migraciones explícitas.

@@ -36,18 +36,22 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 **Objetivo:** Implementar recurrencia real mediante historial, no solo booleanos.
 
 - [x] Lógica MVP de periodo actual en `TaskRecurrenceUtils.java`.
-- [x] Integración de `lastCompletedAt` en el flujo de completado.
+- [x] Integración inicial de `lastCompletedAt` en el flujo de completado.
 - [x] Crear entidad `TaskCompletion`.
 - [x] Crear `TaskCompletionDao`.
 - [x] Integrar `TaskCompletion` en `AppDatabase.java`.
 - [x] Exponer `TaskCompletionDao` desde `AppDatabase.java`.
 - [x] Crear migración Room `7 -> 8` para soportar la nueva tabla de historial.
-- [ ] Refactorizar `MainRepository` para registrar historial de completados.
-- [ ] Adaptar `TaskRecurrenceUtils` para apoyarse en historial real.
-- [ ] Revisar impacto en `TaskAdapter` y `MainViewModel`.
+- [x] Refactorizar `MainRepository.completeTask(...)` para registrar historial real de completados.
+- [x] Validar el bloqueo de recurrencia por instancia de tarea y periodo.
+- [x] Consolidar que tareas con el mismo título siguen siendo entidades independientes.
+- [~] Mantener `lastCompletedAt` como compatibilidad visual temporal en la UI actual.
+- [~] Mantener `TaskRecurrenceUtils` como utilidad temporal pura mientras convive la compatibilidad visual actual.
+- [ ] Revisar impacto final en `TaskAdapter` y `MainViewModel`.
+- [ ] Retirar `lastCompletedAt` cuando deje de ser necesario para compatibilidad visual.
 - [ ] Implementar rachas y estadísticas basadas en historial real.
 
-**Nota de estado:** en esta iteración ya se ha integrado la nueva tabla de historial en el esquema Room y se ha preparado su acceso mediante DAO, pero la lógica de negocio del sistema sigue funcionando con el enfoque MVP actual hasta completar el refactor del caso de uso.
+**Nota de estado:** la recurrencia real ya se apoya en historial persistido por tarea mediante `task_completions`. `TaskRecurrenceUtils` queda consolidada como utilidad temporal pura y la UI sigue usando `lastCompletedAt` como compatibilidad visual temporal.
 
 ## 🔄 Fase 5: Reflejo en la UI (Parcialmente realizado)
 **Objetivo:** Mostrar la riqueza de información de las tareas y estabilizar la experiencia visual.
@@ -97,3 +101,4 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 - `Task.normalizeFrequency(...)`
 - `TaskRecurrenceUtils.isCompletedForCurrentPeriod(...)`
 - `MainRepository.completeTask(...)`
+- `TaskCompletionDao.insert(...)`

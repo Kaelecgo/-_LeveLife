@@ -249,49 +249,18 @@ En conjunto, esta iteración no solo añadió funcionalidad, sino que elevó la 
 
 ---
 
-## 11. Preparación de la base para historial real de completados
+## 11. Nota técnica - evolución de Room a v8 para historial de completados
 
 ### Implementación realizada
-- Se creó la entidad `TaskCompletion.java` como soporte inicial para un historial persistido de completados.
-- Se definió un modelo mínimo con:
-  - `id`
-  - `taskId`
-  - `userId`
-  - `completedAt`
-- Se añadieron claves foráneas hacia las entidades de tarea y usuario para mantener coherencia relacional.
-- Se prepararon índices orientados a consultas futuras por tarea y por rango temporal.
-- Se creó `TaskCompletionDao.java` con operaciones base de inserción y lectura del historial.
+- Room evoluciona de la versión `7` a la versión `8`.
+- Se añade la tabla `task_completions`.
+- Se registran índices orientados a consultas por tarea y por periodo.
+- Se expone `TaskCompletionDao` desde `AppDatabase`.
+- Se registra la migración explícita `7 -> 8`.
 
-### Problema que empieza a resolver
-El enfoque MVP basado en `lastCompletedAt` permite bloquear completados por periodo, pero se queda corto para auditar historial real, calcular rachas o construir estadísticas más ricas.
+### Estado actual
+Esta iteración deja preparada la base persistente del historial real de completados a nivel de esquema y acceso a datos.
 
-### Estado real de esta iteración
-Esta iteración no modifica todavía la lógica de negocio existente ni sustituye el flujo actual de recurrencia.
-La nueva capa se ha preparado como base técnica compilable para su integración posterior en Room y en el caso de uso de completado.
+### Límite actual
+Todavía no se ha refactorizado `completeTask(...)`, por lo que la lógica funcional del sistema sigue apoyándose en el enfoque MVP actual.
 
-### Próximo paso técnico
-- Registrar la nueva entidad y su DAO en `AppDatabase`.
-- Integrar el historial en `MainRepository`.
-- Evolucionar la recurrencia desde el MVP actual hacia un modelo apoyado en completados persistidos.
-
----
-
-## 12. Evolución del esquema a versión 8 para historial real de completados
-
-### Implementación realizada
-- Se integró `TaskCompletion` dentro del conjunto de entidades gestionadas por `AppDatabase`.
-- Se declaró `TaskCompletionDao` como nuevo punto de acceso a la tabla de historial.
-- Se elevó la versión del esquema de Room de `7` a `8`.
-- Se creó la migración explícita `MIGRATION_7_8`.
-- Se registró la nueva migración dentro del builder de Room mediante `.addMigrations(...)`.
-
-### Problema que empieza a resolver
-La solución MVP basada en `lastCompletedAt` permite bloquear repetición por periodo, pero no deja trazabilidad histórica real de cada completado. Sin una tabla específica, el sistema no puede evolucionar de forma sólida hacia estadísticas, rachas o auditoría temporal detallada.
-
-### Justificación técnica
-Este cambio desacopla la futura lógica de historial del modelo simplificado actual y prepara una evolución controlada del dominio sin romper la persistencia existente. Además, mantiene la política de migraciones explícitas como estrategia principal de evolución del esquema.
-
-### Estado real tras esta iteración
-- **Implementado:** infraestructura de persistencia del historial dentro de Room.
-- **Validado:** pendiente de verificación práctica de compilación y migración real.
-- **Pendiente:** integración del historial en la lógica de completado, recurrencia y presentación.
