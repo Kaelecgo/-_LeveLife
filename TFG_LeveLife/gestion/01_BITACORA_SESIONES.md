@@ -267,3 +267,91 @@ La recurrencia queda funcional en estado MVP, basada en el periodo actual. Todav
 
 ### Próximo paso
 Formalizar casos de prueba, preparar evidencias visuales y decidir el alcance final de la acción "Colocar" antes de cerrar documentalmente FASE 3.
+
+---
+
+## Sesión 5 - Refactorización Estética y Estabilización de UI
+
+### Objetivo
+Unificar la identidad visual de la aplicación mediante un sistema de estilos global y corregir errores críticos de navegación y despliegue de componentes.
+
+### Problemas detectados
+- Inconsistencias en el diseño de botones y contenedores entre diferentes pantallas.
+- Crash al inflar `LoginActivity` debido a conflictos en el tema aplicado.
+- Hardcoding de dimensiones y colores en varios layouts de actividades.
+
+### Tareas realizadas
+- Se solventó el crash en `LoginActivity` ajustando el motor de inflado y limpiando los estilos heredados.
+- Se implementó una paleta de colores centralizada en `colors.xml` y se estandarizaron las dimensiones en `dimens.xml`.
+- Se actualizó `themes.xml` para utilizar componentes de Material 3 de forma coherente en todo el proyecto.
+- **Rediseño de Componentes:**
+  - Se crearon selectores de iconos y fondos para la navegación inferior (`nav_icon_selector.xml`, `bg_bottom_nav_item.xml`).
+  - Se unificó el estilo de los "Chips" de estadísticas (Berries y EcoCoins) con bordes suaves y elevación controlada.
+  - Se rediseñaron los ítems de lista en `TaskActivity` e `InventoryActivity` para mejorar la legibilidad.
+- Se sincronizaron las cadenas de texto entre `values/strings.xml` y `values-en/strings.xml` para cubrir los nuevos cambios de UI.
+
+### Archivos afectados
+- `LoginActivity.java`, `MainActivity.java`, `DialogUtils.java`.
+- `activity_main.xml`, `activity_task.xml`, `bottom_sheet_create_task.xml`, `item_task.xml`.
+- `colors.xml`, `themes.xml`, `dimens.xml`, `strings.xml`.
+
+### Resultado
+La aplicación presenta ahora una interfaz profesional y coherente. Se ha eliminado la deuda técnica estética y se ha mejorado la robustez de las pantallas principales frente a diferentes densidades de pantalla.
+
+### Pruebas realizadas
+- Verificación del flujo de Login (sin crashes).
+- Comprobación de escalabilidad de fuentes y márgenes en diferentes dispositivos.
+- Validación visual de los nuevos estados de los botones (Normal, Pressed, Disabled).
+
+### Próximo paso
+Iniciar la fase de empaquetado y revisión final de la memoria técnica (FASE 4).
+
+---
+
+## Sesión 6 - Limpieza de theming, refactor de DialogUtils y corrección del reward preview
+
+### Objetivo
+Cerrar la iteración de estabilización visual y funcional, eliminando deuda de `themes.xml`, simplificando `DialogUtils` y corrigiendo el cálculo de recompensas cuando la dificultad llega con tildes.
+
+### Problemas detectados
+- El sistema de estilos seguía mezclando responsabilidades visuales y residuos heredados.
+- `DialogUtils` concentraba demasiada lógica repetida para el BottomSheet y los diálogos Material.
+- La vista previa de recompensa no se ajustaba correctamente al cambiar la dificultad en casos como `Fácil` o `Difícil`.
+- Existía un selector de color roto y un `values-night/themes.xml` vacío que no aportaba valor real.
+
+### Tareas realizadas
+- Se limpió `themes.xml`, manteniendo la jerarquía base necesaria para la herencia implícita de Android (`LeveLife`, `LeveLife.Text`, `LeveLife.Card`).
+- Se centralizó el estilo de diálogos en el tema global usando `MaterialAlertDialogBuilder`.
+- Se sustituyó el selector roto por `app_button_primary_selector.xml`.
+- Se eliminó `values-night/themes.xml` al no contener overrides útiles.
+- Se alineó `bottom_sheet_create_task.xml` con `dimens`, colores semánticos y estilos compartidos.
+- Se refactorizó `DialogUtils`:
+  - renombrando el flujo principal a `showCreateTaskBottomSheet(...)`
+  - extrayendo helpers para dropdowns y reward preview
+  - reduciendo duplicación y acoplamiento visual
+- Se endureció `Task.normalizeLabel(...)` para eliminar diacríticos mediante `Normalizer`, permitiendo mapear correctamente textos como `Fácil` o `Difícil`.
+- Se añadió una prueba unitaria específica para esta normalización.
+- Se consolidó la modularización de recursos de texto por dominio en `values` y `values-en`.
+
+### Archivos afectados
+- `themes.xml`
+- `DialogUtils.java`
+- `Task.java`
+- `TaskActivity.java`
+- `bottom_sheet_create_task.xml`
+- `app_button_primary_selector.xml`
+- `TaskRewardCalculatorTest.java`
+- recursos `strings_*` en `values` y `values-en`
+
+### Resultado
+El tema visual queda más consistente y entendible, `DialogUtils` pasa a ser una utilidad más mantenible y el sistema de recompensas deja de depender de la forma exacta en que llega la dificultad desde la UI. Con ello se corrige el desajuste del reward preview y se refuerza la estabilidad del flujo de creación de tareas.
+
+### Pruebas realizadas
+- Ejecución de `.\gradlew.bat assembleDebug`.
+- Ejecución de `.\gradlew.bat installDebug`.
+- Ejecución de `.\gradlew.bat testDebugUnitTest`.
+- Verificación del arranque estable de la app tras la limpieza de tema.
+- Validación unitaria del cálculo de recompensas con dificultad acentuada.
+
+### Próximo paso
+Realizar validación manual completa del BottomSheet de tareas, cerrar la tabla de casos de prueba y decidir el alcance final de `Colocar` antes del cierre documental de FASE 3.

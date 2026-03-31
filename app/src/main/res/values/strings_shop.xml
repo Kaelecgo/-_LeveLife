@@ -1,24 +1,14 @@
 <resources>
     <!-- Tienda, Muebles e Inventario -->
     <string name="shop_balance_format">Tus Bayas: %1$d 🫐</string>
-    <string name="furniture_price_format">%1$d 🫐</string>
-    <string name="furniture_owned">Comprado 🛋️ </string>
+    <string name="shop_item_price">%1$d 🫐</string>
+    <string name="shop_item_owned">Comprado 🛋️ </string>
     <string name="toast_furniture_selected">Has seleccionado: %1$s por %2$d 🫐</string>
     <string name="success_buy_furniture">¡Has comprado: %1$s! 🎉</string>
     <string name="error_not_enough_berries">No tienes suficientes bayas para comprar esto 😅</string>
     <string name="error_load_catalog">Error al cargar el catálogo ⚠️</string>
     <string name="error_load_balance">Error al cargar tu balance 📉</string>
 
-
     <string name="placeholder_furniture_name">Nombre Mueble</string>
     <string name="placeholder_furniture_price">0 🫐</string>
-    <string name="content_desc_furniture_icon">Icono del mueble</string>
-
-    <string name="my_room">Mi Habitación 🏠</string>
-    <string name="action_place_furniture">Colocar 👇🏼</string>
-    <string name="empty_inventory">Tu inventario está vacío. 🎒</string>
-    <string name="error_loading_inventory">Error cargando mochila. 🎒</string>
-    <string name="success_placed_furniture">¡%1$s colocado en tu habitación! 🛋️</string>
-    <string name="main_dashboard_label">Tu progreso 📊</string>
-    <string name="main_progress_label">Progreso actual ✨</string>
 </resources>

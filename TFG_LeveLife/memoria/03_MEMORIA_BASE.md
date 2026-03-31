@@ -291,8 +291,15 @@ El registro se ha implementado como una operación consistente en el repositorio
 ### 13.2 Transacciones atómicas en compras y recompensas
 Para evitar fallos de integridad, todas las operaciones de gasto o recompensa se ejecutan dentro de bloques transaccionales. Esto garantiza coherencia entre saldo, progreso, inventario y estado de la tarea.
 
+#### Evolución del flujo de compra de muebles
+Durante una fase posterior de validación funcional se detectó una debilidad en el flujo de compra del inventario. La versión inicial evitaba duplicados físicos en la tabla cruzada mediante `OnConflictStrategy.IGNORE`, pero todavía existía un riesgo de inconsistencia si el descuento de bayas se producía antes de confirmar que la relación usuario-mueble podía consolidarse correctamente.
+
+A partir de esta incidencia, la compra dejó de depender de deducciones previas en la capa de presentación y pasó a ejecutarse íntegramente desde el repositorio como una operación transaccional. El flujo actual recupera el estado real del usuario desde base de datos, comprueba si el mueble ya pertenece al inventario, valida el saldo disponible y solo entonces actualiza simultáneamente el saldo y la relación de inventario.
+
+Esta evolución no modifica el hecho de que FASE 2 dejara resuelto el bloque base de persistencia e inventario a nivel de hito funcional, pero sí refleja una maduración posterior del sistema orientada a reforzar la integridad de datos y la separación de responsabilidades. Gracias a este cambio, la lógica de compra queda alineada con el principio de fuente única de verdad, evitando pérdidas de saldo, compras inconsistentes y dependencia excesiva de la interfaz.
+
 ### 13.3 Sistema enriquecido de tareas y hábitos
-La aplicación ha evolucionado desde una creación mínima de tareas hacia un flujo más completo. La creación se realiza ahora mediante un `BottomSheetDialog` que permite introducir metadatos adicionales y visualizar una vista previa de recompensa antes de confirmar.
+La aplicación ha evolucionado desde una creación mínima de tareas hacia un flujo más completo. La creación se realiza ahora mediante un `BottomSheetDialog`, orquestado desde `DialogUtils`, que permite introducir metadatos adicionales y visualizar una vista previa de recompensa antes de confirmar. Para desacoplar la entrada temporal del modelo persistente se utiliza además `TaskDraft`.
 
 ### 13.4 Lógica centralizada de recompensas
 El cálculo de experiencia, bayas y EcoCoins se ha desacoplado de la interfaz mediante `TaskRewardCalculator`, permitiendo adaptar la recompensa al esfuerzo y al impacto ecológico de cada tarea.
@@ -301,10 +308,13 @@ El cálculo de experiencia, bayas y EcoCoins se ha desacoplado de la interfaz me
 La lógica de recurrencia básica se apoya en `TaskRecurrenceUtils`, que permite bloquear el completado repetido de determinadas tareas dentro del periodo actual. Este bloque se considera actualmente un MVP funcional, ya que todavía no existe una entidad separada de historial completo de completados.
 
 ### 13.6 Normalización y robustez interna
-Durante la evolución del sistema se detectó un problema derivado de comparar lógica interna con textos visibles de la interfaz. Para resolverlo, se reforzó la normalización de categorías, dificultad y frecuencia dentro del modelo de tareas, desacoplando así la lógica de negocio de emojis, traducciones y variaciones visuales.
+Durante la evolución del sistema se detectó un problema derivado de comparar lógica interna con textos visibles de la interfaz. Para resolverlo, se reforzó la normalización de categorías, dificultad y frecuencia dentro del modelo de tareas, desacoplando así la lógica de negocio de emojis, traducciones y variaciones visuales. Esta normalización se amplió posteriormente para eliminar también diacríticos, lo que corrige casos en los que la dificultad llega como `Fácil` o `Difícil` y garantiza que el cálculo de recompensa no dependa del formato exacto del texto mostrado al usuario.
 
 ### 13.7 Evolución de la base de datos
 Se ha sustituido la estrategia destructiva original por un sistema de evolución controlada mediante migraciones explícitas. Este enfoque culmina en la migración a la versión 7, alineada con el nuevo sistema enriquecido de tareas y recompensas ecológicas.
+
+### 13.8 Consistencia visual, theming y recursos compartidos
+En las últimas iteraciones también se ha abordado la deuda visual y de recursos. El proyecto centraliza ahora el theming en `themes.xml`, utiliza componentes Material 3 de forma más coherente y evita mezclar parámetros de layout con estilos globales. Del mismo modo, los diálogos de confirmación y aviso se apoyan en `MaterialAlertDialogBuilder` y en un tema común, reduciendo duplicación visual en `DialogUtils`. En paralelo, los recursos de texto se han modularizado por dominio funcional (`strings_core`, `strings_home`, `strings_navigation`, `strings_inventory`, `strings_auth`, `strings_tasks`, `strings_shop` y `strings_gamification`), facilitando mantenimiento e internacionalización.
 
 ---
 
@@ -324,6 +334,7 @@ Se han ejecutado pruebas unitarias para validar:
 - asignación de EcoCoins cuando corresponde
 - bloqueo por periodo en tareas recurrentes
 - comportamiento de normalización en etiquetas
+- normalización correcta de dificultades con tilde
 
 ### 14.3 Validación funcional
 Además de las pruebas unitarias, se han realizado validaciones manuales de los flujos principales:
@@ -338,12 +349,14 @@ Además de las pruebas unitarias, se han realizado validaciones manuales de los 
 - arranque correcto tras alinear migraciones
 - repoblado del catálogo cuando la tabla de muebles está vacía
 
+Como validación adicional de la capa visual y de recursos, también se ha comprobado la compilación completa del proyecto (`assembleDebug`), la instalación en emulador (`installDebug`) y el arranque estable de la aplicación tras la limpieza del tema global y la refactorización de `DialogUtils`.
+
 ---
 
 ## 15. Conclusiones y trabajo futuro
 
 ### 15.1 Conclusiones
-LeveLife ha evolucionado de un prototipo funcional a una aplicación con una base técnica más robusta. Se ha reforzado la seguridad de credenciales, la integridad de la persistencia y la riqueza del modelo de hábitos sin romper el flujo principal de uso. Además, se ha mejorado la mantenibilidad desacoplando lógica de recompensas, representación visual y tratamiento de datos.
+LeveLife ha evolucionado de un prototipo funcional a una aplicación con una base técnica más robusta. Se ha reforzado la seguridad de credenciales, la integridad de la persistencia y la riqueza del modelo de hábitos sin romper el flujo principal de uso. Además, se ha mejorado la mantenibilidad desacoplando lógica de recompensas, representación visual, theming y tratamiento de datos.
 
 ### 15.2 Trabajo futuro
 - Definir el alcance final de la acción "Colocar" dentro del inventario.

@@ -69,7 +69,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
             tvPrice.setVisibility(View.GONE);
 
             // Cambiamos el texto del boton de "Comprar" a "Colocar"
-            btnAction.setText(itemView.getContext().getString(R.string.action_place_furniture));
+            btnAction.setText(itemView.getContext().getString(R.string.inventory_action_place));
             btnAction.setEnabled(true);
 
             btnAction.setOnClickListener(v -> listener.onPlaceClick(furniture));

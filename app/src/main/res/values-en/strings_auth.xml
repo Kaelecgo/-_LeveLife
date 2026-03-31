@@ -4,11 +4,11 @@
     <string name="hint_username">>_Username</string>
     <string name="hint_password">>_Password</string>
 
-    <string name="btn_enter">>_Start Adventure 🚀</string>
-    <string name="btn_register">>_Register 📝</string>
+    <string name="auth_action_login">>_Start Adventure 🚀</string>
+    <string name="auth_action_register">>_Register 📝</string>
 
     <string name="error_empty_fields">Please fill in all fields ❗</string>
-    <string name="error_login_failed">Error: Incorrect username or password ❌</string>
+    <string name="auth_error_login_failed">Error: Incorrect username or password ❌</string>
     <string name="error_session_expired">Your session has expired, please log in again 🔐</string>
     <string name="error_user_exists">Username already exists ⚠️</string>
 

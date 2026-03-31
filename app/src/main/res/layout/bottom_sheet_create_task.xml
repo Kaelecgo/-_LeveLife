@@ -1,104 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:clipToPadding="false">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="@dimen/spacing_large">
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/LeveLife.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_task_title">
+            android:hint="@string/tasks_hint_title">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etTaskTitle"
+                style="@style/LeveLife.EditText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
+                android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/LeveLife.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="@string/dialog_task_description_hint">
+            android:hint="@string/tasks_hint_description">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etTaskDescription"
+                style="@style/LeveLife.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minLines="2"
+                android:gravity="top|start"
+                android:inputType="textCapSentences|textMultiLine"
+                android:minLines="3"
                 android:maxLines="4" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/LeveLife.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="@string/dialog_task_category_hint"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:hint="@string/tasks_hint_category"
             app:endIconMode="dropdown_menu">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/actTaskCategory"
+                style="@style/LeveLife.AutoCompleteTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/LeveLife.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="@string/dialog_task_difficulty_hint"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:hint="@string/tasks_hint_difficulty"
             app:endIconMode="dropdown_menu">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/actTaskDifficulty"
+                style="@style/LeveLife.AutoCompleteTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/LeveLife.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="@string/dialog_task_frequency_hint"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:hint="@string/tasks_hint_frequency"
             app:endIconMode="dropdown_menu">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/actTaskFrequency"
+                style="@style/LeveLife.AutoCompleteTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/tvTaskRewardPreviewTitle"
-            android:layout_width="wrap_content"
+        <com.google.android.material.card.MaterialCardView
+            style="@style/LeveLife.Card"
+            android:id="@+id/cardRewardPreview"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/dialog_task_reward_preview_title"
-            android:textColor="@color/fourth_text_logo"
-            android:textStyle="bold" />
+            android:layout_marginTop="@dimen/spacing_large"
+            app:cardElevation="@dimen/elevation_low"
+            app:strokeColor="@color/app_chip_berries"
+            app:strokeWidth="1dp">
 
-        <TextView
-            android:id="@+id/tvTaskRewardPreview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/dialog_task_reward_preview_with_eco"
-            android:textColor="@color/reward_berries" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_medium">
+
+                <TextView
+                    android:id="@+id/tvTaskRewardPreviewTitle"
+                    style="@style/LeveLife.Text.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dialog_task_reward_preview_title" />
+
+                <TextView
+                    android:id="@+id/tvTaskRewardPreview"
+                    style="@style/LeveLife.Text.BodySecondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_small"
+                    android:text="@string/dialog_task_reward_preview_with_eco"
+                    android:textColor="@color/game_berries" />
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCreateTaskFromSheet"
+            style="@style/LeveLife.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/spacing_large"
             android:text="@string/common_action_create" />
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

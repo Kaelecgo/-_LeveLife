@@ -9,7 +9,7 @@
     <color name="brand_purple_dark">#413770</color>
 
     <!-- Gamificación -->
-    <color name="game_xp">#4CAF50</color>
+    <color name="game_xp">#63BE6A</color>
     <color name="game_berries">#FF9800</color>
     <color name="game_eco">#6BCB77</color>
 
@@ -43,6 +43,7 @@
     <color name="app_chip_berries">@color/cozy_tan</color>
     <color name="app_chip_eco">@color/cozy_green_soft</color>
     <color name="app_nav_bg">@color/cozy_green_nav</color>
+    <color name="app_nav_item_active_bg">@color/cozy_green_soft</color>
 
     <!-- COMPATIBILIDAD (Para que compilen los drawables y layouts antiguos) -->
     <color name="black">#000000</color>

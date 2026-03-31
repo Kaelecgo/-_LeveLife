@@ -120,6 +120,7 @@ Centralizar esta lógica mejora la mantenibilidad, reduce duplicación y protege
 - Se detectó un bug importante causado por comparar la lógica interna con textos visibles de UI que incluían emojis o variantes de idioma.
 - Se eliminó la dependencia directa entre lógica de negocio y textos mostrados en dropdowns.
 - Se reforzó la normalización de categorías, dificultades y frecuencias en `Task.java`.
+- Se amplió la normalización para eliminar también diacríticos y corregir el cálculo cuando la dificultad llega como `Fácil` o `Difícil`.
 - Se añadieron pruebas específicas para cubrir estos casos de normalización.
 - Se ajustó la vista previa de recompensas para recalcularse automáticamente al cambiar los selectores del formulario.
 
@@ -129,7 +130,7 @@ Los valores visibles de la interfaz podían no coincidir exactamente con las con
 
 ### Justificación técnica
 
-Este bloque demuestra una mejora clara de robustez. La lógica del sistema deja de depender de cómo se renderiza el texto en pantalla y pasa a apoyarse en reglas internas más estables, compatibles con internacionalización y cambios futuros de interfaz.
+Este bloque demuestra una mejora clara de robustez. La lógica del sistema deja de depender de cómo se renderiza el texto en pantalla y pasa a apoyarse en reglas internas más estables, compatibles con internacionalización, tildes, cambios visuales y futuras iteraciones de interfaz.
 
 ---
 
@@ -179,24 +180,32 @@ Este ajuste era necesario para cerrar un exploit funcional y mantener la coheren
 
 ---
 
-## 8. Organización de recursos e internacionalización
+## 8. Organización de recursos, internacionalización y theming compartido
 
 ### Implementación realizada
 
 - Se modularizaron los recursos de texto en archivos separados:
+    - `strings_core.xml`
+    - `strings_home.xml`
+    - `strings_navigation.xml`
+    - `strings_inventory.xml`
     - `strings_auth.xml`
     - `strings_tasks.xml`
     - `strings_shop.xml`
     - `strings_gamification.xml`
 - Se consolidó el soporte bilingüe en español e inglés.
+- Se limpió `themes.xml` para centralizar mejor los estilos Material 3 y eliminar residuos heredados.
+- Se refactorizó `DialogUtils` para apoyarse en el tema global de diálogos.
+- Se sustituyó un selector roto por `app_button_primary_selector.xml`.
+- Se eliminó un `values-night/themes.xml` vacío que no aportaba overrides reales.
 
 ### Problema que resolvía
 
-El crecimiento del archivo de recursos dificultaba el mantenimiento y aumentaba el acoplamiento entre áreas funcionales.
+El crecimiento del archivo de recursos dificultaba el mantenimiento y aumentaba el acoplamiento entre áreas funcionales. Además, la dispersión de estilos y algunos residuos heredados complicaban la estabilidad visual del proyecto.
 
 ### Justificación técnica
 
-Esta reorganización mejora la mantenibilidad del proyecto, facilita la localización de textos y prepara la base para seguir ampliando la aplicación con menor fricción.
+Esta reorganización mejora la mantenibilidad del proyecto, facilita la localización de textos, ordena el sistema visual y prepara la base para seguir ampliando la aplicación con menor fricción.
 
 ---
 
@@ -205,9 +214,11 @@ Esta reorganización mejora la mantenibilidad del proyecto, facilita la localiza
 ### Comprobaciones efectuadas
 
 - Se ejecutó en varias ocasiones `.\gradlew.bat testDebugUnitTest`.
+- Se ejecutó `.\gradlew.bat assembleDebug`.
+- Se ejecutó `.\gradlew.bat installDebug`.
 - El proyecto compila correctamente tras la integración de cambios.
 - Los tests unitarios asociados a recompensas y recurrencia continúan pasando.
-- Se añadieron casos de prueba para cubrir la normalización de etiquetas.
+- Se añadieron casos de prueba para cubrir la normalización de etiquetas y dificultades acentuadas.
 - La aplicación vuelve a arrancar sin crashear.
 - La tienda recupera correctamente su catálogo cuando la tabla está vacía.
 
@@ -230,6 +241,8 @@ Tras esta fase, LeveLife queda en un estado significativamente más maduro:
 - recurrencia básica funcional
 - creación de tareas más clara y completa
 - mejor robustez ante cambios de idioma, textos y presentación
+- theming global más consistente y mantenible
+- `DialogUtils` más limpio y desacoplado
 - validación técnica reforzada mediante pruebas unitarias
 
 En conjunto, esta iteración no solo añadió funcionalidad, sino que elevó la calidad interna del proyecto en seguridad, consistencia, mantenibilidad y capacidad de crecimiento.

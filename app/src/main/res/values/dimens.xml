@@ -29,4 +29,8 @@
     <dimen name="elevation_medium">4dp</dimen>
 
     <dimen name="chip_height">36dp</dimen>
+
+    <dimen name="progress_bar_height">24dp</dimen>
+
+    <dimen name="bottom_nav_height">72dp</dimen>
 </resources>

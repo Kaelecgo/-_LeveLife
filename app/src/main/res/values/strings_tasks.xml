@@ -1,20 +1,20 @@
 <resources>
     <!-- Tareas y Hábitos -->
-    <string name="item_task_clean">"¡No tienes tareas pendientes! Tómate un café ☕ o crea una 👇🏼"</string>
+    <string name="tasks_empty_state">¡No tienes tareas pendientes! Tómate un café ☕ o crea una 👇🏼</string>
     <string name="error_load_tasks">Error: No se pudieron cargar las tareas ⚠️</string>
     <string name="content_desc_add_task">Añadir nueva tarea ➕</string>
 
     <!-- Strings para la vista previa del item -->
-    <string name="item_task_default_title">Tarea de ejemplo 📝</string>
-    <string name="item_task_default_category">Categoría 📋</string>
+    <string name="tasks_preview_title">Tarea de ejemplo 📝</string>
+    <string name="tasks_preview_category">Categoría 📋</string>
 
     <!-- Formulario de creación (BottomSheet) -->
-    <string name="dialog_new_task_title">Nueva Tarea 📝</string>
-    <string name="hint_task_title">¿Qué tienes que hacer? ✍️</string>
-    <string name="dialog_task_description_hint">Añade una descripción breve 💬</string>
-    <string name="dialog_task_category_hint">Categoría 📋</string>
-    <string name="dialog_task_difficulty_hint">Dificultad ⚡</string>
-    <string name="dialog_task_frequency_hint">Frecuencia 🔄</string>
+    <string name="tasks_dialog_new_title">Nueva Tarea 📝</string>
+    <string name="tasks_hint_title">¿Qué tienes que hacer? ✍️</string>
+    <string name="tasks_hint_description">Añade una descripción breve 💬</string>
+    <string name="tasks_hint_category">Categoría 📋</string>
+    <string name="tasks_hint_difficulty">Dificultad ⚡</string>
+    <string name="tasks_hint_frequency">Frecuencia 🔄</string>
 
     <string name="dialog_task_reward_preview_title">Vista previa de recompensa 💎</string>
     <string name="dialog_task_reward_preview">%1$d XP | %2$d bayas 🫐</string>
@@ -30,16 +30,16 @@
 
     <string-array name="task_categories">
         <item>General</item>
-        <item>Salud y Fisico</item>
+        <item>Salud y Físico</item>
         <item>Estudio y trabajo</item>
         <item>Social y Ocio</item>
         <item>Sostenibilidad</item>
     </string-array>
 
     <string-array name="task_difficulties">
-        <item>Facil</item>
+        <item>Fácil</item>
         <item>Media</item>
-        <item>Dificil</item>
+        <item>Difícil</item>
     </string-array>
 
     <string-array name="task_frequencies">

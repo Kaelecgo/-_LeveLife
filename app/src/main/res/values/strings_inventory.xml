@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="my_room">Mi Habitación 🏠</string>
+    <string name="inventory_action_place">Colocar 👇🏼</string>
+    <string name="empty_inventory">Tu inventario está vacío. 🎒</string>
+    <string name="error_loading_inventory">Error cargando mochila. 🎒</string>
+    <string name="inventory_item_placed">¡%1$s colocado en tu habitación! 🛋️</string>
+
+    <string name="content_desc_furniture_icon">Icono del mueble</string>
+</resources>

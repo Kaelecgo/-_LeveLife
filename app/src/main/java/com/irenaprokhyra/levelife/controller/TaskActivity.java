@@ -83,7 +83,7 @@ public class TaskActivity extends AppCompatActivity {
 
         fabAddTask = findViewById(R.id.fabAddTask);
         fabAddTask.setOnClickListener(v -> {
-            DialogUtils.showCreateTaskDialog(this, draft -> {
+            DialogUtils.showCreateTaskBottomSheet(this, draft -> {
                 Task newTask = buildTaskFromDraft(draft);
                 viewModel.insertTask(newTask);
             });

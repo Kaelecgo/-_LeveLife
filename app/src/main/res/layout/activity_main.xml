@@ -9,12 +9,11 @@
     android:fitsSystemWindows="true"
     tools:context=".controller.MainActivity">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/headerCardView"
         style="@style/LeveLife.Card.Header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/corner_radius_xlarge"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -59,9 +58,9 @@
                     android:id="@+id/pbMainXp"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/spacing_large"
+                    android:layout_height="@dimen/progress_bar_height"
+                    android:minHeight="@dimen/progress_bar_height"
                     android:max="100"
-                    android:minHeight="@dimen/spacing_large"
                     android:progressDrawable="@drawable/custom_progressbar"
                     tools:progress="65" />
 
@@ -71,9 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:fontFamily="@font/nunito_bold"
                     android:text="@string/main_xp_default"
-                    android:textColor="@color/app_text_primary"
                     tools:text="65 / 100 XP" />
             </FrameLayout>
 
@@ -103,7 +100,7 @@
             </LinearLayout>
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardRoomContainer"
@@ -130,7 +127,7 @@
 
             <TextView
                 android:id="@+id/tvRoomSubtitle"
-                style="@style/LeveLife.Text.Label"
+                style="@style/LeveLife.Text.BodySecondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_tiny"
@@ -162,19 +159,18 @@
 
                     <TextView
                         android:id="@+id/tvRoomEmptyDescription"
-                        style="@style/LeveLife.Text.Label"
-                        android:layout_width="wrap_content"
+                        style="@style/LeveLife.Text.BodySecondary"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_small"
-                        android:gravity="center"
-                        android:lineSpacingExtra="2dp"
+                        android:layout_gravity="center_horizontal"
+                        android:maxWidth="280dp"
                         android:text="@string/main_room_empty_description"
-                        android:textSize="@dimen/text_size_body" />
+                        android:textSize="@dimen/text_size_body"
+                        android:textAlignment="center"/>
 
                 </LinearLayout>
-
             </FrameLayout>
-
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
@@ -186,7 +182,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_medium"
         android:layout_marginEnd="@dimen/spacing_medium"
+        android:layout_marginHorizontal="@dimen/spacing_medium"
         android:layout_marginBottom="@dimen/spacing_medium"
+        android:layout_gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

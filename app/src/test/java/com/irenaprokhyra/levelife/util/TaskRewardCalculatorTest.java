@@ -29,7 +29,16 @@ public class TaskRewardCalculatorTest {
 
     @Test
     public void calculateRewards_emojiLabels_areNormalized() {
-        TaskReward reward = TaskRewardCalculator.calculateRewards("Dificil 🔥", "Sostenibilidad 🌱");
+        TaskReward reward = TaskRewardCalculator.calculateRewards("Dificil fire", "Sostenibilidad eco");
+
+        assertEquals(40, reward.getRewardXP());
+        assertEquals(20, reward.getRewardBerries());
+        assertEquals(3, reward.getEcoReward());
+    }
+
+    @Test
+    public void calculateRewards_accentedDifficulty_isNormalized() {
+        TaskReward reward = TaskRewardCalculator.calculateRewards("Dif\u00edcil", Task.CATEGORY_ECO);
 
         assertEquals(40, reward.getRewardXP());
         assertEquals(20, reward.getRewardBerries());

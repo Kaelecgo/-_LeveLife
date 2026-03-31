@@ -1,5 +1,7 @@
 package com.irenaprokhyra.levelife.model;
 
+import java.text.Normalizer;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -182,7 +184,8 @@ public class Task {
             return "";
         }
 
-        return value
+        return Normalizer.normalize(value, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}+", "")
                 .replaceAll("[^\\p{L}\\p{Nd} ]", "")
                 .replaceAll("\\s+", " ")
                 .trim();

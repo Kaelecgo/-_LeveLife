@@ -3,73 +3,51 @@
 ## Estado actual
 - Arquitectura MVVM con Room, Repository, ViewModel y LiveData operativa.
 - Autenticación local reforzada con contraseñas protegidas mediante hash PBKDF2.
-- Preservación de sesión implementada y recuperación correcta desde SplashActivity.
-- Base de datos estabilizada con migraciones explícitas de Room hasta la versión 7.
-- Gestión de tareas e interfaz principal funcionales.
-- El sistema ha evolucionado de tareas básicas a un modelo de hábitos enriquecido.
-- Task soporta dificultad, frecuencia, recompensa ecológica y control temporal básico.
-- Se ha introducido una economía dual con Berries y EcoCoins.
-- La lógica de recompensas está centralizada en TaskRewardCalculator.
-- La recurrencia básica se gestiona mediante TaskRecurrenceUtils.
-- La creación de tareas se realiza mediante BottomSheetDialog con vista previa de recompensas en tiempo real.
-- Tienda operativa con compra validada de forma atómica en repositorio.
-- Inventario persistente y conectado a base de datos.
-- Modularización de recursos de texto e internacionalización en progreso consolidado.
-- Se ha reforzado la robustez desacoplando lógica interna y textos visibles de la UI mediante normalización de etiquetas.
+- Recuperación de sesión estabilizada desde `SplashActivity`.
+- Base de datos Room alineada con migraciones explícitas hasta la versión 7.
+- Sistema de tareas enriquecido con dificultad, frecuencia, recompensa ecológica y control temporal básico.
+- Economía dual operativa con Berries y EcoCoins.
+- Cálculo de recompensas desacoplado en `TaskRewardCalculator`.
+- Recurrencia MVP implementada mediante `TaskRecurrenceUtils`.
+- Creación de tareas mediante BottomSheet con vista previa de recompensa.
+- Theming global unificado con Material 3 y estilos compartidos `LeveLife.*`.
+- `DialogUtils` refactorizado para centralizar BottomSheet y diálogos de confirmación.
+- Recursos de texto modularizados por dominio en español e inglés.
+- Normalización de etiquetas endurecida para soportar traducciones, emojis y diacríticos.
 
 ## Bloque actual
-Cierre del núcleo técnico enriquecido, validación funcional del nuevo sistema de hábitos y consolidación documental de FASE 3 con criterio realista de transición hacia FASE 4.
+Estabilización final del núcleo técnico, cierre documental de FASE 3 y preparación del paquete de evidencias para tutoría y defensa.
 
 ## Avances recientes
-- La compra de muebles se ejecuta dentro de una transacción del repositorio.
-- Se valida dentro de la transacción si el usuario ya posee el mueble.
-- Se valida saldo suficiente antes de descontar bayas.
-- Se evita la deducción local de bayas desde el ViewModel.
-- La finalización de tareas se ejecuta de forma atómica en el repositorio.
-- Se centralizan mensajes de error y recompensa en el ViewModel mediante LiveData.
-- Se restauró el feedback visual de recompensa al completar tareas mediante un evento observable.
-- Se reforzó la autenticación sustituyendo la validación en texto plano por contraseñas protegidas mediante hash.
-- Se mejoró el flujo de registro para hacerlo más fiable y coherente con el acceso automático del usuario tras el alta.
-- Se corrigió la recuperación de sesión desde SplashActivity unificando la clave persistida del usuario activo.
-- Se eliminó la dependencia de fallbackToDestructiveMigration() como estrategia principal y se sustituyó por migraciones explícitas de Room.
-- Se completó la migración 6 -> 7 añadiendo correctamente los nuevos campos del sistema enriquecido.
-- Se recuperó sobre master el sistema avanzado de creación de tareas mediante BottomSheet.
-- Se integraron EcoCoins en el modelo de usuario, en la interfaz principal y en el flujo de recompensas.
-- Se centralizó el cálculo de premios en TaskRewardCalculator.
-- Se integró recurrencia básica por periodo actual mediante TaskRecurrenceUtils.
-- Se reforzó la normalización de categorías, dificultad y frecuencia para evitar errores causados por traducciones, emojis o textos visibles de UI.
-- Se corrigió el exploit por el que una tarea podía recompensar sin quedar correctamente marcada.
-- Se ajustó el orden visual de tareas según estado completado en el periodo actual.
-- La tienda vuelve a repoblar el catálogo automáticamente si la tabla furniture está vacía.
+- Se corrigió el crash de `LoginActivity` provocado por la inflación del layout y la mezcla entre parámetros de layout y estilos.
+- Se limpió `themes.xml`, manteniendo una jerarquía de estilos compatible con la herencia implícita de Android (`LeveLife`, `LeveLife.Text`, `LeveLife.Card`).
+- Se centralizó el estilo de diálogos con `MaterialAlertDialogBuilder` y tema global de aplicación.
+- Se refactorizó `DialogUtils` para separar mejor orquestación, binding de dropdowns y renderizado del reward preview.
+- Se renombró el flujo de creación a `showCreateTaskBottomSheet(...)`, alineándolo con el comportamiento real.
+- Se sustituyó un selector de color roto por `app_button_primary_selector.xml`.
+- Se eliminó un `values-night/themes.xml` vacío que no aportaba overrides reales.
+- Se limpió `bottom_sheet_create_task.xml` para usar `dimens`, colores semánticos y estilos compartidos.
+- Se amplió la normalización de `Task` para eliminar diacríticos y corregir el cálculo de recompensas cuando la dificultad llega como `Fácil` o `Difícil`.
+- Se añadió una prueba unitaria específica para esa normalización con tildes.
+- Se consolidó la modularización de recursos de texto en `strings_core`, `strings_home`, `strings_navigation`, `strings_inventory`, `strings_auth`, `strings_tasks`, `strings_shop` y `strings_gamification`.
 
 ## Validaciones realizadas
-- Completar tarea normal: correcto ✅
-- Completar tarea ya completada: no reaplica recompensa ✅
-- Comprar mueble con saldo: correcto ✅
-- Comprar mueble sin saldo: bloqueado desde UI ✅
-- Comprar mueble repetido: bloqueado desde UI con estado Purchased ✅
-- Persistencia de saldo tras reinicio: correcta ✅
-- Persistencia de inventario tras reinicio: correcta ✅
-- Subida de nivel con animación y feedback visual: correcta ✅
-- Flujo de usuario nuevo desde registro hasta primera compra: correcto ✅
-- Recuperación de sesión desde SplashActivity: correcta ✅
-- Toast de recompensa al completar tarea: restaurado y funcional ✅
-- Registro reforzado, auto-login y autenticación con hash: correctos ✅
-- Reward preview del formulario enriquecido: funcional ✅
-- Recompensas dinámicas según dificultad: correctas ✅
-- EcoCoins aplicadas correctamente en tareas ecológicas ✅
-- Recurrencia básica con bloqueo por periodo: funcional ✅
-- Tests unitarios de recompensas y recurrencia: correctos ✅
-- Arranque estable tras alinear esquema y migración 6 -> 7: correcto ✅
-- Repoblado automático del catálogo de tienda si está vacío: correcto ✅
+- `.\gradlew.bat assembleDebug` correcto.
+- `.\gradlew.bat installDebug` correcto.
+- `.\gradlew.bat testDebugUnitTest` correcto.
+- Arranque estable de la app tras la limpieza del tema.
+- `LoginActivity` deja de crashear al inflar su layout.
+- Cálculo de recompensas correcto para dificultad acentuada (`Difícil`).
+- Recompensas ecológicas y economía dual cubiertas por pruebas unitarias.
+- BottomSheet de tareas compilando y enlazado con `TaskActivity`.
 
 ## Próxima sesión
-Formalizar la tabla de casos de prueba, preparar evidencias visuales del flujo principal, cerrar documentalmente FASE 3 y decidir el alcance final real de la acción "Colocar" antes de fijar qué parte de FASE 4 entra en la versión final del TFG.
+Completar validación manual de extremo a extremo del flujo de tareas, cerrar la tabla de casos de prueba, preparar evidencias visuales y decidir el alcance final de la acción `Colocar`.
 
 ## Pendientes mayores
-- Formalizar tabla completa de casos de prueba.
+- Formalizar la tabla completa de casos de prueba con resultado esperado y real.
 - Preparar evidencias visuales reutilizables para memoria y defensa.
-- Definir el alcance final de la acción "Colocar" dentro del inventario.
-- Cerrar el documento final de FASE 3 para tutoría.
-- Decidir qué elementos de FASE 4 se implementan realmente y cuáles quedan como ampliación futura.
-- Mantener coherencia entre panel, bitácora, backlog, memoria y defensa.
+- Definir el comportamiento funcional definitivo de `Colocar` en inventario/habitación.
+- Decidir si la colocación persistente entra en esta versión o queda como ampliación futura.
+- Revalidar manualmente reward preview, EcoCoins y recurrencia MVP tras las últimas correcciones.
+- Mantener coherencia entre panel, bitácora, backlog, memoria y trazabilidad.

@@ -1,20 +1,31 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="Base.Theme.LeveLife" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:fontFamily">@font/nunito_regular</item>
         <item name="colorPrimary">@color/app_button_primary</item>
+        <item name="colorOnPrimary">@color/neutral_white</item>
         <item name="android:windowBackground">@color/app_background</item>
+
+        <item name="colorSurface">@color/app_surface_card</item>
+        <item name="colorOnSurface">@color/app_text_primary</item>
+        <item name="colorSecondary">@color/app_text_accent</item>
+
+
+        <item name="materialButtonStyle">@style/LeveLife.Button</item>
+        <item name="textInputStyle">@style/LeveLife.TextInputLayout</item>
+        <item name="materialAlertDialogTheme">@style/LeveLife.AlertDialog</item>
+        <item name="bottomSheetDialogTheme">@style/LeveLife.BottomSheetDialog</item>
     </style>
 
     <style name="Theme.LeveLife" parent="Base.Theme.LeveLife" />
 
-    <!-- Estilos base para herencia por puntos -->
+    <!-- Padres base para la jerarquía de estilos con notación por puntos -->
     <style name="LeveLife" />
     <style name="LeveLife.Text" parent="LeveLife" />
     <style name="LeveLife.Card" parent="Widget.Material3.CardView.Elevated" />
 
     <!-- CARDS -->
-    <style name="LeveLife.Card.Base">
+    <style name="LeveLife.Card.Base" parent="LeveLife.Card">
         <item name="cardBackgroundColor">@color/app_surface_card</item>
         <item name="cardCornerRadius">@dimen/corner_radius_large</item>
         <item name="cardElevation">@dimen/elevation_low</item>
@@ -47,6 +58,12 @@
         <item name="android:fontFamily">@font/nunito_regular</item>
     </style>
 
+    <style name="LeveLife.Text.BodySecondary">
+        <item name="android:textColor">@color/app_text_secondary</item>
+        <item name="android:textSize">@dimen/text_size_body</item>
+        <item name="android:fontFamily">@font/nunito_regular</item>
+    </style>
+
     <style name="LeveLife.Text.Title">
         <item name="android:textColor">@color/app_text_primary</item>
         <item name="android:textSize">@dimen/text_size_title</item>
@@ -73,15 +90,26 @@
         <item name="android:textColorHint">@color/app_text_secondary</item>
     </style>
 
+    <style name="LeveLife.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/app_surface_card</item>
+        <item name="boxStrokeColor">@color/app_text_secondary</item>
+        <item name="hintTextColor">@color/app_text_secondary</item>
+        <item name="boxCornerRadiusTopStart">@dimen/corner_radius_large</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/corner_radius_large</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/corner_radius_large</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/corner_radius_large</item>
+    </style>
+
     <!-- BUTTONS -->
     <style name="LeveLife.Button" parent="Widget.Material3.Button">
         <item name="android:fontFamily">@font/nunito_bold</item>
-        <item name="backgroundTint">@color/app_button_primary</item>
+        <item name="backgroundTint">@color/app_button_primary_selector</item>
     </style>
 
     <style name="LeveLife.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
         <item name="android:fontFamily">@font/nunito_bold</item>
         <item name="android:textColor">@color/app_text_accent</item>
+        <item name="android:layout_marginTop">@dimen/spacing_small</item>
         <item name="strokeColor">@color/app_text_accent</item>
     </style>
 
@@ -98,4 +126,28 @@
         <item name="android:textSize">@dimen/text_size_body</item>
     </style>
 
+    <style name="LeveLife.AlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/app_surface_card</item>
+        <item name="colorPrimary">@color/app_button_primary</item>
+        <item name="buttonBarPositiveButtonStyle">@style/LeveLife.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/LeveLife.DialogButton</item>
+    </style>
+
+    <style name="LeveLife.DialogButton" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/app_button_primary</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:fontFamily">@font/nunito_bold</item>
+    </style>
+
+    <style name="LeveLife.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/LeveLife.BottomSheet</item>
+    </style>
+
+    <style name="LeveLife.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_bottom_sheet_surface</item>
+    </style>
+
+    <style name="LeveLife.AutoCompleteTextView" parent="Widget.Material3.AutoCompleteTextView.OutlinedBox">
+        <item name="android:textColor">@color/app_text_primary</item>
+    </style>
 </resources>

@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">LeveLife</string>
+
+    <string name="common_loading">Cargando...⏳</string>
+
+    <string name="common_action_yes">Sí ✅</string>
+    <string name="common_action_no">No ❌</string>
+    <string name="common_action_create">Crear ✨</string>
+    <string name="common_action_buy">Comprar 🛒</string>
+    <string name="common_action_logout">Cerrar Sesión 🚪</string>
+    <string name="common_error_session_lost">Error: Se ha perdido la sesión 🔐</string>
+
+    <string name="dialog_logout_message">¿Estás seguro de que quieres salir?</string>
+</resources>

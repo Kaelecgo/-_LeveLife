@@ -1,20 +1,20 @@
 <resources>
     <!-- Tasks & Habits -->
-    <string name="item_task_clean">"No pending tasks! Grab a coffee ☕ or create one 👇🏼"</string>
+    <string name="tasks_empty_state">No pending tasks! Grab a coffee ☕ or create one 👇🏼</string>
     <string name="error_load_tasks">Error: Could not load tasks ⚠️</string>
     <string name="content_desc_add_task">Add new task ➕</string>
 
     <!-- Preview Strings for Layout -->
-    <string name="item_task_default_title">Example Task 📝</string>
-    <string name="item_task_default_category">Category 📋</string>
+    <string name="tasks_preview_title">Example Task 📝</string>
+    <string name="tasks_preview_category">Category 📋</string>
 
     <!-- Creation Form (BottomSheet) -->
-    <string name="dialog_new_task_title">New Task 📝</string>
-    <string name="hint_task_title">What do you need to do?</string>
-    <string name="dialog_task_description_hint">Add a brief description 💬</string>
-    <string name="dialog_task_category_hint">Category 📋</string>
-    <string name="dialog_task_difficulty_hint">Difficulty ⚡</string>
-    <string name="dialog_task_frequency_hint">Frequency 🔄</string>
+    <string name="tasks_dialog_new_title">New Task 📝</string>
+    <string name="tasks_hint_title">What do you need to do? ✍️</string>
+    <string name="tasks_hint_description">Add a brief description 💬</string>
+    <string name="tasks_hint_category">Category 📋</string>
+    <string name="tasks_hint_difficulty">Difficulty ⚡</string>
+    <string name="tasks_hint_frequency">Frequency 🔄</string>
 
     <string name="dialog_task_reward_preview_title">Reward Preview 💎</string>
     <string name="dialog_task_reward_preview">%1$d XP | %2$d Berries 🫐</string>

@@ -92,14 +92,14 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
 
         public void bind(Furniture furniture, OnFurnitureBuyClickListener listener, int balance, List<Integer> ownedIds) {
             tvName.setText(furniture.getName());
-            String priceText = itemView.getContext().getString(R.string.furniture_price_format, furniture.getPrice());
+            String priceText = itemView.getContext().getString(R.string.shop_item_price, furniture.getPrice());
             tvPrice.setText(priceText);
 
             // >_ MEJORA UX | Validación Visual de Fondos _<
             if (ownedIds.contains(furniture.getId())) {
                 // Ya lo tiene comprado
                 btnBuy.setEnabled(false);
-                btnBuy.setText(R.string.furniture_owned);
+                btnBuy.setText(R.string.shop_item_owned);
             } else if (balance >= furniture.getPrice()) {
                 btnBuy.setEnabled(true);
                 btnBuy.setText(R.string.common_action_buy);

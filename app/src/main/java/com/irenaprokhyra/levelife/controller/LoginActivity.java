@@ -113,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onError(String message) {
                 runOnUiThread(() -> Toast.makeText(
                         LoginActivity.this,
-                        getString(R.string.error_login_failed),
+                        getString(R.string.auth_error_login_failed),
                         Toast.LENGTH_SHORT
                 ).show());
             }

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardBottomNav"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
-    app:cardBackgroundColor="@color/bottom_nav_bg"
-    app:cardCornerRadius="24dp"
-    app:cardElevation="3dp">
+    android:layout_height="@dimen/bottom_nav_height"
+    app:cardBackgroundColor="@color/app_nav_bg"
+    app:cardCornerRadius="@dimen/corner_radius_xlarge"
+    app:cardElevation="@dimen/elevation_low">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
@@ -14,13 +15,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
-
         app:itemBackground="@drawable/bg_bottom_nav_item"
         app:itemHorizontalTranslationEnabled="false"
-        app:itemIconSize="24dp"
+        app:itemIconSize="@dimen/icon_size_medium"
         app:itemIconTint="@color/nav_icon_selector"
         app:itemRippleColor="@android:color/transparent"
         app:labelVisibilityMode="unlabeled"
         app:menu="@menu/menu_bottom_nav" />
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

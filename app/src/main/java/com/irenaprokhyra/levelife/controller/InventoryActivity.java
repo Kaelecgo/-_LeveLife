@@ -70,7 +70,7 @@ public class InventoryActivity extends AppCompatActivity {
         // o en la BD para que el mapa sepa qué PNG dibujar
 
         // Por ahora, damos feedback de éxito usando el string parametrizado
-        String successMsg = getString(R.string.success_placed_furniture, furniture.getName());
+        String successMsg = getString(R.string.inventory_item_placed, furniture.getName());
         Toast.makeText(this, successMsg, Toast.LENGTH_SHORT).show();
 
         // Opcional: Cerrar el inventario para simular que volvemos a la habitación

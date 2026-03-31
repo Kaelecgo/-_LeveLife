@@ -1,22 +1,14 @@
 <resources>
     <!-- Shop, Furniture & Inventory -->
     <string name="shop_balance_format">Your Berries: %1$d 🫐</string>
-    <string name="furniture_price_format">%1$d 🫐</string>
-    <string name="furniture_owned">Purchased 🛋️</string>
+    <string name="shop_item_price">%1$d 🫐</string>
+    <string name="shop_item_owned">Purchased 🛋️</string>
     <string name="toast_furniture_selected">Selected: %1$s for %2$d 🫐</string>
     <string name="success_buy_furniture">Successfully bought: %1$s! 🎉</string>
     <string name="error_not_enough_berries">Not enough berries to buy this 😅</string>
     <string name="error_load_catalog">Error loading catalog ⚠️</string>
     <string name="error_load_balance">Error loading balance 📉</string>
 
-
     <string name="placeholder_furniture_name">Item Name</string>
     <string name="placeholder_furniture_price">0 🫐</string>
-    <string name="content_desc_furniture_icon">Furniture icon</string>
-
-    <string name="my_room">My Room 🏠</string>
-    <string name="action_place_furniture">Place 👇🏼</string>
-    <string name="empty_inventory">Your inventory is empty 🎒</string>
-    <string name="error_loading_inventory">Error loading backpack 🎒</string>
-    <string name="success_placed_furniture">%1$s placed in your room! 🛋️</string>
 </resources>
