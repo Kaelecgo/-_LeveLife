@@ -1,53 +1,54 @@
 package com.irenaprokhyra.levelife.util;
 
 import com.irenaprokhyra.levelife.model.Task;
-
 import java.util.Calendar;
 
 public final class TaskRecurrenceUtils {
 
-    private TaskRecurrenceUtils() {
-    }
+    private TaskRecurrenceUtils() {}
 
+    /**
+     * Determina si una tarea está completada para el periodo actual basándose en su caché
+     * 'lastCompletedAt'. Ideal para uso rápido en la UI (Adapters).
+     */
     public static boolean isCompletedForCurrentPeriod(Task task) {
-        if (task == null) {
-            return false;
-        }
+        if (task == null) return false;
+        if (!task.isRecurring()) return task.isCompleted();
 
-        if (!task.isRecurring()) {
-            return task.isCompleted();
-        }
-
-        return wasCompletedInCurrentPeriod(task.getFrequency(), task.getLastCompletedAt(), System.currentTimeMillis());
+        long periodStart = getCurrentPeriodStart(task.getFrequency(), System.currentTimeMillis());
+        return task.getLastCompletedAt() >= periodStart;
     }
 
-    public static boolean wasCompletedInCurrentPeriod(String frequency, long lastCompletedAt, long now) {
-        if (lastCompletedAt <= 0L) {
-            return false;
+    /**
+     * Calcula el timestamp (ms) exacto en el que comenzó el periodo actual
+     * (día, semana o mes) para una frecuencia dada.
+     */
+    public static long getCurrentPeriodStart(String frequency, long now) {
+        String normalized = Task.normalizeFrequency(frequency);
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(now);
+
+        // Resetear siempre a las 00:00:00.000
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        if (Task.FREQUENCY_DAILY.equals(normalized)) {
+            return cal.getTimeInMillis();
         }
 
-        String normalizedFrequency = Task.normalizeFrequency(frequency);
-        Calendar lastCalendar = Calendar.getInstance();
-        lastCalendar.setTimeInMillis(lastCompletedAt);
-
-        Calendar nowCalendar = Calendar.getInstance();
-        nowCalendar.setTimeInMillis(now);
-
-        if (Task.FREQUENCY_DAILY.equals(normalizedFrequency)) {
-            return sameDay(lastCalendar, nowCalendar);
+        if (Task.FREQUENCY_WEEKLY.equals(normalized)) {
+            cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+            return cal.getTimeInMillis();
         }
 
-        if (Task.FREQUENCY_WEEKLY.equals(normalizedFrequency)) {
-            return lastCalendar.get(Calendar.YEAR) == nowCalendar.get(Calendar.YEAR)
-                    && lastCalendar.get(Calendar.WEEK_OF_YEAR) == nowCalendar.get(Calendar.WEEK_OF_YEAR);
+        if (Task.FREQUENCY_MONTHLY.equals(normalized)) {
+            cal.set(Calendar.DAY_OF_MONTH, 1);
+            return cal.getTimeInMillis();
         }
 
-        if (Task.FREQUENCY_MONTHLY.equals(normalizedFrequency)) {
-            return lastCalendar.get(Calendar.YEAR) == nowCalendar.get(Calendar.YEAR)
-                    && lastCalendar.get(Calendar.MONTH) == nowCalendar.get(Calendar.MONTH);
-        }
-
-        return false;
+        return 0L;
     }
 
     public static String getFrequencyLabel(Task task) {
@@ -55,37 +56,5 @@ public final class TaskRecurrenceUtils {
             return Task.FREQUENCY_ONCE;
         }
         return Task.normalizeFrequency(task.getFrequency());
-    }
-
-    private static boolean sameDay(Calendar first, Calendar second) {
-        return first.get(Calendar.YEAR) == second.get(Calendar.YEAR)
-                && first.get(Calendar.DAY_OF_YEAR) == second.get(Calendar.DAY_OF_YEAR);
-    }
-
-    public static long getCurrentPeriodStart(String frequency, long now) {
-        String normalizedFrequency = Task.normalizeFrequency(frequency);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(now);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        if (Task.FREQUENCY_DAILY.equals(normalizedFrequency)) {
-            return calendar.getTimeInMillis();
-        }
-
-        if (Task.FREQUENCY_WEEKLY.equals(normalizedFrequency)) {
-            calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
-            return calendar.getTimeInMillis();
-        }
-
-        if (Task.FREQUENCY_MONTHLY.equals(normalizedFrequency)) {
-            calendar.set(Calendar.DAY_OF_MONTH, 1);
-            return calendar.getTimeInMillis();
-        }
-
-        return 0L;
     }
 }
