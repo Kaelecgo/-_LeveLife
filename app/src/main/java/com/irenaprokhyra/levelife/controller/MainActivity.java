@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private int currentUserId;
     private MainViewModel viewModel;
 
-    private TextView tvMainLevel, tvMainBerries, tvMainEcoCoins, tvMainXpText;
+    private TextView tvMainSectionLabel, tvMainLevel, tvMainBerries, tvMainEcoCoins, tvMainXpText;
     private ProgressBar pbMainXp;
     private BottomNavigationView bottomNavigationView;
 
@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        tvMainSectionLabel = findViewById(R.id.tvMainSectionLabel);
         tvMainLevel = findViewById(R.id.tvMainLevel);
         tvMainBerries = findViewById(R.id.tvMainBerries);
         tvMainEcoCoins = findViewById(R.id.tvMainEcoCoins);
@@ -122,6 +123,11 @@ public class MainActivity extends AppCompatActivity {
             int currentProgress = user.getProgressPercentage();
 
             pbMainXp.setMax(100);
+
+            // Actualizar el saludo con el nombre del usuario
+            if (tvMainSectionLabel != null) {
+                tvMainSectionLabel.setText(getString(R.string.main_welcome_format, user.getName()));
+            }
 
             // Sincronización con strings_gamification.xml
             String xpText = getString(R.string.main_xp_format, user.getExperience(), user.getXpToNextLevel());

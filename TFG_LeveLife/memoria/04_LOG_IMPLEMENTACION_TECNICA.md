@@ -40,17 +40,10 @@ Este bloque mejora dos atributos de calidad esenciales del sistema: seguridad e 
 
 ### Implementación realizada
 
-- Se revisó la integración de cambios sobre `master`.
-- Se recuperó trabajo funcional desde una copia temporal de seguridad tras la sincronización del repositorio.
-- Se corrigieron inconsistencias entre el esquema real de la base de datos y las entidades de Room.
-- Se completó la migración `6 -> 7`, incorporando correctamente los nuevos campos:
-    - `eco_coins`
-    - `eco_reward`
-    - `difficulty`
-    - `frequency`
-    - `last_completed_at`
-- Se ajustaron `defaultValue` donde fue necesario para que Room validase correctamente la migración.
-- Se corrigió el repoblado del catálogo para que la tienda vuelva a cargar muebles automáticamente si la tabla `furniture` está vacía.
+- Se detectó un bug de catálogo parcial en bases antiguas.
+- La lógica previa solo repoblaba el catálogo si la tabla `furniture` estaba completamente vacía.
+- Se sustituyó por una reparación idempotente en `onOpen`, capaz de insertar únicamente los elementos faltantes.
+- Se adoptó `image_ref` como identificador técnico estable del catálogo para detectar ausencias sin duplicar los elementos ya existentes.
 
 ### Problema que resolvía
 
@@ -158,25 +151,32 @@ La nueva interfaz mejora la claridad, reduce fricción y alinea la experiencia d
 
 ---
 
-## 7. Corrección del flujo de completado y recurrencia MVP
+## 7. Transición de la recurrencia MVP a historial persistido
 
 ### Implementación realizada
 
-- Se abordó un bug por el cual una tarea recién creada podía otorgar recompensa sin quedar marcada ni deshabilitada correctamente.
-- Se ajustó el completado de tareas puntuales para que queden:
-    - marcadas como completadas
-    - deshabilitadas
-    - reordenadas al final de la lista
-- Las tareas recurrentes se controlan mediante `TaskRecurrenceUtils`, tomando como referencia el periodo actual.
-- `TaskAdapter` pasó a ordenar según el estado de completado del periodo vigente y no únicamente por un booleano persistido.
+- Se sustituyó la base lógica de recurrencia apoyada únicamente en `lastCompletedAt` por un historial persistido en `task_completions`.
+- `MainRepository.completeTask(...)` pasó a consultar el historial por tarea y periodo antes de permitir un nuevo completado.
+- El bloqueo deja de depender de comprobaciones heredadas en capas superiores y vuelve a decidirse en el repositorio.
+- Se mantuvo `TaskRecurrenceUtils` como utilidad temporal pura para cálculo de periodos y compatibilidad transitoria.
+- Se amplió la cobertura de `TaskRecurrenceUtils`.
+- Se validaron periodos diario, semanal y mensual.
+- Se validó el cálculo de inicio de periodo.
+- Se mantuvo compatibilidad con frecuencias normalizadas desde textos de UI.
+- Las tareas con el mismo título siguen tratándose como entidades independientes.
+- `lastCompletedAt` permanece temporalmente como compatibilidad visual para la UI actual.
+
+### Problema que resolvía
+
+El enfoque MVP inicial permitía bloquear tareas recurrentes por periodo, pero mezclaba demasiado lógica heredada, estado visual y persistencia simplificada. Eso dificultaba evolucionar la recurrencia de forma coherente y dejaba demasiado acoplamiento entre modelo viejo y flujo nuevo.
 
 ### Estado actual del bloque
 
-La recurrencia queda funcional en estado MVP. El sistema ya soporta bloqueo por periodo actual, aunque todavía no existe un historial completo de completados mediante una entidad separada.
+La recurrencia real ya se apoya en historial persistido por tarea y periodo. `TaskRecurrenceUtils` queda consolidada como utilidad temporal pura y `lastCompletedAt` se mantiene únicamente como compatibilidad visual transitoria.
 
 ### Justificación técnica
 
-Este ajuste era necesario para cerrar un exploit funcional y mantener la coherencia entre recompensa, estado visible y progreso del usuario.
+Este refactor reduce la mezcla entre el modelo antiguo basado en `isCompleted` y el sistema nuevo de historial real de completados. Con ello, el bloqueo de recurrencia pasa a estar soportado por datos persistidos y no por señales débiles o estados visuales heredados.
 
 ---
 
@@ -220,7 +220,12 @@ Esta reorganización mejora la mantenibilidad del proyecto, facilita la localiza
 - Los tests unitarios asociados a recompensas y recurrencia continúan pasando.
 - Se añadieron casos de prueba para cubrir la normalización de etiquetas y dificultades acentuadas.
 - La aplicación vuelve a arrancar sin crashear.
-- La tienda recupera correctamente su catálogo cuando la tabla está vacía.
+- La reparación idempotente del catálogo detecta elementos faltantes en bases antiguas sin depender de una tabla `furniture` completamente vacía.
+- Se amplió la cobertura de pruebas sobre `TaskRecurrenceUtils`.
+- Se validaron periodos diario, semanal y mensual.
+- Se validó el cálculo de inicio de periodo.
+- `.\gradlew.bat testDebugUnitTest` sigue pasando tras el cierre de `dev/feature-task-completion-history`.
+- `.\gradlew.bat assembleDebug` sigue pasando tras la limpieza final de validaciones heredadas, DAO, adapter y formulario.
 
 ### Valor de esta validación
 
@@ -230,39 +235,46 @@ Estas comprobaciones no solo confirman el funcionamiento de nuevas features, sin
 
 ## 10. Resultado consolidado de la iteración
 
-Tras esta fase, LeveLife queda en un estado significativamente más maduro:
+Tras el cierre de este bloque, LeveLife queda en un estado significativamente más coherente a nivel técnico:
 
 - mayor seguridad en autenticación
 - persistencia más fiable y evolutiva
-- esquema de base de datos estabilizado en versión 7
-- modelo de tareas enriquecido
+- esquema de base de datos extendido hasta la versión 8
+- historial real de completados integrado en la base lógica de recurrencia
+- modelo de tareas enriquecido y más robusto
 - economía dual con EcoCoins
 - lógica de recompensas desacoplada y centralizada
-- recurrencia básica funcional
-- creación de tareas más clara y completa
-- mejor robustez ante cambios de idioma, textos y presentación
+- formulario de creación endurecido con validación de valores válidos
+- reward preview más limpio y mejor acotado
+- mejor separación entre estado persistido y compatibilidad visual temporal
 - theming global más consistente y mantenible
-- `DialogUtils` más limpio y desacoplado
-- validación técnica reforzada mediante pruebas unitarias
+- recursos de texto más legibles y ordenados
+- validación técnica reforzada mediante pruebas unitarias y compilación correcta
 
-En conjunto, esta iteración no solo añadió funcionalidad, sino que elevó la calidad interna del proyecto en seguridad, consistencia, mantenibilidad y capacidad de crecimiento.
+En conjunto, esta iteración no solo añadió infraestructura y refactors puntuales, sino que cerró de forma suficientemente limpia la transición desde la recurrencia MVP hacia un modelo apoyado en historial persistido, dejando pendiente únicamente la retirada futura de `lastCompletedAt` como compatibilidad visual temporal.
 
 ---
 
-## 11. Nota técnica - evolución de Room a v8 para historial de completados
+## 11. Cierre técnico del bloque `dev/feature-task-completion-history`
 
 ### Implementación realizada
-- Room evoluciona de la versión `7` a la versión `8`.
-- Se añade la tabla `task_completions`.
-- Se registran índices orientados a consultas por tarea y por periodo.
-- Se expone `TaskCompletionDao` desde `AppDatabase`.
-- Se registra la migración explícita `7 -> 8`.
+- Se eliminó en `MainViewModel` la validación heredada basada en `task.isCompleted()`, devolviendo el bloqueo real de recurrencia al repositorio.
+- Se corrigió en `TaskAdapter` el estado visual de las tareas recurrentes, aplicando tachado cuando corresponde y limpiándolo cuando la tarea vuelve a estar disponible.
+- Se eliminó en `TaskDao` la ordenación por `isCompleted`, al no describir correctamente el comportamiento real de hábitos recurrentes.
+- Se simplificó `TaskCompletionDao` para conservar solo los métodos realmente utilizados por el proyecto en esta iteración.
+- Se endureció la validación del formulario en `Task.java` y `DialogUtils.java`, exigiendo categoría, dificultad y frecuencia válidas.
+- Se limpió el reward preview para que solo reaccione a factores que afectan realmente a la recompensa.
+- Se reescribió `strings_tasks.xml` para eliminar texto roto y mejorar legibilidad.
+
+### Validación realizada
+- `.\gradlew.bat testDebugUnitTest` correcto.
+- `.\gradlew.bat assembleDebug` correcto.
 
 ### Estado actual
-Esta iteración deja preparada la base persistente del historial real de completados a nivel de esquema y acceso a datos.
+El flujo de completado deja de mezclar tanto la lógica heredada de `isCompleted` con el modelo nuevo apoyado en historial persistido. El bloque queda técnicamente más coherente y suficientemente limpio para considerarse cerrado dentro del alcance actual.
 
 ### Límite actual
-Todavía no se ha refactorizado `completeTask(...)`, por lo que la lógica funcional del sistema sigue apoyándose en el enfoque MVP actual.
+La retirada completa de `lastCompletedAt` como compatibilidad visual de la UI queda fuera de este cierre y pasa a considerarse mejora futura, no bug urgente del bloque actual.
 
 ---
 
@@ -277,4 +289,4 @@ Todavía no se ha refactorizado `completeTask(...)`, por lo que la lógica funci
 Las bases de datos heredadas (Legacy) no recibían las actualizaciones del catálogo mercantil tras una migración de esquema. Asimismo, existía un alto riesgo de fallo de validación interno de Room por discrepancias en la nomenclatura de los índices autogenerados frente a los manuales.
 
 ### Justificación técnica
-La optimización de la siembra de datos mediante `beginTransaction` y caché en memoria demuestra un manejo avanzado del I/O y del rendimiento. Además, el nombramiento explícito de los índices asegura el principio de "Evolución Controlada del Esquema", garantizando que el paso a producción sobre usuarios con bases de datos antiguas sea fluido, íntegro y libre de caídas (Zero-Crashes).
+La reparación idempotente del catálogo reduce riesgos sobre bases antiguas o incompletas, evita duplicados innecesarios y mejora la resiliencia del proceso de apertura de la base de datos. Además, el nombramiento explícito de índices garantiza una validación estable del esquema físico de Room durante la migración a la versión 8.

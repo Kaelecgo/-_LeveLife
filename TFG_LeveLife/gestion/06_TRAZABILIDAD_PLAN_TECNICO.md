@@ -49,6 +49,10 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 - [x] Ampliar la cobertura de `TaskRecurrenceUtils`.
 - [x] Validar periodos diario, semanal y mensual.
 - [x] Validar el cálculo de inicio de periodo.
+- [x] Eliminar la validación heredada basada en `task.isCompleted()` desde `MainViewModel`.
+- [x] Corregir el estado visual de tareas recurrentes en `TaskAdapter`.
+- [x] Eliminar la ordenación por `isCompleted` en `TaskDao`.
+- [x] Simplificar `TaskCompletionDao` al uso real actual del proyecto.
 - [x] Pruebas unitarias exhaustivas de recurrencia y normalización temporal.
 - [~] Mantener `TaskRecurrenceUtils` como utilidad temporal pura.
 - [~] Mantener `lastCompletedAt` como compatibilidad visual temporal para la UI actual.
@@ -69,6 +73,9 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 - [x] BottomSheet de creación alineado con estilos globales.
 - [x] Limpieza de `themes.xml` y eliminación de hardcodes visuales en el formulario.
 - [x] Estabilización del login tras corregir el crash de inflado.
+- [x] Endurecimiento del formulario de tareas para exigir categoría, dificultad y frecuencia válidas.
+- [x] Limpieza del `reward preview` para que solo reaccione a factores que alteran realmente la recompensa.
+- [x] Reescritura de `strings_tasks.xml` para eliminar texto roto y mejorar legibilidad.
 - [ ] Implementar filtros en `TaskActivity` (Todas, Eco, Hábitos, Pendientes).
 - [ ] Revisar empty states y feedback visual final en inventario y tienda.
 
@@ -97,6 +104,7 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 - [x] Refactor de `DialogUtils`.
 - [x] Modularización de recursos de texto por dominio.
 - [x] Sustitución de selector roto por `app_button_primary_selector.xml`.
+- [x] Reparación idempotente del catálogo de tienda en bases antiguas mediante detección de elementos faltantes por `image_ref`.
 - [ ] Revisión final de recursos y posibles caracteres mal codificados.
 
 ---
@@ -108,5 +116,6 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 - `Task.normalizeDifficulty(...)`
 - `Task.normalizeFrequency(...)`
 - `TaskRecurrenceUtils.isCompletedForCurrentPeriod(...)`
+- `TaskRecurrenceUtils.getStartOfPeriod(...)`
 - `MainRepository.completeTask(...)`
-- `TaskCompletionDao.insert(...)`
+

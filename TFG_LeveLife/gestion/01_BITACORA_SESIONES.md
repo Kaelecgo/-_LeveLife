@@ -406,4 +406,52 @@ Garantizar una actualización segura desde versiones anteriores (v7) a la v8, as
 - `TaskCompletion.java`
 
 ### Resultado
-La actualización sobre bases de datos preexistentes ahora reconcilia el catálogo de forma segura, ultra rápida y sin duplicados. El esquema de Room valida correctamente los índices físicos de la nueva tabla de historial.
+La actualización sobre bases de datos preexistentes ahora reconcilia el catálogo de forma segura, eficiente y sin duplicados. El esquema de Room valida correctamente los índices físicos de la nueva tabla de historial.
+
+---
+
+## Sesión 9 - Cierre técnico de `dev/feature-task-completion-history`
+
+### Objetivo
+Cerrar el bloque de historial real de completados con un refactor mínimo, coherente y suficiente para continuar el desarrollo sin arrastrar mezcla entre lógica heredada y modelo nuevo.
+
+### Problemas detectados
+- Seguía existiendo mezcla entre la lógica antigua basada en `isCompleted` y el modelo nuevo apoyado en historial persistido.
+- El estado visual de algunas tareas recurrentes no se restauraba correctamente al volver a estar disponibles.
+- El orden por `isCompleted` en `TaskDao` ya no describía bien el comportamiento real de hábitos recurrentes.
+- `TaskCompletionDao` mantenía más superficie de la necesaria para el uso real actual.
+- El formulario de creación todavía aceptaba combinaciones inválidas si solo se validaba “texto no vacío”.
+- El reward preview seguía reaccionando a cambios que no alteraban realmente la recompensa.
+- `strings_tasks.xml` arrastraba texto roto y falta de legibilidad.
+
+### Tareas realizadas
+- Se eliminó en `MainViewModel` la validación heredada basada en `task.isCompleted()` para que el bloqueo real vuelva a decidirse desde el repositorio.
+- Se corrigió en `TaskAdapter` el estado visual de las tareas, aplicando tachado cuando corresponde y limpiándolo cuando la tarea vuelve a estar disponible.
+- Se eliminó en `TaskDao` la ordenación por `isCompleted`.
+- Se simplificó `TaskCompletionDao` para dejar solo los métodos realmente usados por el proyecto en esta iteración.
+- Se endureció la validación del formulario en `Task.java` y `DialogUtils.java`, exigiendo categoría, dificultad y frecuencia válidas.
+- Se limpió el reward preview para que solo reaccione a los factores que afectan a la recompensa.
+- Se reescribió `strings_tasks.xml` para eliminar texto roto y dejar el bloque legible.
+
+### Archivos afectados
+- `MainViewModel.java`
+- `TaskAdapter.java`
+- `TaskDao.java`
+- `TaskCompletionDao.java`
+- `Task.java`
+- `DialogUtils.java`
+- `strings_tasks.xml`
+
+### Resultado
+El flujo de completado deja de mezclar tanto la lógica vieja de `isCompleted` con el modelo nuevo de historial persistido. El bloque queda técnicamente bastante más coherente y suficientemente limpio para darse por cerrado dentro del alcance actual.
+
+### Pruebas realizadas
+- Ejecución de `.\gradlew.bat testDebugUnitTest`.
+- Ejecución de `.\gradlew.bat assembleDebug`.
+
+### Límites de esta iteración
+- La transición completa para que la UI deje de depender de `lastCompletedAt` como caché visual temporal queda fuera de este cierre.
+- Ese ajuste se considera mejora futura, no bug urgente del bloque actual.
+
+### Próximo paso
+Continuar con la siguiente iteración del proyecto sin reabrir este bloque, dejando la retirada futura de `lastCompletedAt` como mejora posterior cuando toque cerrar la transición visual.
