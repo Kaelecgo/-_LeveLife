@@ -58,13 +58,13 @@ La versión actual del proyecto incluye un conjunto de funcionalidades centradas
 - sistema de experiencia, niveles, bayas y EcoCoins
 - formulario avanzado de creación de tareas mediante BottomSheetDialog
 - cálculo dinámico de recompensas según dificultad e impacto ecológico
-- control básico de recurrencia por periodo actual
+- historial real de completados por tarea y periodo mediante persistencia local
 - catálogo de muebles en tienda
 - compra de muebles con validación de saldo y atomicidad
 - inventario del usuario
 - persistencia de sesión y datos locales garantizada mediante migraciones explícitas de esquema
 
-Quedan como ampliaciones futuras aspectos como una habitación totalmente interactiva, colocación persistente rica de muebles, historial completo de hábitos recurrentes mediante entidad separada, sincronización en la nube, estadísticas avanzadas o una ampliación más ambiciosa del sistema ecológico.
+Quedan como ampliaciones futuras aspectos como una habitación totalmente interactiva, colocación persistente rica de muebles, retirada de la compatibilidad visual temporal basada en `lastCompletedAt`, rachas, estadísticas avanzadas y una ampliación más ambiciosa del sistema ecológico, sincronización en la nube, estadísticas avanzadas o una ampliación más ambiciosa del sistema ecológico.
 
 ---
 
@@ -96,13 +96,14 @@ En el estado actual del proyecto ya se han implementado y validado los siguiente
 - registro de usuario reforzado
 - sistema de recompensas atómico
 - tienda virtual e inventario persistente
-- cadena de migraciones explícitas hasta la versión 7
+- cadena de migraciones explícitas hasta la versión 8
 - validaciones de seguridad e integridad mediante hash de contraseñas y nombres de usuario únicos
-- enriquecimiento de la entidad Task con dificultad, frecuencia, recompensa ecológica y control temporal básico
+- enriquecimiento de la entidad Task con dificultad, frecuencia, recompensa ecológica y compatibilidad visual temporal mediante `lastCompletedAt`
 - economía dual con bayas y EcoCoins
 - creación de tareas mediante BottomSheetDialog con vista previa de recompensas
 - lógica de recompensas centralizada en `TaskRewardCalculator`
-- recurrencia básica gestionada mediante `TaskRecurrenceUtils`
+- historial real de completados mediante `TaskCompletion` y `TaskCompletionDao`
+- recurrencia real apoyada en historial persistido por tarea y periodo, con `TaskRecurrenceUtils` como utilidad temporal de apoyo
 - normalización de etiquetas para desacoplar lógica de negocio y textos visibles de UI
 - pruebas unitarias del núcleo de recompensas y recurrencia
 
@@ -235,14 +236,13 @@ La arquitectura de LeveLife se apoya en el principio de **Single Source of Truth
 
 Un pilar fundamental de la arquitectura es la gestión de credenciales mediante `PasswordUtils`. Este componente se encarga de generar y verificar hashes, además de gestionar la transición de cuentas antiguas mediante un sistema de actualización transparente durante el login.
 
-En cuanto a la persistencia, el sistema implementa migraciones explícitas hasta la versión 7 del esquema. Esto permite evolucionar el modelo sin comprometer el progreso guardado por el usuario, incluyendo campos nuevos relacionados con seguridad, recompensas ecológicas y hábitos enriquecidos.
-
+En cuanto a la persistencia, el sistema implementa migraciones explícitas hasta la versión 8 del esquema. Esto permite evolucionar el modelo sin comprometer el progreso guardado por el usuario, incluyendo la tabla `task_completions`, nuevos ajustes de recurrencia y compatibilidad visual temporal.
 ### 11.3 Lógica desacoplada y robustez del dominio
 
 La arquitectura también ha evolucionado para reducir la dependencia entre interfaz y lógica interna. Para ello:
 
 - el cálculo de recompensas se concentra en `TaskRewardCalculator`
-- la recurrencia básica se gestiona en `TaskRecurrenceUtils`
+- la recurrencia real se apoya en historial persistido por tarea y periodo, manteniéndose `TaskRecurrenceUtils` como utilidad temporal para cálculo de periodos
 - la entidad `Task` incorpora normalización de etiquetas para evitar errores provocados por emojis, traducciones o textos visibles
 
 Este enfoque mejora la mantenibilidad y hace que el sistema sea más resistente ante cambios futuros de UI o internacionalización.
@@ -281,6 +281,9 @@ Actúa como catálogo global de muebles comprables dentro de la tienda.
 ### 12.4 Tabla `user_furniture_cross_ref`
 Relaciona usuarios y muebles adquiridos en una estructura N:M mediante clave compuesta, evitando compras duplicadas del mismo mueble por un mismo usuario.
 
+### 12.5 Tabla `task_completions`
+Registra el historial real de completados por tarea y usuario. Incluye la referencia a la tarea, la referencia al usuario y la marca temporal del completado, permitiendo bloquear recompensas repetidas por tarea y periodo con una base persistida y no solo visual.
+
 ---
 
 ## 13. Implementación del sistema
@@ -304,14 +307,17 @@ La aplicación ha evolucionado desde una creación mínima de tareas hacia un fl
 ### 13.4 Lógica centralizada de recompensas
 El cálculo de experiencia, bayas y EcoCoins se ha desacoplado de la interfaz mediante `TaskRewardCalculator`, permitiendo adaptar la recompensa al esfuerzo y al impacto ecológico de cada tarea.
 
-### 13.5 Recurrencia básica y control temporal
-La lógica de recurrencia básica se apoya en `TaskRecurrenceUtils`, que permite bloquear el completado repetido de determinadas tareas dentro del periodo actual. Este bloque se considera actualmente un MVP funcional, ya que todavía no existe una entidad separada de historial completo de completados.
+### 13.5 Recurrencia real y control temporal
+La recurrencia del sistema ha evolucionado desde un enfoque MVP apoyado principalmente en `lastCompletedAt` hacia una base real sustentada por historial persistido en `task_completions`. En el estado actual, `MainRepository.completeTask(...)` consulta el historial de completados por tarea y periodo antes de conceder nuevas recompensas, evitando que el bloqueo dependa de señales débiles como `isCompleted` o de una única marca temporal simplificada.
+
+`TaskRecurrenceUtils` se mantiene como utilidad de apoyo para cálculo temporal y compatibilidad transitoria, validando periodos diario, semanal y mensual y el inicio de cada periodo. Por compatibilidad visual con la UI actual, `lastCompletedAt` permanece todavía como una capa temporal de apoyo, pero ya no constituye la base lógica principal de la recurrencia.
 
 ### 13.6 Normalización y robustez interna
 Durante la evolución del sistema se detectó un problema derivado de comparar lógica interna con textos visibles de la interfaz. Para resolverlo, se reforzó la normalización de categorías, dificultad y frecuencia dentro del modelo de tareas, desacoplando así la lógica de negocio de emojis, traducciones y variaciones visuales. Esta normalización se amplió posteriormente para eliminar también diacríticos, lo que corrige casos en los que la dificultad llega como `Fácil` o `Difícil` y garantiza que el cálculo de recompensa no dependa del formato exacto del texto mostrado al usuario.
 
-### 13.7 Evolución de la base de datos
-Se ha sustituido la estrategia destructiva original por un sistema de evolución controlada mediante migraciones explícitas. Este enfoque culmina en la migración a la versión 7, alineada con el nuevo sistema enriquecido de tareas y recompensas ecológicas.
+Se ha sustituido la estrategia destructiva original por un sistema de evolución controlada mediante migraciones explícitas. Este enfoque alcanza actualmente la versión 8 del esquema, incorporando tanto el sistema enriquecido de tareas y recompensas ecológicas como la tabla `task_completions` y los ajustes necesarios para sostener la recurrencia real mediante historial persistido.
+
+Además, en una iteración posterior se endureció la reparación del catálogo de tienda en bases antiguas, sustituyendo la lógica dependiente de una tabla vacía por una reconciliación idempotente de elementos faltantes basada en `image_ref`.
 
 ### 13.8 Consistencia visual, theming y recursos compartidos
 En las últimas iteraciones también se ha abordado la deuda visual y de recursos. El proyecto centraliza ahora el theming en `themes.xml`, utiliza componentes Material 3 de forma más coherente y evita mezclar parámetros de layout con estilos globales. Del mismo modo, los diálogos de confirmación y aviso se apoyan en `MaterialAlertDialogBuilder` y en un tema común, reduciendo duplicación visual en `DialogUtils`. En paralelo, los recursos de texto se han modularizado por dominio funcional (`strings_core`, `strings_home`, `strings_navigation`, `strings_inventory`, `strings_auth`, `strings_tasks`, `strings_shop` y `strings_gamification`), facilitando mantenimiento e internacionalización.
@@ -332,7 +338,10 @@ Se han ejecutado pruebas unitarias para validar:
 
 - cálculo de recompensas según dificultad
 - asignación de EcoCoins cuando corresponde
-- bloqueo por periodo en tareas recurrentes
+- bloqueo de recurrencia por tarea y periodo
+- validación de periodos diario, semanal y mensual
+- cálculo correcto del inicio de periodo
+- compatibilidad con frecuencias normalizadas desde textos de UI
 - comportamiento de normalización en etiquetas
 - normalización correcta de dificultades con tilde
 
@@ -347,9 +356,10 @@ Además de las pruebas unitarias, se han realizado validaciones manuales de los 
 - compra de muebles
 - persistencia de inventario y saldo
 - arranque correcto tras alinear migraciones
-- repoblado del catálogo cuando la tabla de muebles está vacía
+- reparación idempotente del catálogo en bases antiguas mediante inserción de elementos faltantes
 
 Como validación adicional de la capa visual y de recursos, también se ha comprobado la compilación completa del proyecto (`assembleDebug`), la instalación en emulador (`installDebug`) y el arranque estable de la aplicación tras la limpieza del tema global y la refactorización de `DialogUtils`.
+Asimismo, el cierre técnico del bloque de historial real de completados se validó con compilación correcta (`assembleDebug`) y mantenimiento del paso de las pruebas unitarias (`testDebugUnitTest`) tras limpiar la mezcla entre lógica heredada basada en `isCompleted` y el modelo nuevo apoyado en historial persistido.
 
 ---
 
@@ -361,7 +371,8 @@ LeveLife ha evolucionado de un prototipo funcional a una aplicación con una bas
 ### 15.2 Trabajo futuro
 - Definir el alcance final de la acción "Colocar" dentro del inventario.
 - Evolucionar el inventario hacia una habitación más interactiva.
-- Valorar una entidad separada para historial completo de hábitos recurrentes.
+- Retirar progresivamente la compatibilidad visual temporal basada en `lastCompletedAt` cuando la UI deje de necesitarla.
+- Ampliar la explotación del historial persistido con rachas, estadísticas y métricas de hábitos.
 - Separar repositorio y ViewModel por funcionalidades cuando el núcleo quede completamente estabilizado.
 - Ampliar cobertura mediante pruebas instrumentadas de interfaz.
 - Estudiar opciones de copia de seguridad externa o sincronización opcional.
