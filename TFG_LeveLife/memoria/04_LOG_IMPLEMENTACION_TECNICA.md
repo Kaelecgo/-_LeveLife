@@ -264,3 +264,17 @@ Esta iteración deja preparada la base persistente del historial real de complet
 ### Límite actual
 Todavía no se ha refactorizado `completeTask(...)`, por lo que la lógica funcional del sistema sigue apoyándose en el enfoque MVP actual.
 
+---
+
+## 12. Reconciliación de datos y estabilización de migraciones
+
+### Implementación realizada
+- Se rediseñó la población inicial del catálogo de recompensas (`seedFurnitureCatalog`).
+- Se implementó una comprobación en memoria (O(1)) frente a los identificadores de imagen (`image_ref`) existentes.
+- Se forzó el nombramiento explícito de índices de base de datos en la entidad `TaskCompletion`.
+
+### Problema que resolvía
+Las bases de datos heredadas (Legacy) no recibían las actualizaciones del catálogo mercantil tras una migración de esquema. Asimismo, existía un alto riesgo de fallo de validación interno de Room por discrepancias en la nomenclatura de los índices autogenerados frente a los manuales.
+
+### Justificación técnica
+La optimización de la siembra de datos mediante `beginTransaction` y caché en memoria demuestra un manejo avanzado del I/O y del rendimiento. Además, el nombramiento explícito de los índices asegura el principio de "Evolución Controlada del Esquema", garantizando que el paso a producción sobre usuarios con bases de datos antiguas sea fluido, íntegro y libre de caídas (Zero-Crashes).

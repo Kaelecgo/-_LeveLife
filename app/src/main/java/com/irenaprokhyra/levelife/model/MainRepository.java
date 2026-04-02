@@ -241,9 +241,38 @@ public class MainRepository {
     }
 
     private void seedStarterTasks(int userId) {
-        taskDao.insertTask(new Task(userId, "Beber agua", "Empieza el dia cuidandote", Task.CATEGORY_HEALTH, 10, 5));
-        taskDao.insertTask(new Task(userId, "Planificar el dia", "Anota tus 3 prioridades", Task.CATEGORY_GENERAL, 15, 8));
-        taskDao.insertTask(new Task(userId, "Mover el cuerpo", "Da un paseo corto o estira", Task.CATEGORY_HEALTH, 20, 10));
+        taskDao.insertTask(new Task(
+                userId,
+                "Beber agua",
+                "Empieza el dia cuidandote",
+                Task.CATEGORY_HEALTH,
+                10, 5, 0,
+                Task.DIFFICULTY_EASY,
+                Task.FREQUENCY_DAILY,
+                false
+        ));
+
+        taskDao.insertTask(new Task(
+                userId,
+                "Planificar el dia",
+                "Anota tus 3 prioridades",
+                Task.CATEGORY_GENERAL,
+                15, 8, 0,
+                Task.DIFFICULTY_EASY,
+                Task.FREQUENCY_DAILY,
+                false
+        ));
+
+        taskDao.insertTask(new Task(
+                userId,
+                "Mover el cuerpo",
+                "Da un paseo corto o estira",
+                Task.CATEGORY_HEALTH,
+                20, 10, 0,
+                Task.DIFFICULTY_MEDIUM,
+                Task.FREQUENCY_DAILY,
+                false
+        ));
     }
 
     public interface LoginCallback {

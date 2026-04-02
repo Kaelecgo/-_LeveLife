@@ -35,23 +35,31 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 ## 🔄 Fase 4: Hábitos recurrentes (En progreso)
 **Objetivo:** Implementar recurrencia real mediante historial, no solo booleanos.
 
-- [x] Lógica MVP de periodo actual en `TaskRecurrenceUtils.java`.
+- [x] Lógica MVP inicial de periodo actual en `TaskRecurrenceUtils.java`.
 - [x] Integración inicial de `lastCompletedAt` en el flujo de completado.
 - [x] Crear entidad `TaskCompletion`.
 - [x] Crear `TaskCompletionDao`.
 - [x] Integrar `TaskCompletion` en `AppDatabase.java`.
 - [x] Exponer `TaskCompletionDao` desde `AppDatabase.java`.
 - [x] Crear migración Room `7 -> 8` para soportar la nueva tabla de historial.
-- [x] Refactorizar `MainRepository.completeTask(...)` para registrar historial real de completados.
+- [x] Sustituir la base de recurrencia MVP por historial persistido en `task_completions`.
+- [x] Refactorizar `MainRepository.completeTask(...)` para consultar historial por tarea y periodo.
 - [x] Validar el bloqueo de recurrencia por instancia de tarea y periodo.
-- [x] Consolidar que tareas con el mismo título siguen siendo entidades independientes.
-- [~] Mantener `lastCompletedAt` como compatibilidad visual temporal en la UI actual.
-- [~] Mantener `TaskRecurrenceUtils` como utilidad temporal pura mientras convive la compatibilidad visual actual.
+- [x] Mantener compatibilidad con frecuencias normalizadas desde textos de UI.
+- [x] Ampliar la cobertura de `TaskRecurrenceUtils`.
+- [x] Validar periodos diario, semanal y mensual.
+- [x] Validar el cálculo de inicio de periodo.
+- [x] Pruebas unitarias exhaustivas de recurrencia y normalización temporal.
+- [~] Mantener `TaskRecurrenceUtils` como utilidad temporal pura.
+- [~] Mantener `lastCompletedAt` como compatibilidad visual temporal para la UI actual.
 - [ ] Revisar impacto final en `TaskAdapter` y `MainViewModel`.
 - [ ] Retirar `lastCompletedAt` cuando deje de ser necesario para compatibilidad visual.
 - [ ] Implementar rachas y estadísticas basadas en historial real.
+- [ ] Definir una semántica específica de duplicación por título, si finalmente se necesita.
 
-**Nota de estado:** la recurrencia real ya se apoya en historial persistido por tarea mediante `task_completions`. `TaskRecurrenceUtils` queda consolidada como utilidad temporal pura y la UI sigue usando `lastCompletedAt` como compatibilidad visual temporal.
+**Nota de estado:** la recurrencia real ya se apoya en historial persistido por tarea mediante `task_completions`. `MainRepository.completeTask(...)` consulta historial por tarea y periodo, `TaskRecurrenceUtils` queda consolidada como utilidad temporal pura y la UI sigue usando `lastCompletedAt` como compatibilidad visual temporal.
+
+**Fuera del alcance actual:** rachas, estadísticas y semántica específica de duplicación por título.
 
 ## 🔄 Fase 5: Reflejo en la UI (Parcialmente realizado)
 **Objetivo:** Mostrar la riqueza de información de las tareas y estabilizar la experiencia visual.

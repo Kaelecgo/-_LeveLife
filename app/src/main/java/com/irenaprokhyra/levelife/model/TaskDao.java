@@ -7,7 +7,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 import java.util.List;
-
 @Dao
 public interface TaskDao {
     @Insert
@@ -22,15 +21,6 @@ public interface TaskDao {
     @Query("SELECT * FROM tasks WHERE id = :id LIMIT 1")
     Task getTaskById(int id);
 
-    @Query("SELECT * FROM tasks WHERE user_id = :userId ORDER BY isCompleted ASC")
+    @Query("SELECT * FROM tasks WHERE user_id = :userId ORDER BY id ASC")
     LiveData<List<Task>> getTasksByUserIdLiveData(int userId);
-
-    @Query("SELECT * FROM tasks WHERE category = :categoryName")
-    List<Task> getTasksByCategory(String categoryName);
-
-    @Query("SELECT COUNT(*) FROM tasks WHERE user_id = :userId AND isCompleted = 1")
-    int countCompletedTasks(int userId);
-
-    @Query("SELECT COUNT(*) FROM tasks WHERE user_id = :userId AND isCompleted = 0")
-    int countPendingTasks(int userId);
 }

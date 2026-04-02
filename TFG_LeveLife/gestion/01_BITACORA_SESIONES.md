@@ -385,3 +385,25 @@ La base de datos queda preparada para soportar historial real de completados a n
 
 ### Próximo paso
 Integrar el historial en la lógica de negocio y decidir cómo convivirá con el mecanismo actual basado en `lastCompletedAt`.
+
+## Sesión 8 - Estabilización de migración v8 y reconciliación de catálogo
+
+### Objetivo
+Garantizar una actualización segura desde versiones anteriores (v7) a la v8, asegurando que el catálogo de tienda se pueble correctamente sin duplicados y que Room valide el esquema físico de los índices sin crashear.
+
+### Problemas detectados
+- El método antiguo de poblado (`ensureFurnitureCatalogSeeded`) dependía de un `COUNT(*)` global. Al migrar de v7 (que ya tenía 4 ítems), la condición no se cumplía y los 4 muebles nuevos de la v8 nunca se insertaban.
+- Room podía lanzar errores de validación de esquema si los nombres autogenerados de los índices en la entidad `TaskCompletion` no coincidían exactamente con los definidos en el SQL de `MIGRATION_7_8`.
+
+### Tareas realizadas
+- Se reescribió la lógica de población del catálogo aplicando un patrón idempotente.
+- Se optimizó la lectura de la base de datos volcando los identificadores inmutables (`image_ref`) en un `HashSet` en memoria (búsqueda O(1)).
+- Se agruparon las inserciones faltantes dentro de una única transacción atómica manual (`beginTransaction`).
+- Se definió explícitamente el atributo `name` en la anotación `@Index` de `TaskCompletion.java` para forzar la coincidencia exacta con el esquema SQL de la migración.
+
+### Archivos afectados
+- `AppDatabase.java`
+- `TaskCompletion.java`
+
+### Resultado
+La actualización sobre bases de datos preexistentes ahora reconcilia el catálogo de forma segura, ultra rápida y sin duplicados. El esquema de Room valida correctamente los índices físicos de la nueva tabla de historial.

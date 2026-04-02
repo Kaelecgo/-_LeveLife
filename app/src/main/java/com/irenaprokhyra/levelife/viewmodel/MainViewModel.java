@@ -43,7 +43,7 @@ public class MainViewModel extends AndroidViewModel {
     public LiveData<String> getRewardMessage() { return rewardMessage; }
 
     public void completeTask(Task task) {
-        if (task == null || task.isCompleted()) return;
+        if (task == null) return;
 
         User currentUser = user.getValue();
         if (currentUser == null) return;

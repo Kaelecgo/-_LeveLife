@@ -105,13 +105,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             }
             tvReward.setText(rewardText);
 
+            // Aseguramos que el tachado se elimine siempre para evitar problemas de reciclaje
+            tvTitle.setPaintFlags(tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+
             if (completedForCurrentPeriod) {
                 int disableColor = ContextCompat.getColor(itemView.getContext(), R.color.third_text_logo);
                 tvTitle.setTextColor(disableColor);
                 tvCategory.setTextColor(disableColor);
                 tvMeta.setTextColor(disableColor);
                 tvReward.setTextColor(disableColor);
-                tvTitle.setPaintFlags(tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                 cbCompleted.setEnabled(false);
                 cbCompleted.setOnClickListener(null);
             } else {
