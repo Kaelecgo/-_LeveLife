@@ -65,12 +65,10 @@ public final class DialogUtils {
 
         actTaskCategory.setOnItemClickListener((parent, dropdownView, position, id) -> updateRewardPreview.run());
         actTaskDifficulty.setOnItemClickListener((parent, dropdownView, position, id) -> updateRewardPreview.run());
-        actTaskFrequency.setOnItemClickListener((parent, dropdownView, position, id) -> updateRewardPreview.run());
 
         TextWatcher rewardPreviewWatcher = new SimpleTextWatcher(updateRewardPreview);
         actTaskCategory.addTextChangedListener(rewardPreviewWatcher);
         actTaskDifficulty.addTextChangedListener(rewardPreviewWatcher);
-        actTaskFrequency.addTextChangedListener(rewardPreviewWatcher);
 
         updateRewardPreview.run();
 
@@ -81,7 +79,10 @@ public final class DialogUtils {
             String difficulty = Task.normalizeDifficulty(readText(actTaskDifficulty));
             String frequency = Task.normalizeFrequency(readText(actTaskFrequency));
 
-            if (title.isEmpty() || category.isEmpty() || difficulty.isEmpty() || frequency.isEmpty()) {
+            if (title.isEmpty()
+                    || !Task.isKnownCategory(category)
+                    || !Task.isKnownDifficulty(difficulty)
+                    || !Task.isKnownFrequency(frequency)) {
                 Toast.makeText(context, R.string.error_invalid_task_form, Toast.LENGTH_SHORT).show();
                 return;
             }

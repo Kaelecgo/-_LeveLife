@@ -53,3 +53,15 @@
 - Contexto: El crecimiento de `strings.xml` dificultaba mantenimiento, revisión y traducción.
 - Decisión: Separar recursos en `strings_core`, `strings_home`, `strings_navigation`, `strings_inventory`, `strings_auth`, `strings_tasks`, `strings_shop` y `strings_gamification`, manteniendo paridad en `values` y `values-en`.
 - Consecuencia: El mantenimiento e internacionalización resultan más escalables y más fáciles de documentar.
+
+## DT-10 - Reconciliación idempotente del catálogo de tienda
+- Estado: Adoptada.
+- Contexto: Al actualizar la app, los nuevos ítems de la tienda no se insertaban si ya existían registros previos en la base de datos heredada.
+- Decisión: Sustituir la comprobación global por un algoritmo de reconciliación basado en caché de memoria (`HashSet`) e identificadores inmutables (`image_ref`), agrupado en una única transacción atómica en `onOpen`.
+- Consecuencia: Se garantiza que el catálogo siempre esté completo e íntegro sin importar la versión de origen, se minimiza el I/O del disco y se protege el sistema contra inserciones duplicadas ante futuros cambios de idioma (i18n).
+
+## DT-11 - Nombramiento explícito de índices en Room
+- Estado: Adoptada.
+- Contexto: Riesgo de crash (`IllegalStateException`) si Room autogeneraba nombres de índices distintos a los de la migración manual en SQL.
+- Decisión: Forzar el atributo `name` en las anotaciones `@Index` de las entidades (ej. `TaskCompletion`) para obligar a que coincidan exactamente con la migración.
+- Consecuencia: Migraciones de esquema 100% estables y sin falsos positivos en la validación de integridad de Room.

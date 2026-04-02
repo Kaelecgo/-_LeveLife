@@ -152,6 +152,30 @@ public class Task {
         return !FREQUENCY_ONCE.equals(normalizeFrequency(frequency));
     }
 
+    public static boolean isKnownCategory(String category) {
+        String normalized = normalizeCategory(category);
+        return CATEGORY_HEALTH.equals(normalized)
+                || CATEGORY_ECO.equals(normalized)
+                || CATEGORY_FOCUS.equals(normalized)
+                || CATEGORY_SOCIAL.equals(normalized)
+                || CATEGORY_GENERAL.equals(normalized);
+    }
+
+    public static boolean isKnownDifficulty(String difficulty) {
+        String normalized = normalizeDifficulty(difficulty);
+        return DIFFICULTY_EASY.equals(normalized)
+                || DIFFICULTY_MEDIUM.equals(normalized)
+                || DIFFICULTY_HARD.equals(normalized);
+    }
+
+    public static boolean isKnownFrequency(String frequency) {
+        String normalized = normalizeFrequency(frequency);
+        return FREQUENCY_ONCE.equals(normalized)
+                || FREQUENCY_DAILY.equals(normalized)
+                || FREQUENCY_WEEKLY.equals(normalized)
+                || FREQUENCY_MONTHLY.equals(normalized);
+    }
+
     public static String normalizeCategory(String category) {
         String normalized = normalizeLabel(category);
         if (startsWithLabel(normalized, CATEGORY_HEALTH) || startsWithLabel(normalized, "Health")) return CATEGORY_HEALTH;
@@ -172,10 +196,28 @@ public class Task {
 
     public static String normalizeFrequency(String frequency) {
         String normalized = normalizeLabel(frequency);
-        if (startsWithLabel(normalized, FREQUENCY_DAILY) || startsWithLabel(normalized, "Daily")) return FREQUENCY_DAILY;
-        if (startsWithLabel(normalized, FREQUENCY_WEEKLY) || startsWithLabel(normalized, "Weekly")) return FREQUENCY_WEEKLY;
-        if (startsWithLabel(normalized, FREQUENCY_MONTHLY) || startsWithLabel(normalized, "Monthly")) return FREQUENCY_MONTHLY;
-        if (startsWithLabel(normalized, FREQUENCY_ONCE) || startsWithLabel(normalized, "Once") || normalized.isEmpty()) return FREQUENCY_ONCE;
+
+        if (startsWithLabel(normalized, FREQUENCY_DAILY) || startsWithLabel(normalized, "Daily")) {
+            return FREQUENCY_DAILY;
+        }
+        if (startsWithLabel(normalized, FREQUENCY_WEEKLY) || startsWithLabel(normalized, "Weekly")) {
+            return FREQUENCY_WEEKLY;
+        }
+        if (startsWithLabel(normalized, FREQUENCY_MONTHLY) || startsWithLabel(normalized, "Monthly")) {
+            return FREQUENCY_MONTHLY;
+        }
+
+        // Compatibilidad legacy: versiones antiguas guardaban "Normal"
+        if (startsWithLabel(normalized, "Normal")) {
+            return FREQUENCY_ONCE;
+        }
+
+        if (startsWithLabel(normalized, FREQUENCY_ONCE)
+                || startsWithLabel(normalized, "Once")
+                || normalized.isEmpty()) {
+            return FREQUENCY_ONCE;
+        }
+
         return normalized;
     }
 

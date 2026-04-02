@@ -209,25 +209,124 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     private static void seedFurnitureCatalog(SupportSQLiteDatabase db) {
-        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Silla Madera', 50, 'Basico', 'furn_chair_wood', NULL, NULL)");
-        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Planta', 30, 'Decoracion', 'furn_plant_small', NULL, NULL)");
-        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('PC Gamer', 500, 'Tecnologia', 'furn_pc_gamer', NULL, NULL)");
-        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Lampara', 80, 'Iluminacion', 'furn_lamp_desk', NULL, NULL)");
-        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Estanteria', 120, 'Almacenaje', 'furn_shelf', NULL, NULL)");
-        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Cama Comoda', 300, 'Descanso', 'furn_bed', NULL, NULL)");
-        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Alfombra', 40, 'Decoracion', 'furn_rug', NULL, NULL)");
-        db.execSQL("INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES ('Ventilador Eco', 150, 'Sostenibilidad', 'furn_fan_eco', NULL, NULL)");
+        db.beginTransaction();
+        try {
+            Set<String> existingImageRefs = new HashSet<>();
+            Cursor cursor = db.query("SELECT image_ref FROM furniture");
+
+            try {
+                while (cursor.moveToNext()) {
+                    String imageRef = cursor.getString(0);
+                    if (imageRef != null) {
+                        existingImageRefs.add(imageRef);
+                    }
+                }
+            } finally {
+                cursor.close();
+            }
+
+            insertFurnitureIfMissing(db, existingImageRefs,
+                    "Silla Madera", 50, "Basico", "furn_chair_wood", null, null);
+            insertFurnitureIfMissing(db, existingImageRefs,
+                    "Planta", 30, "Decoracion", "furn_plant_small", null, null);
+            insertFurnitureIfMissing(db, existingImageRefs,
+                    "PC Gamer", 500, "Tecnologia", "furn_pc_gamer", null, null);
+            insertFurnitureIfMissing(db, existingImageRefs,
+                    "Lampara", 80, "Iluminacion", "furn_lamp_desk", null, null);
+            insertFurnitureIfMissing(db, existingImageRefs,
+                    "Estanteria", 120, "Almacenaje", "furn_shelf", null, null);
+            insertFurnitureIfMissing(db, existingImageRefs,
+                    "Cama Comoda", 300, "Descanso", "furn_bed", null, null);
+            insertFurnitureIfMissing(db, existingImageRefs,
+                    "Alfombra", 40, "Decoracion", "furn_rug", null, null);
+            insertFurnitureIfMissing(db, existingImageRefs,
+                    "Ventilador Eco", 150, "Sostenibilidad", "furn_fan_eco", null, null);
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    private static void insertFurnitureIfMissing(
+            SupportSQLiteDatabase db,
+            Set<String> existingImageRefs,
+            String name,
+            int price, String category,
+            String imageRef,
+            String description,
+            String type
+    ) {
+        if (existingImageRefs.contains(imageRef)) {
+            return;
+        }
+
+        db.execSQL(
+                "INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES (?, ?, ?, ?, ?, ?)",
+                new Object[]{name, price, category, imageRef, description, type}
+        );
+
+        existingImageRefs.add(imageRef);
     }
 
     private static void ensureFurnitureCatalogSeeded(SupportSQLiteDatabase db) {
-        Cursor cursor = db.query("SELECT COUNT(*) FROM furniture");
-        try {
-            if (cursor.moveToFirst() && cursor.getInt(0) == 0) {
-                seedFurnitureCatalog(db);
-            }
-        } finally {
-            cursor.close();
-        }
+        seedFurnitureCatalog(db);
+    }
+
+
+    private static void repairLegacyTaskFrequencies(SupportSQLiteDatabase db) {
+        db.execSQL(
+                "UPDATE tasks SET frequency = ?, difficulty = ?, isCompleted = 0, last_completed_at = 0 " +
+                        "WHERE title = ? AND description = ? AND reward_xp = ? AND reward_berries = ? " +
+                        "AND (frequency IS NULL OR frequency = ? OR frequency = '' OR frequency = ?)",
+                new Object[]{
+                        Task.FREQUENCY_DAILY,
+                        Task.DIFFICULTY_EASY,
+                        "Beber agua",
+                        "Empieza el dia cuidandote",
+                        10,
+                        5,
+                        Task.FREQUENCY_ONCE,
+                        "Normal"
+                }
+        );
+
+        db.execSQL(
+                "UPDATE tasks SET frequency = ?, difficulty = ?, isCompleted = 0, last_completed_at = 0 " +
+                        "WHERE title = ? AND description = ? AND reward_xp = ? AND reward_berries = ? " +
+                        "AND (frequency IS NULL OR frequency = ? OR frequency = '' OR frequency = ?)",
+                new Object[]{
+                        Task.FREQUENCY_DAILY,
+                        Task.DIFFICULTY_EASY,
+                        "Planificar el dia",
+                        "Anota tus 3 prioridades",
+                        15,
+                        8,
+                        Task.FREQUENCY_ONCE,
+                        "Normal"
+                }
+        );
+
+        db.execSQL(
+                "UPDATE tasks SET frequency = ?, difficulty = ?, isCompleted = 0, last_completed_at = 0 " +
+                        "WHERE title = ? AND description = ? AND reward_xp = ? AND reward_berries = ? " +
+                        "AND (frequency IS NULL OR frequency = ? OR frequency = '' OR frequency = ?)",
+                new Object[]{
+                        Task.FREQUENCY_DAILY,
+                        Task.DIFFICULTY_MEDIUM,
+                        "Mover el cuerpo",
+                        "Da un paseo corto o estira",
+                        20,
+                        10,
+                        Task.FREQUENCY_ONCE,
+                        "Normal"
+                }
+        );
+
+        db.execSQL(
+                "UPDATE tasks SET frequency = ? WHERE frequency = ?",
+                new Object[]{Task.FREQUENCY_ONCE, "Normal"}
+        );
     }
 
     private static final RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
@@ -244,6 +343,7 @@ public abstract class AppDatabase extends RoomDatabase {
             super.onOpen(db);
             databaseWriteExecutor.execute(() -> {
                 ensureFurnitureCatalogSeeded(db);
+                repairLegacyTaskFrequencies(db);
             });
         }
     };

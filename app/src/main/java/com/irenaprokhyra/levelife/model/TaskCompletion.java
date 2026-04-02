@@ -24,8 +24,8 @@ import androidx.room.PrimaryKey;
                 )
         },
         indices = {
-                @Index(value = {"user_id"}),
-                @Index(value = {"task_id", "completed_at"})
+                @Index(value = "user_id", name = "index_task_completions_user_id"),
+                @Index(value = {"task_id", "completed_at"}, name = "index_task_completions_task_id_completed_at")
         }
 )
 

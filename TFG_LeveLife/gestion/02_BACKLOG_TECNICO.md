@@ -15,7 +15,6 @@
 - [ ] Crear un empty state sólido para inventario vacío.
 - [ ] Revisar comportamiento con varios usuarios de prueba.
 - [ ] Revisar manejo de errores y feedback visual en `LoginActivity`, `ShopActivity` y `TaskActivity`.
-- [ ] Verificar migraciones reales sobre dispositivos o bases con datos previos, si se dispone de ellas.
 - [ ] Revisar la modularización final de recursos de texto en `values` y `values-en`.
 - [ ] Revisar en dispositivo la consistencia visual tras la limpieza de `themes.xml` y `DialogUtils`.
 - [ ] Confirmar si existen caracteres mal codificados visibles en recursos o documentación y corregirlos si afloran en runtime.
@@ -47,6 +46,7 @@
 - [ ] Validar migración real `7 -> 8` sobre base existente.
 
 ## Cerrado recientemente
+- [x] Verificar migraciones reales sobre dispositivos o bases con datos previos, si se dispone de ellas.
 - [x] Documentar el endurecimiento de autenticación y migraciones explícitas.
 - [x] Documentar el sistema enriquecido de `Task`, `TaskRewardCalculator` y EcoCoins.
 - [x] Documentar la normalización de etiquetas y el desacoplamiento entre UI y lógica interna.
