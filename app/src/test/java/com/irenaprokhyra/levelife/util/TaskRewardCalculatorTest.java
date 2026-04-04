@@ -82,7 +82,7 @@ public class TaskRewardCalculatorTest {
     }
 
     @Test
-    public void calculateRewards_mediumEcoTask_addsEcoRewardWithoutChangingBaseDifficultyRewards() {
+    public void calculateRewards_mediumEcoTask_grantsScaledEcoReward() {
         TaskReward reward = TaskRewardCalculator.calculateRewards(
                 Task.DIFFICULTY_MEDIUM,
                 Task.CATEGORY_ECO
@@ -90,7 +90,7 @@ public class TaskRewardCalculatorTest {
 
         assertEquals(20, reward.getRewardXP());
         assertEquals(10, reward.getRewardBerries());
-        assertEquals(3, reward.getEcoReward());
+        assertEquals(2, reward.getEcoReward());
     }
 
     @Test
@@ -126,6 +126,30 @@ public class TaskRewardCalculatorTest {
         TaskReward reward = TaskRewardCalculator.calculateRewards(
                 "Media",
                 "General 🌍"
+        );
+
+        assertEquals(20, reward.getRewardXP());
+        assertEquals(10, reward.getRewardBerries());
+        assertEquals(0, reward.getEcoReward());
+    }
+
+    @Test
+    public void calculateRewards_easyEcoTask_grantsScaledEcoReward() {
+        TaskReward reward = TaskRewardCalculator.calculateRewards(
+                Task.DIFFICULTY_EASY,
+                Task.CATEGORY_ECO
+        );
+
+        assertEquals(10, reward.getRewardXP());
+        assertEquals(5, reward.getRewardBerries());
+        assertEquals(1, reward.getEcoReward());
+    }
+
+    @Test
+    public void calculateRewards_mediumNonEcoTask_hasNoEcoCoins() {
+        TaskReward reward = TaskRewardCalculator.calculateRewards(
+                Task.DIFFICULTY_MEDIUM,
+                Task.CATEGORY_GENERAL
         );
 
         assertEquals(20, reward.getRewardXP());
