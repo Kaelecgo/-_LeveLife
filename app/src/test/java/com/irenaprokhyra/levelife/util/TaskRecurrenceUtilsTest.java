@@ -45,13 +45,51 @@ public class TaskRecurrenceUtilsTest {
     }
 
     @Test
+    public void wasCompletedInCurrentPeriod_dailyTask_exactlyAtDayStart_returnsTrue() {
+        Calendar now = Calendar.getInstance();
+        now.set(2026, Calendar.MARCH, 29, 15, 0, 0);
+        now.set(Calendar.MILLISECOND, 0);
+
+        Calendar startOfDay = (Calendar) now.clone();
+        startOfDay.set(Calendar.HOUR_OF_DAY, 0);
+        startOfDay.set(Calendar.MINUTE, 0);
+        startOfDay.set(Calendar.SECOND, 0);
+        startOfDay.set(Calendar.MILLISECOND, 0);
+
+        assertTrue(TaskRecurrenceUtils.wasCompletedInCurrentPeriod(
+                Task.FREQUENCY_DAILY,
+                startOfDay.getTimeInMillis(),
+                now.getTimeInMillis()
+        ));
+    }
+
+    @Test
+    public void wasCompletedInCurrentPeriod_dailyTask_oneMillisecondBeforeDayStart_returnsFalse() {
+        Calendar now = Calendar.getInstance();
+        now.set(2026, Calendar.MARCH, 29, 15, 0, 0);
+        now.set(Calendar.MILLISECOND, 0);
+
+        Calendar startOfDay = (Calendar) now.clone();
+        startOfDay.set(Calendar.HOUR_OF_DAY, 0);
+        startOfDay.set(Calendar.MINUTE, 0);
+        startOfDay.set(Calendar.SECOND, 0);
+        startOfDay.set(Calendar.MILLISECOND, 0);
+
+        assertFalse(TaskRecurrenceUtils.wasCompletedInCurrentPeriod(
+                Task.FREQUENCY_DAILY,
+                startOfDay.getTimeInMillis() - 1L,
+                now.getTimeInMillis()
+        ));
+    }
+
+    @Test
     public void wasCompletedInCurrentPeriod_weeklyTask_sameWeek_returnsTrue() {
         Calendar now = Calendar.getInstance();
         now.set(2026, Calendar.MARCH, 29, 15, 0, 0);
         now.set(Calendar.MILLISECOND, 0);
 
         Calendar earlierThisWeek = (Calendar) now.clone();
-        earlierThisWeek.add(Calendar.DAY_OF_YEAR, -2);
+        earlierThisWeek.set(2026, Calendar.MARCH, 27, 10, 0, 0);
 
         assertTrue(TaskRecurrenceUtils.wasCompletedInCurrentPeriod(
                 Task.FREQUENCY_WEEKLY,
@@ -67,11 +105,47 @@ public class TaskRecurrenceUtilsTest {
         now.set(Calendar.MILLISECOND, 0);
 
         Calendar lastWeek = (Calendar) now.clone();
-        lastWeek.add(Calendar.WEEK_OF_YEAR, -1);
+        lastWeek.add(Calendar.DAY_OF_YEAR, -7);
 
         assertFalse(TaskRecurrenceUtils.wasCompletedInCurrentPeriod(
                 Task.FREQUENCY_WEEKLY,
                 lastWeek.getTimeInMillis(),
+                now.getTimeInMillis()
+        ));
+    }
+
+    @Test
+    public void wasCompletedInCurrentPeriod_weeklyTask_exactlyAtWeekStart_returnsTrue() {
+        Calendar now = Calendar.getInstance();
+        now.set(2026, Calendar.MARCH, 29, 15, 0, 0);
+        now.set(Calendar.MILLISECOND, 0);
+
+        Calendar startOfWeek = Calendar.getInstance();
+        startOfWeek.setFirstDayOfWeek(Calendar.MONDAY);
+        startOfWeek.set(2026, Calendar.MARCH, 23, 0, 0, 0);
+        startOfWeek.set(Calendar.MILLISECOND, 0);
+
+        assertTrue(TaskRecurrenceUtils.wasCompletedInCurrentPeriod(
+                Task.FREQUENCY_WEEKLY,
+                startOfWeek.getTimeInMillis(),
+                now.getTimeInMillis()
+        ));
+    }
+
+    @Test
+    public void wasCompletedInCurrentPeriod_weeklyTask_oneMillisecondBeforeWeekStart_returnsFalse() {
+        Calendar now = Calendar.getInstance();
+        now.set(2026, Calendar.MARCH, 29, 15, 0, 0);
+        now.set(Calendar.MILLISECOND, 0);
+
+        Calendar startOfWeek = Calendar.getInstance();
+        startOfWeek.setFirstDayOfWeek(Calendar.MONDAY);
+        startOfWeek.set(2026, Calendar.MARCH, 23, 0, 0, 0);
+        startOfWeek.set(Calendar.MILLISECOND, 0);
+
+        assertFalse(TaskRecurrenceUtils.wasCompletedInCurrentPeriod(
+                Task.FREQUENCY_WEEKLY,
+                startOfWeek.getTimeInMillis() - 1L,
                 now.getTimeInMillis()
         ));
     }
@@ -109,6 +183,46 @@ public class TaskRecurrenceUtilsTest {
     }
 
     @Test
+    public void wasCompletedInCurrentPeriod_monthlyTask_exactlyAtMonthStart_returnsTrue() {
+        Calendar now = Calendar.getInstance();
+        now.set(2026, Calendar.MARCH, 29, 15, 0, 0);
+        now.set(Calendar.MILLISECOND, 0);
+
+        Calendar startOfMonth = (Calendar) now.clone();
+        startOfMonth.set(Calendar.DAY_OF_MONTH, 1);
+        startOfMonth.set(Calendar.HOUR_OF_DAY, 0);
+        startOfMonth.set(Calendar.MINUTE, 0);
+        startOfMonth.set(Calendar.SECOND, 0);
+        startOfMonth.set(Calendar.MILLISECOND, 0);
+
+        assertTrue(TaskRecurrenceUtils.wasCompletedInCurrentPeriod(
+                Task.FREQUENCY_MONTHLY,
+                startOfMonth.getTimeInMillis(),
+                now.getTimeInMillis()
+        ));
+    }
+
+    @Test
+    public void wasCompletedInCurrentPeriod_monthlyTask_oneMillisecondBeforeMonthStart_returnsFalse() {
+        Calendar now = Calendar.getInstance();
+        now.set(2026, Calendar.MARCH, 29, 15, 0, 0);
+        now.set(Calendar.MILLISECOND, 0);
+
+        Calendar startOfMonth = (Calendar) now.clone();
+        startOfMonth.set(Calendar.DAY_OF_MONTH, 1);
+        startOfMonth.set(Calendar.HOUR_OF_DAY, 0);
+        startOfMonth.set(Calendar.MINUTE, 0);
+        startOfMonth.set(Calendar.SECOND, 0);
+        startOfMonth.set(Calendar.MILLISECOND, 0);
+
+        assertFalse(TaskRecurrenceUtils.wasCompletedInCurrentPeriod(
+                Task.FREQUENCY_MONTHLY,
+                startOfMonth.getTimeInMillis() - 1L,
+                now.getTimeInMillis()
+        ));
+    }
+
+    @Test
     public void wasCompletedInCurrentPeriod_emojiFrequency_sameDay_returnsTrue() {
         Calendar now = Calendar.getInstance();
         now.set(2026, Calendar.MARCH, 29, 15, 0, 0);
@@ -119,6 +233,22 @@ public class TaskRecurrenceUtilsTest {
 
         assertTrue(TaskRecurrenceUtils.wasCompletedInCurrentPeriod(
                 "Diaria 🔄",
+                earlierToday.getTimeInMillis(),
+                now.getTimeInMillis()
+        ));
+    }
+
+    @Test
+    public void wasCompletedInCurrentPeriod_englishFrequency_sameDay_returnsTrue() {
+        Calendar now = Calendar.getInstance();
+        now.set(2026, Calendar.MARCH, 29, 15, 0, 0);
+        now.set(Calendar.MILLISECOND, 0);
+
+        Calendar earlierToday = (Calendar) now.clone();
+        earlierToday.set(Calendar.HOUR_OF_DAY, 9);
+
+        assertTrue(TaskRecurrenceUtils.wasCompletedInCurrentPeriod(
+                "Daily",
                 earlierToday.getTimeInMillis(),
                 now.getTimeInMillis()
         ));
@@ -159,12 +289,9 @@ public class TaskRecurrenceUtilsTest {
         );
 
         Calendar expected = Calendar.getInstance();
-        expected.setTimeInMillis(now.getTimeInMillis());
-        expected.set(Calendar.HOUR_OF_DAY, 0);
-        expected.set(Calendar.MINUTE, 0);
-        expected.set(Calendar.SECOND, 0);
+        expected.setFirstDayOfWeek(Calendar.MONDAY);
+        expected.set(2026, Calendar.MARCH, 23, 0, 0, 0);
         expected.set(Calendar.MILLISECOND, 0);
-        expected.set(Calendar.DAY_OF_WEEK, expected.getFirstDayOfWeek());
 
         assertEquals(expected.getTimeInMillis(), periodStart);
     }
