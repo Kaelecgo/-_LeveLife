@@ -5,7 +5,8 @@ import androidx.lifecycle.LiveData;
 import com.irenaprokhyra.levelife.util.PasswordUtils;
 import com.irenaprokhyra.levelife.util.TaskRecurrenceUtils;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
+import java.util.function.LongSupplier;
 
 public class MainRepository {
     private static final int WELCOME_BERRIES = 50;
@@ -16,15 +17,23 @@ public class MainRepository {
     private final TaskDao taskDao;
     private final FurnitureDao furnitureDao;
     private final TaskCompletionDao taskCompletionDao;
-    private final ExecutorService executor;
+    private final Executor executor;
+    private final LongSupplier nowProvider;
 
     private MainRepository(Application application) {
-        db = AppDatabase.getInstance(application);
-        userDao = db.userDao();
-        taskDao = db.taskDao();
-        furnitureDao = db.furnitureDao();
-        taskCompletionDao = db.taskCompletionDao();
-        executor = AppDatabase.databaseWriteExecutor;
+        this(AppDatabase.getInstance(application),
+             AppDatabase.databaseWriteExecutor,
+             System::currentTimeMillis);
+    }
+
+    MainRepository(AppDatabase db, Executor executor, LongSupplier nowProvider) {
+        this.db = db;
+        this.userDao = db.userDao();
+        this.taskDao = db.taskDao();
+        this.furnitureDao = db.furnitureDao();
+        this.taskCompletionDao = db.taskCompletionDao();
+        this.executor = executor;
+        this.nowProvider = nowProvider;
     }
 
     public static synchronized MainRepository getInstance(Application application) {
@@ -138,7 +147,7 @@ public class MainRepository {
                 final boolean[] leveledUp = {false};
 
                 Boolean result = db.runInTransaction(() -> {
-                    long now = System.currentTimeMillis();
+                    long now = nowProvider.getAsLong();
                     Task task = taskDao.getTaskById(taskId);
 
                     if (task == null || task.getUserId() != userId) return false;

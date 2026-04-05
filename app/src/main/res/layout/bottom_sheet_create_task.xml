@@ -115,14 +115,74 @@
                     android:layout_height="wrap_content"
                     android:text="@string/dialog_task_reward_preview_title" />
 
-                <TextView
-                    android:id="@+id/tvTaskRewardPreview"
-                    style="@style/LeveLife.Text.BodySecondary"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
-                    android:text="@string/dialog_task_reward_preview_with_eco"
-                    android:textColor="@color/game_berries" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!-- XP Reward -->
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_xp_small"
+                        app:tint="@color/highlight" />
+
+                    <TextView
+                        android:id="@+id/tvRewardXP"
+                        style="@style/LeveLife.Text.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/spacing_medium"
+                        android:fontFamily="@font/nunito_black"
+                        android:text="10 XP"
+                        android:textColor="@color/highlight" />
+
+                    <!-- Berries Reward -->
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_berry_small" />
+
+                    <TextView
+                        android:id="@+id/tvRewardBerries"
+                        style="@style/LeveLife.Text.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/spacing_medium"
+                        android:fontFamily="@font/nunito_black"
+                        android:text="5 bayas"
+                        android:textColor="@color/game_berries" />
+
+                    <!-- Eco Reward -->
+                    <LinearLayout
+                        android:id="@+id/layoutEcoReward"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_marginEnd="4dp"
+                            android:src="@drawable/ic_leaf_small" />
+
+                        <TextView
+                            android:id="@+id/tvRewardEco"
+                            style="@style/LeveLife.Text.Body"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/nunito_black"
+                            android:text="2 Eco"
+                            android:textColor="@color/brand_green_dark" />
+                    </LinearLayout>
+
+                </LinearLayout>
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>

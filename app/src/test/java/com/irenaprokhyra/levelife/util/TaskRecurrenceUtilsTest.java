@@ -302,6 +302,26 @@ public class TaskRecurrenceUtilsTest {
         assertEquals(0L, periodStart);
     }
 
+    @Test
+    public void getMillisUntilNextPeriod_daily_returnsMillisecondsUntilNextMidnight() {
+        Calendar now = calendarOf(2026, Calendar.MARCH, 29, 15, 30, 0, 0);
+        Calendar nextMidnight = calendarOf(2026, Calendar.MARCH, 30, 0, 0, 0, 0);
+
+        long millisLeft = TaskRecurrenceUtils.getMillisUntilNextPeriod(
+                Task.FREQUENCY_DAILY,
+                now.getTimeInMillis()
+        );
+
+        assertEquals(nextMidnight.getTimeInMillis() - now.getTimeInMillis(), millisLeft);
+    }
+
+    @Test
+    public void formatRemainingTime_moreThanOneDay_includesDayPrefix() {
+        long millis = (((2L * 24L) + 5L) * 60L * 60L + 30L * 60L + 10L) * 1000L;
+
+        assertEquals("2d 05:30:10", TaskRecurrenceUtils.formatRemainingTime(millis));
+    }
+
     private Calendar calendarOf(int year, int month, int day, int hour, int minute, int second, int millis) {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day, hour, minute, second);
