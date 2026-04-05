@@ -6,11 +6,27 @@ import static org.junit.Assert.assertTrue;
 
 import com.irenaprokhyra.levelife.model.Task;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 public class TaskRecurrenceUtilsTest {
+
+    private TimeZone originalTimeZone;
+
+    @Before
+    public void setUp() {
+        originalTimeZone = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
+
+    @After
+    public void tearDown() {
+        TimeZone.setDefault(originalTimeZone);
+    }
 
     @Test
     public void wasCompletedInCurrentPeriod_dailyTask_sameDay_returnsTrue() {
