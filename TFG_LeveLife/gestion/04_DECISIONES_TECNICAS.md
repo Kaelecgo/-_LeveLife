@@ -77,3 +77,9 @@
 - Contexto: La validación basada únicamente en comprobar que un texto no estuviera vacío permitía combinaciones inválidas en categoría, dificultad y frecuencia.
 - Decisión: Endurecer la validación del formulario para exigir valores válidos de dominio en lugar de aceptar cualquier texto no vacío.
 - Consecuencia: Se reduce la entrada de estados inconsistentes desde la UI, se protege mejor la lógica de recompensas y recurrencia, y el flujo de creación queda más coherente con el modelo interno.
+
+## DT-13 - Estrategia de Autoreparación de Datos (Self-healing) en `onOpen`
+- Estado: Adoptada.
+- Contexto: Durante la evolución del esquema (v6 -> v8), algunos registros de tareas quedaron con frecuencias nulas o valores heredados ("Normal") que rompían la nueva lógica de recurrencia y recompensas.
+- Decisión: Implementar `repairLegacyTaskFrequencies` en el callback `onOpen` de Room para detectar y corregir proactivamente registros inconsistentes en cada arranque de la aplicación.
+- Consecuencia: Se garantiza la estabilidad del sistema sin recurrir a migraciones destructivas, mejorando la experiencia de usuario y la robustez del modelo de datos frente a cambios de versiones.

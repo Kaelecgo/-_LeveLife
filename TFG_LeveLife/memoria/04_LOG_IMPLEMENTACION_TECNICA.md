@@ -278,7 +278,35 @@ La retirada completa de `lastCompletedAt` como compatibilidad visual de la UI qu
 
 ---
 
-## 12. Reconciliación de datos y estabilización de migraciones
+## 12. Validación técnica de recurrencia y completado transaccional
+
+### Implementación realizada
+- Se reforzó la batería de pruebas unitarias de `TaskRecurrenceUtils`.
+- Se añadieron casos límite para validar el inicio exacto de periodo diario, semanal y mensual.
+- Se incorporaron comprobaciones específicas del comportamiento semanal con convención fija de lunes a domingo y variantes de frecuencia en inglés.
+- Para evitar falsos fallos dependientes del entorno, los tests se estabilizaron fijando una zona horaria controlada y utilizando helpers de calendario reutilizables.
+- Se preparó una validación de integración real sobre Room para `MainRepository.completeTask(...)`.
+- La suite de integración se ejecutó sobre una base en memoria, con control explícito del tiempo y ejecución síncrona del repositorio en entorno de prueba.
+- Esto permitió validar el flujo completo de lectura de tarea, validación de usuario, consulta del historial de completados, actualización de recompensas, inserción en `task_completions` y actualización del estado visible de la tarea.
+
+### Resultados obtenidos
+- En las tareas de una sola ejecución, el primer completado aplica correctamente experiencia y recompensas, actualiza `last_completed_at`, registra una fila en historial y deja la tarea marcada como completada.
+- Un segundo intento sobre la misma tarea queda bloqueado sin volver a alterar ni el progreso del usuario ni el historial persistido.
+- En las tareas recurrentes, el sistema no depende del booleano `isCompleted`, sino del historial real en `task_completions`.
+- Un segundo intento dentro del mismo periodo es rechazado, mientras que un nuevo periodo vuelve a permitir la operación y genera un nuevo registro válido en historial.
+- También se comprobó el bloqueo correcto cuando un usuario intenta completar una tarea que no le pertenece.
+
+### Valor técnico del bloque
+Este trabajo desplaza la garantía de consistencia desde la interfaz hacia el núcleo del sistema. La recurrencia ya no depende solo de estados visuales o de una marca simplificada en memoria, sino de una comprobación persistente por periodo sobre historial real. A nivel de arquitectura, esto consolida el papel del `Repository` como fuente única de verdad y como orquestador transaccional entre Room, la lógica de recompensas y el estado de la tarea.
+
+### Pendientes de validación restantes
+- compra transaccional de muebles
+- autenticación con escenarios legacy
+- migraciones reales entre versiones de base de datos
+
+---
+
+## 13. Reconciliación de datos y estabilización de migraciones
 
 ### Implementación realizada
 - Se rediseñó la población inicial del catálogo de recompensas (`seedFurnitureCatalog`).
@@ -290,3 +318,42 @@ Las bases de datos heredadas (Legacy) no recibían las actualizaciones del catá
 
 ### Justificación técnica
 La reparación idempotente del catálogo reduce riesgos sobre bases antiguas o incompletas, evita duplicados innecesarios y mejora la resiliencia del proceso de apertura de la base de datos. Además, el nombramiento explícito de índices garantiza una validación estable del esquema físico de Room durante la migración a la versión 8.
+
+---
+
+## 14. Mejora de UX de recurrencia y limpieza del contador temporal
+
+### Evaluación inicial
+La mejora de UX iba en buena dirección y no introducía una rotura estructural del flujo de tareas. La aplicación seguía compilando y las pruebas unitarias pasaban correctamente, por lo que el cambio de `AlertDialog` a `BottomSheet` no comprometía la estabilidad general del bloque.
+
+### Riesgos detectados
+- El mayor riesgo estaba en `TaskAdapter.java`, donde el enfoque inicial con `Runnable` por fila podía dejar callbacks vivos al reciclar o desacoplar vistas.
+- Persistía además una incoherencia conceptual ya conocida: el repositorio validaba recurrencia con historial persistido, mientras que la UI seguía pintando apoyándose en `lastCompletedAt` como caché visual temporal.
+- Con la introducción del cronómetro visible, esta diferencia entre fuente de verdad y representación visual pasaba a ser más perceptible.
+
+### Refactor aplicado
+- Se eliminó el modelo de temporizador autónomo por `ViewHolder`.
+- Se sustituyó por un ticker compartido en el propio `TaskAdapter`, apoyado en un único `Handler` sobre el hilo principal.
+- El adapter pasó a actualizar el texto del contador mediante payloads periódicos, evitando cronómetros independientes por fila.
+- El ticker se detiene automáticamente cuando ya no existen tareas recurrentes bloqueadas visibles.
+- También se detiene al desacoplarse el adapter del `RecyclerView`, reduciendo el riesgo de fugas, callbacks persistentes fuera de pantalla y glitches durante el scroll.
+
+### Mejora visual y de recursos
+- Se limpió el `BottomSheet` informativo de reinicio diario.
+- Se añadió un botón propio en `bottom_sheet_daily_reset_info.xml`.
+- Se corrigieron textos rotos y problemas de codificación en `strings_tasks.xml`.
+- Se alineó también la versión en inglés de los textos del bloque diario.
+
+### Cobertura añadida
+- Se amplió `TaskRecurrenceUtilsTest.java` con validaciones de tiempo hasta el siguiente periodo diario.
+- Se añadió cobertura para el formato con prefijo de días cuando el tiempo restante supera las 24 horas.
+
+### Validación realizada
+- `.\gradlew.bat testDebugUnitTest` correcto.
+- `.\gradlew.bat clean assembleDebug` correcto.
+
+### Resultado
+El cronómetro de recurrencia queda bastante más seguro a nivel de adapter, el popup diario gana coherencia visual y el bloque puede darse por cerrado sin señales de rotura en compilación o pruebas unitarias.
+
+### Deuda residual
+La deuda de fondo que permanece es la ya conocida: la UI de recurrencia sigue apoyándose en `lastCompletedAt` como caché visual mientras la validación real vive en historial persistido. No se considera un bloqueo inmediato para continuar, pero sí el siguiente refactor de fondo cuando se quiera cerrar definitivamente el modelo de hábitos.

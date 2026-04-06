@@ -25,6 +25,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-DEBUG"
         }
     }
     compileOptions {

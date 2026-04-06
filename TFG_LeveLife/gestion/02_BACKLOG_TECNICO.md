@@ -1,6 +1,8 @@
 # Backlog Técnico - LeveLife
 
 ## Crítico
+- [ ] Validar compra transaccional de muebles.
+- [ ] Validar manualmente el flujo de recurrencia apoyado en historial persistido por tarea y periodo en tareas recurrentes.
 - [ ] Cerrar documento definitivo de FASE 3 para tutoría.
 - [ ] Formalizar tabla completa de casos de prueba con resultado esperado y resultado real.
 - [ ] Preparar evidencias visuales del flujo principal para memoria y defensa.
@@ -9,7 +11,6 @@
 - [ ] Probar login y registro sobre escenarios de datos migrados.
 - [ ] Revalidar manualmente el reward preview al cambiar dificultad y categoría tras la corrección de normalización.
 - [ ] Validar manualmente EcoCoins en tareas ecológicas dentro del flujo real de uso.
-- [ ] Validar manualmente el flujo de recurrencia apoyado en historial persistido por tarea y periodo en tareas recurrentes.
 
 ## Alto
 - [ ] Crear un empty state sólido para inventario vacío.
@@ -21,7 +22,9 @@
 
 ### En progreso
 - [ ] Validar migración real `7 -> 8` sobre base existente.
+- [ ] Probar autenticación con escenarios legacy.
 - [ ] Decidir en una iteración futura cuándo retirar `lastCompletedAt` como compatibilidad visual temporal de la UI.
+- [ ] Alinear la UI de recurrencia con el mismo origen de verdad persistido que ya usa el repositorio.
 
 ## Medio
 - [ ] Añadir pruebas manuales de flujo real para login, sesión persistente, registro y creación de tareas.
@@ -41,6 +44,7 @@
 - [ ] Preparar material de defensa asociado al refactor técnico y a la evolución del sistema de hábitos.
 
 ## Cerrado recientemente
+- [x] Verificar migraciones reales entre versiones de base de datos (v7 -> v8).
 - [x] Verificar migraciones reales sobre dispositivos o bases con datos previos, si se dispone de ellas.
 - [x] Documentar el endurecimiento de autenticación y migraciones explícitas.
 - [x] Documentar el sistema enriquecido de `Task`, `TaskRewardCalculator` y EcoCoins.
@@ -60,3 +64,12 @@
 - [x] Limpiar el reward preview para que solo reaccione a factores que alteran la recompensa.
 - [x] Reescribir `strings_tasks.xml` para eliminar texto roto y mejorar legibilidad.
 - [x] Aplicar hotfix de reconciliación idempotente del catálogo en bases antiguas usando `image_ref` como identificador técnico estable.
+- [x] Validar integración de `MainRepository.completeTask(...)` sobre Room.
+- [x] Confirmar el bloqueo de recurrencia por tarea y periodo mediante historial persistido.
+- [x] Ampliar la cobertura de `TaskRecurrenceUtils` con validación de periodos diario, semanal y mensual.
+- [x] Validar el cálculo de inicio de periodo con zona horaria controlada y helpers reutilizables.
+- [x] Sustituir temporizadores por fila en `TaskAdapter` por un ticker compartido más seguro.
+- [x] Limpiar el popup diario de reinicio automático y sus recursos asociados.
+- [x] Corregir textos y problemas de codificación del bloque diario en `strings_tasks.xml`.
+- [x] Ampliar `TaskRecurrenceUtilsTest` con cobertura de tiempo hasta el siguiente periodo diario y formato con prefijo de días.
+- [x] Validar `testDebugUnitTest` y `clean assembleDebug` tras la mejora de UX de recurrencia.
