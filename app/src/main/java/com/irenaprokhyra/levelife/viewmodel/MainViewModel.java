@@ -15,6 +15,7 @@ import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
     private final MainRepository repository;
+    private int currentUserId = -1;
     private LiveData<User> user;
     private LiveData<List<Task>> userTasks;
     private LiveData<List<Furniture>> inventory;
@@ -30,6 +31,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void init(int userId) {
+        this.currentUserId = userId;
         if (this.user == null) {
             user = repository.getUserLiveData(userId);
             userTasks = repository.getTasksLiveData(userId);
@@ -129,10 +131,12 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void purchaseFurniture(Furniture furniture, Runnable onSuccess) {
-        User currentUser = user.getValue();
-        if (currentUser == null) return;
+        if (currentUserId == -1) {
+            errorMessages.postValue("Sesión no válida");
+            return;
+        }
 
-        repository.purchaseFurniture(currentUser.getId(), furniture, new MainRepository.PurchaseCallback() {
+        repository.purchaseFurniture(currentUserId, furniture, new MainRepository.PurchaseCallback() {
             @Override
             public void onSuccess() {
                 if (onSuccess != null) onSuccess.run();
@@ -146,10 +150,12 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void placeFurniture(Furniture furniture, String slot, Runnable onSuccess) {
-        User currentUser = user.getValue();
-        if (currentUser == null) return;
+        if (currentUserId == -1) {
+            errorMessages.postValue("Sesión no válida");
+            return;
+        }
 
-        repository.placeFurniture(currentUser.getId(), furniture, slot, new MainRepository.PlacementCallback() {
+        repository.placeFurniture(currentUserId, furniture, slot, new MainRepository.PlacementCallback() {
             @Override
             public void onSuccess() {
                 if (onSuccess != null) onSuccess.run();
@@ -163,13 +169,12 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void removePlacedFurniture(String slot, Runnable onSuccess) {
-        User currentUser = user.getValue();
-        if (currentUser == null) {
+        if (currentUserId == -1) {
             errorMessages.postValue("Usuario no identificado");
             return;
         }
 
-        repository.removePlacedFurniture(currentUser.getId(), slot, new MainRepository.PlacementCallback() {
+        repository.removePlacedFurniture(currentUserId, slot, new MainRepository.PlacementCallback() {
             @Override
             public void onSuccess() {
                 if (onSuccess != null) onSuccess.run();

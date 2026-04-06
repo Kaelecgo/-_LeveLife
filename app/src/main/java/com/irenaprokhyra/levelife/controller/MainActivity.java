@@ -3,6 +3,8 @@ package com.irenaprokhyra.levelife.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,9 +15,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.irenaprokhyra.levelife.R;
+import com.irenaprokhyra.levelife.model.PlacedFurniture;
+import com.irenaprokhyra.levelife.model.PlacedFurnitureItem;
 import com.irenaprokhyra.levelife.model.User;
 import com.irenaprokhyra.levelife.util.DialogUtils;
+import com.irenaprokhyra.levelife.util.FurnitureDrawableResolver;
 import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
+
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,6 +33,12 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvMainSectionLabel, tvMainLevel, tvMainBerries, tvMainEcoCoins, tvMainXpText;
     private ProgressBar pbMainXp;
     private BottomNavigationView bottomNavigationView;
+
+    private View layoutRoomEmptyState;
+    private ImageView ivPlacedWall;
+    private ImageView ivPlacedFloor;
+    private ImageView ivPlacedDesk;
+    private ImageView ivPlacedDecor;
 
     private int lastKnownLevel = -1;
     private int lastKnownProgress = -1;
@@ -67,6 +80,12 @@ public class MainActivity extends AppCompatActivity {
         tvMainXpText = findViewById(R.id.tvMainXpText);
         pbMainXp = findViewById(R.id.pbMainXp);
 
+        layoutRoomEmptyState = findViewById(R.id.layoutRoomEmptyState);
+        ivPlacedWall = findViewById(R.id.ivPlacedWall);
+        ivPlacedFloor = findViewById(R.id.ivPlacedFloor);
+        ivPlacedDesk = findViewById(R.id.ivPlacedDesk);
+        ivPlacedDecor = findViewById(R.id.ivPlacedDecor);
+
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setItemIconTintList(null);
     }
@@ -75,6 +94,14 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getUser().observe(this, user -> {
             if (user != null) {
                 updateUI(user);
+            }
+        });
+
+        viewModel.getPlacedFurniture().observe(this, this::renderPlacedFurniture);
+
+        viewModel.getErrorMessages().observe(this, message -> {
+            if (message != null && !message.trim().isEmpty()) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -114,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
     private void navigateTo(Class<?> destinationClass) {
         Intent intent = new Intent(this, destinationClass);
         intent.putExtra("USER_ID", currentUserId);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
     }
 
@@ -124,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
 
             pbMainXp.setMax(100);
 
-            // Actualizar el saludo con el nombre del usuario
             if (tvMainSectionLabel != null) {
                 tvMainSectionLabel.setText(getString(R.string.main_welcome_format, user.getName()));
             }
@@ -157,19 +184,79 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void renderPlacedFurniture(List<PlacedFurnitureItem> placedFurnitureItems) {
+        Log.d("MainActivity", "renderPlacedFurniture: " + (placedFurnitureItems != null ? placedFurnitureItems.size() : "0") + " muebles recibidos.");
+
+        if (placedFurnitureItems == null || placedFurnitureItems.isEmpty()) {
+            clearPlacedFurnitureViews();
+            layoutRoomEmptyState.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        // IMPORTANTE: Ocultar el estado vacío y limpiar slots antiguos
+        layoutRoomEmptyState.setVisibility(View.GONE);
+        clearPlacedFurnitureViews();
+
+        for (PlacedFurnitureItem item : placedFurnitureItems) {
+            if (item == null) continue;
+
+            ImageView targetView = getTargetViewForSlot(item.getSlot());
+            if (targetView != null) {
+                int drawableResId = FurnitureDrawableResolver.resolveDrawableResId(this, item.getImageRef());
+                targetView.setImageResource(drawableResId);
+                targetView.setContentDescription(item.getName());
+                targetView.setVisibility(View.VISIBLE);
+                Log.d("MainActivity", "Mueble renderizado: " + item.getName() + " en " + item.getSlot());
+            }
+        }
+    }
+
+    private ImageView getTargetViewForSlot(String slot) {
+        if (PlacedFurniture.SLOT_WALL.equals(slot)) {
+            return ivPlacedWall;
+        } else if (PlacedFurniture.SLOT_FLOOR.equals(slot)) {
+            return ivPlacedFloor;
+        } else if (PlacedFurniture.SLOT_DESK.equals(slot)) {
+            return ivPlacedDesk;
+        } else if (PlacedFurniture.SLOT_DECOR.equals(slot)) {
+            return ivPlacedDecor;
+        }
+        return null;
+    }
+
+    private void clearPlacedFurnitureViews() {
+        clearImageView(ivPlacedWall);
+        clearImageView(ivPlacedFloor);
+        clearImageView(ivPlacedDesk);
+        clearImageView(ivPlacedDecor);
+    }
+
+    private void clearImageView(ImageView imageView) {
+        if (imageView == null) return;
+        imageView.setImageDrawable(null);
+        imageView.setVisibility(View.GONE);
+        imageView.setContentDescription(null);
+    }
+
+
     private void animateLevelUp(int targetLevel, int targetProgress) {
-        android.animation.ObjectAnimator animateTo100 = android.animation.ObjectAnimator.ofInt(pbMainXp, "progress", pbMainXp.getProgress(), 100);
+        android.animation.ObjectAnimator animateTo100 = android.animation.ObjectAnimator.ofInt(
+                pbMainXp, "progress", pbMainXp.getProgress(), 100);
         animateTo100.setDuration(600);
         animateTo100.addListener(new android.animation.AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(android.animation.Animator animation) {
-                Toast.makeText(MainActivity.this, getString(R.string.dialog_levelup_message, targetLevel),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        MainActivity.this,
+                        getString(R.string.dialog_levelup_message, targetLevel),
+                        Toast.LENGTH_SHORT
+                ).show();
 
                 tvMainLevel.setText(getString(R.string.main_level_format, targetLevel));
                 pbMainXp.setProgress(0);
 
-                android.animation.ObjectAnimator animateToRealProgress = android.animation.ObjectAnimator.ofInt(pbMainXp, "progress", 0, targetProgress);
+                android.animation.ObjectAnimator animateToRealProgress =
+                        android.animation.ObjectAnimator.ofInt(pbMainXp, "progress", 0, targetProgress);
                 animateToRealProgress.setDuration(500);
                 animateToRealProgress.start();
             }

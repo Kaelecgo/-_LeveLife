@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.irenaprokhyra.levelife.util.FurnitureDrawableResolver;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
 import java.util.ArrayList;
@@ -26,15 +27,14 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
         this.listener = listener;
     }
 
-    public void setInventoryList (List<Furniture> list) {
-        this.inventoryList = list;
+    public void setInventoryList(List<Furniture> list) {
+        this.inventoryList = (list != null) ? list : new ArrayList<>();
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public InventoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Reutilizamos el diseño visual del item de la tienda, pero cambiaremos su comportamiento
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_furniture, parent, false);
         return new InventoryViewHolder(view);
     }
@@ -66,9 +66,14 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
 
         public void bind (Furniture furniture, OnFurniturePlaceClickListener listener) {
             tvName.setText(furniture.getName());
+            int drawableResId = FurnitureDrawableResolver.resolveDrawableResId(
+                    itemView.getContext(),
+                    furniture.getImageRef()
+            );
+            ivIcon.setImageResource(drawableResId);
+
             tvPrice.setVisibility(View.GONE);
 
-            // Cambiamos el texto del boton de "Comprar" a "Colocar"
             btnAction.setText(itemView.getContext().getString(R.string.inventory_action_place));
             btnAction.setEnabled(true);
 

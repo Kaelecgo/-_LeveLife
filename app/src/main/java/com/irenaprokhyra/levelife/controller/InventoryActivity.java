@@ -104,11 +104,18 @@ public class InventoryActivity extends AppCompatActivity {
     }
 
     private void placeFurnitureInRoom(Furniture furniture, String slot) {
-        viewModel.placeFurniture(furniture, slot, () -> runOnUiThread(() -> {
-            String successMsg = getString(R.string.inventory_item_placed, furniture.getName());
-            Toast.makeText(this, successMsg, Toast.LENGTH_SHORT).show();
-            finish();
-        }));
+        viewModel.placeFurniture(furniture, slot, () -> {
+            runOnUiThread(() -> {
+                String message = getString(R.string.inventory_item_placed, furniture.getName());
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("USER_ID", currentUserId);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                finish();
+            });
+        });
     }
 
     private void setupNavigation() {
