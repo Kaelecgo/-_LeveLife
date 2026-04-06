@@ -21,9 +21,10 @@ import java.util.concurrent.Executors;
                 Task.class,
                 Furniture.class,
                 UserFurnitureCrossRef.class,
-                TaskCompletion.class
+                TaskCompletion.class,
+                PlacedFurniture.class
         },
-        version = 8,
+        version = 9,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -124,6 +125,40 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_8_9 = new Migration(8, 9) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `placed_furniture` (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`user_id` INTEGER NOT NULL, " +
+                            "`furniture_id` INTEGER NOT NULL, " +
+                            "`slot` TEXT NOT NULL, " +
+                            "`placed_at` INTEGER NOT NULL, " +
+                            "FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE, " +
+                            "FOREIGN KEY(`furniture_id`) REFERENCES `furniture`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE" +
+                            ")"
+            );
+
+            database.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_placed_furniture_user_id` " +
+                            "ON `placed_furniture` (`user_id`)"
+            );
+
+            database.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_placed_furniture_furniture_id` " +
+                            "ON `placed_furniture` (`furniture_id`)"
+            );
+
+            database.execSQL(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS `index_placed_furniture_user_id_slot` " +
+                            "ON `placed_furniture` (`user_id`, `slot`)"
+
+            );
+        }
+    };
+
+
     public abstract UserDao userDao();
 
     public abstract TaskDao taskDao();
@@ -131,6 +166,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract FurnitureDao furnitureDao();
 
     public abstract TaskCompletionDao taskCompletionDao();
+
+    public abstract PlacedFurnitureDao placedFurnitureDao();
 
     public static AppDatabase getInstance(final Context context) {
         if (INSTANCE == null) {
@@ -149,7 +186,8 @@ public abstract class AppDatabase extends RoomDatabase {
                                     MIGRATION_4_5,
                                     MIGRATION_5_6,
                                     MIGRATION_6_7,
-                                    MIGRATION_7_8
+                                    MIGRATION_7_8,
+                                    MIGRATION_8_9
                             )
                             .addCallback(sRoomDatabaseCallback)
                             .build();
