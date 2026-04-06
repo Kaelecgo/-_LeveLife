@@ -2,21 +2,21 @@ package com.irenaprokhyra.levelife.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
-import com.irenaprokhyra.levelife.model.MainRepository;
+import com.irenaprokhyra.levelife.model.PlacedFurniture;
 import com.irenaprokhyra.levelife.view.InventoryAdapter;
 import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
 
-import java.util.List;
 
 public class InventoryActivity extends AppCompatActivity {
 
@@ -50,8 +50,7 @@ public class InventoryActivity extends AppCompatActivity {
         rvInventory = findViewById(R.id.rvInventory);
         rvInventory.setLayoutManager(new GridLayoutManager(this, 2));
 
-        // >_ PASAMOS EL METODO COMO REFERENCIA PARA LA LÓGICA DE A3 _<
-        adapter = new InventoryAdapter(this::placeFurnitureInRoom);
+        adapter = new InventoryAdapter(this::showSlotPicker);
         rvInventory.setAdapter(adapter);
     }
 
@@ -62,29 +61,60 @@ public class InventoryActivity extends AppCompatActivity {
             }
             adapter.setInventoryList(furnitureList);
         });
+
+        viewModel.getErrorMessages().observe(this, message -> {
+            if (message != null && !message.trim().isEmpty()) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    // >_ LA LÓGICA (Colocar el mueble) _<
-    private void placeFurnitureInRoom(Furniture furniture) {
-        // En el próximo hito, aquí guardaremos el ID del mueble activo en SharedPreferences
-        // o en la BD para que el mapa sepa qué PNG dibujar
+    private void showSlotPicker(Furniture furniture) {
+        if (furniture == null) return;
 
-        // Por ahora, damos feedback de éxito usando el string parametrizado
-        String successMsg = getString(R.string.inventory_item_placed, furniture.getName());
-        Toast.makeText(this, successMsg, Toast.LENGTH_SHORT).show();
+        CharSequence[] slotLabels = new CharSequence[] {
+                "Suelo",
+                "Pared",
+                "Escritorio",
+                "Decoración"
+        };
 
-        // Opcional: Cerrar el inventario para simular que volvemos a la habitación
-        // finish();
-
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Elegir zona")
+                .setItems(slotLabels, (dialog, which) -> {
+                    String slot = mapSlotFromIndex(which);
+                    placeFurnitureInRoom(furniture, slot);
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
+    private String mapSlotFromIndex(int which) {
+        switch (which) {
+            case 0:
+                return PlacedFurniture.SLOT_FLOOR;
+            case 1:
+                return PlacedFurniture.SLOT_WALL;
+            case 2:
+                return PlacedFurniture.SLOT_DESK;
+            case 3:
+            default:
+                return PlacedFurniture.SLOT_DECOR;
+        }
+    }
 
+    private void placeFurnitureInRoom(Furniture furniture, String slot) {
+        viewModel.placeFurniture(furniture, slot, () -> runOnUiThread(() -> {
+            String successMsg = getString(R.string.inventory_item_placed, furniture.getName());
+            Toast.makeText(this, successMsg, Toast.LENGTH_SHORT).show();
+            finish();
+        }));
+    }
 
     private void setupNavigation() {
         BottomNavigationView bottomNav= findViewById(R.id.bottomNavigationView);
         if (bottomNav == null) return;
 
-        //bottomNav.setItemIconTintList(null);
         bottomNav.setSelectedItemId(R.id.nav_inventory);
 
         bottomNav.setOnItemSelectedListener(item -> {
@@ -99,8 +129,7 @@ public class InventoryActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
                 return true;
-            }
-            else if (itemId == R.id.nav_inventory) { return true; }
+            } else if (itemId == R.id.nav_inventory) { return true; }
             else if (itemId == R.id.nav_tasks) {
                 Intent intent = new Intent(this, TaskActivity.class);
                 intent.putExtra("USER_ID", currentUserId);
