@@ -50,7 +50,10 @@ public final class DialogUtils {
         MaterialAutoCompleteTextView actTaskCategory = view.findViewById(R.id.actTaskCategory);
         MaterialAutoCompleteTextView actTaskDifficulty = view.findViewById(R.id.actTaskDifficulty);
         MaterialAutoCompleteTextView actTaskFrequency = view.findViewById(R.id.actTaskFrequency);
-        TextView tvTaskRewardPreview = view.findViewById(R.id.tvTaskRewardPreview);
+        TextView tvRewardXP = view.findViewById(R.id.tvRewardXP);
+        TextView tvRewardBerries = view.findViewById(R.id.tvRewardBerries);
+        TextView tvRewardEco = view.findViewById(R.id.tvRewardEco);
+        View layoutEcoReward = view.findViewById(R.id.layoutEcoReward);
         MaterialButton btnCreateTask = view.findViewById(R.id.btnCreateTaskFromSheet);
 
         bindDropdown(context, actTaskCategory, R.array.task_categories, 0);
@@ -59,7 +62,10 @@ public final class DialogUtils {
 
         Runnable updateRewardPreview = () -> renderRewardPreview(
                 context,
-                tvTaskRewardPreview,
+                tvRewardXP,
+                tvRewardBerries,
+                tvRewardEco,
+                layoutEcoReward,
                 resolveReward(actTaskCategory, actTaskDifficulty)
         );
 
@@ -116,6 +122,23 @@ public final class DialogUtils {
                 .show();
     }
 
+    public static void showDailyTaskResetInfoDialog(Context context) {
+        BottomSheetDialog dialog = new BottomSheetDialog(context, R.style.LeveLife_BottomSheetDialog);
+        View view = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_daily_reset_info, null);
+        dialog.setContentView(view);
+
+        FrameLayout bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        if (bottomSheet != null) {
+            bottomSheet.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        }
+        view.setBackgroundResource(R.drawable.bg_bottom_sheet_surface);
+
+        MaterialButton btnUnderstood = view.findViewById(R.id.btnUnderstood);
+        btnUnderstood.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
     private static void bindDropdown(
             Context context,
             MaterialAutoCompleteTextView dropdown,
@@ -140,22 +163,23 @@ public final class DialogUtils {
         return TaskRewardCalculator.calculateRewards(difficulty, category);
     }
 
-    private static void renderRewardPreview(Context context, TextView rewardView, TaskReward reward) {
-        if (reward.getEcoReward() > 0) {
-            rewardView.setText(context.getString(
-                    R.string.dialog_task_reward_preview_with_eco,
-                    reward.getRewardXP(),
-                    reward.getRewardBerries(),
-                    reward.getEcoReward()
-            ));
-            return;
-        }
+    private static void renderRewardPreview(
+            Context context,
+            TextView tvXP,
+            TextView tvBerries,
+            TextView tvEco,
+            View layoutEco,
+            TaskReward reward
+    ) {
+        tvXP.setText(String.format(java.util.Locale.getDefault(), "%d XP", reward.getRewardXP()));
+        tvBerries.setText(String.format(java.util.Locale.getDefault(), "%d %s", reward.getRewardBerries(), context.getString(R.string.item_task_reward_berries_unit)));
 
-        rewardView.setText(context.getString(
-                R.string.dialog_task_reward_preview,
-                reward.getRewardXP(),
-                reward.getRewardBerries()
-        ));
+        if (reward.getEcoReward() > 0) {
+            layoutEco.setVisibility(View.VISIBLE);
+            tvEco.setText(String.format(java.util.Locale.getDefault(), "%d Eco", reward.getEcoReward()));
+        } else {
+            layoutEco.setVisibility(View.GONE);
+        }
     }
 
     private static String readText(TextView view) {

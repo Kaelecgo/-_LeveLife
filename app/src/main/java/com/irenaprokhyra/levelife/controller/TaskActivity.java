@@ -136,6 +136,13 @@ public class TaskActivity extends AppCompatActivity {
             }
         });
 
+        viewModel.getShowDailyTaskResetDialog().observe(this, show -> {
+            if (show != null && show) {
+                DialogUtils.showDailyTaskResetInfoDialog(this);
+                viewModel.clearDailyTaskResetDialog();
+            }
+        });
+
         viewModel.getErrorMessages().observe(this, message -> {
             if (message != null) {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

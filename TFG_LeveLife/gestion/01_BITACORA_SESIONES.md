@@ -406,4 +406,125 @@ Garantizar una actualización segura desde versiones anteriores (v7) a la v8, as
 - `TaskCompletion.java`
 
 ### Resultado
-La actualización sobre bases de datos preexistentes ahora reconcilia el catálogo de forma segura, ultra rápida y sin duplicados. El esquema de Room valida correctamente los índices físicos de la nueva tabla de historial.
+La actualización sobre bases de datos preexistentes ahora reconcilia el catálogo de forma segura, eficiente y sin duplicados. El esquema de Room valida correctamente los índices físicos de la nueva tabla de historial.
+
+---
+
+## Sesión 9 - Cierre técnico de `dev/feature-task-completion-history`
+
+### Objetivo
+Cerrar el bloque de historial real de completados con un refactor mínimo, coherente y suficiente para continuar el desarrollo sin arrastrar mezcla entre lógica heredada y modelo nuevo.
+
+### Problemas detectados
+- Seguía existiendo mezcla entre la lógica antigua basada en `isCompleted` y el modelo nuevo apoyado en historial persistido.
+- El estado visual de algunas tareas recurrentes no se restauraba correctamente al volver a estar disponibles.
+- El orden por `isCompleted` en `TaskDao` ya no describía bien el comportamiento real de hábitos recurrentes.
+- `TaskCompletionDao` mantenía más superficie de la necesaria para el uso real actual.
+- El formulario de creación todavía aceptaba combinaciones inválidas si solo se validaba “texto no vacío”.
+- El reward preview seguía reaccionando a cambios que no alteraban realmente la recompensa.
+- `strings_tasks.xml` arrastraba texto roto y falta de legibilidad.
+
+### Tareas realizadas
+- Se eliminó en `MainViewModel` la validación heredada basada en `task.isCompleted()` para que el bloqueo real vuelva a decidirse desde el repositorio.
+- Se corrigió en `TaskAdapter` el estado visual de las tareas, aplicando tachado cuando corresponde y limpiándolo cuando la tarea vuelve a estar disponible.
+- Se eliminó en `TaskDao` la ordenación por `isCompleted`.
+- Se simplificó `TaskCompletionDao` para dejar solo los métodos realmente usados por el proyecto en esta iteración.
+- Se endureció la validación del formulario en `Task.java` y `DialogUtils.java`, exigiendo categoría, dificultad y frecuencia válidas.
+- Se limpió el reward preview para que solo reaccione a los factores que afectan a la recompensa.
+- Se reescribió `strings_tasks.xml` para eliminar texto roto y dejar el bloque legible.
+
+### Archivos afectados
+- `MainViewModel.java`
+- `TaskAdapter.java`
+- `TaskDao.java`
+- `TaskCompletionDao.java`
+- `Task.java`
+- `DialogUtils.java`
+- `strings_tasks.xml`
+
+### Resultado
+El flujo de completado deja de mezclar tanto la lógica vieja de `isCompleted` con el modelo nuevo de historial persistido. El bloque queda técnicamente bastante más coherente y suficientemente limpio para darse por cerrado dentro del alcance actual.
+
+### Pruebas realizadas
+- Ejecución de `.\gradlew.bat testDebugUnitTest`.
+- Ejecución de `.\gradlew.bat assembleDebug`.
+
+### Límites de esta iteración
+- La transición completa para que la UI deje de depender de `lastCompletedAt` como caché visual temporal queda fuera de este cierre.
+- Ese ajuste se considera mejora futura, no bug urgente del bloque actual.
+
+### Próximo paso
+Continuar con la siguiente iteración del proyecto sin reabrir este bloque, dejando la retirada futura de `lastCompletedAt` como mejora posterior cuando toque cerrar la transición visual.
+
+---
+
+## Sesión 10 - Validación técnica de recurrencia y completado transaccional
+
+### Objetivo
+Validar técnicamente la recurrencia temporal y el flujo transaccional de completado sobre Room, comprobando el comportamiento real de `MainRepository.completeTask(...)` sobre una base operativa.
+
+### Tareas realizadas
+- Se amplió la cobertura de pruebas unitarias de `TaskRecurrenceUtils`.
+- Se añadieron casos límite para validar el inicio exacto de periodo diario, semanal y mensual.
+- Se validó el comportamiento semanal con convención fija de lunes a domingo y variantes de frecuencia en inglés.
+- Se estabilizaron los tests fijando una zona horaria controlada y reutilizando helpers de calendario.
+- Se montó una validación de integración real sobre Room para `MainRepository.completeTask(...)` mediante la suite `MainRepositoryCompleteTaskIntegrationTest`.
+- La suite se ejecutó sobre una base en memoria (`Room.inMemoryDatabaseBuilder`), con control explícito del tiempo (mediante `AtomicLong` y un `fixedNow` inyectado en el repositorio) y ejecución síncrona en el hilo de prueba para garantizar determinismo.
+- Se verificó el flujo completo de lectura de tarea, validación de usuario (incluyendo protección contra intrusión), consulta del historial de completados, actualización de recompensas, inserción en `task_completions` y actualización del estado visible de la tarea.
+
+
+### Resultado
+- En tareas de una sola ejecución, el primer completado aplica correctamente experiencia y recompensas, actualiza `last_completed_at`, registra historial y deja la tarea marcada como completada.
+- Un segundo intento sobre la misma tarea queda bloqueado sin volver a alterar el progreso del usuario ni el historial persistido.
+- En tareas recurrentes, el sistema se apoya en el historial real de `task_completions` y no en el booleano `isCompleted`.
+- Un segundo intento dentro del mismo periodo es rechazado, mientras que un nuevo periodo vuelve a permitir la operación y genera un nuevo registro válido en historial.
+- También se confirmó el bloqueo correcto cuando un usuario intenta completar una tarea que no le pertenece.
+
+### Valor del bloque
+La recurrencia deja de depender solo de utilidades puras y queda validada también a nivel de repositorio y persistencia real. Esto refuerza el papel del `Repository` como fuente única de verdad y consolida la consistencia del flujo frente a pulsaciones repetidas, intentos inválidos y regresiones futuras.
+
+### Pendiente
+- Validar compra transaccional de muebles.
+- Probar autenticación con escenarios legacy.
+- Verificar migraciones reales entre versiones de base de datos.
+
+---
+
+## Sesión 11 - Mejora de UX de recurrencia y refactor del contador temporal
+
+### Objetivo
+Mejorar la experiencia de usuario en tareas recurrentes, hacer más comprensible el reinicio automático de tareas diarias y reducir la deuda técnica del contador temporal en `TaskAdapter`.
+
+### Problemas detectados
+- El enfoque inicial con temporizadores por fila en `TaskAdapter` introducía riesgo de callbacks vivos al reciclar o desacoplar vistas.
+- La UI de recurrencia seguía apoyándose en `lastCompletedAt` como caché visual, mientras que la validación real del repositorio ya se apoyaba en historial persistido.
+- El popup diario y algunos textos asociados necesitaban limpieza visual y de recursos.
+
+### Tareas realizadas
+- Se evaluó la mejora de UX de tareas recurrentes y su impacto técnico sobre el flujo actual.
+- Se sustituyó el modelo de `Runnable` por fila por un ticker compartido dentro de `TaskAdapter`.
+- El adapter pasó a utilizar un único `Handler` en el hilo principal para actualizar el contador visible.
+- El ticker se detiene cuando ya no hay tareas recurrentes bloqueadas y también al desacoplarse del `RecyclerView`.
+- Se limpió el `BottomSheet` informativo diario, añadiendo un botón propio en `bottom_sheet_daily_reset_info.xml`.
+- Se corrigieron textos y problemas de codificación en `strings_tasks.xml`, incluyendo alineación con la versión en inglés.
+- Se amplió `TaskRecurrenceUtilsTest.java` con cobertura para tiempo hasta el siguiente periodo diario y formato con prefijo de días cuando quedan más de 24 horas.
+- Se revisó además la coherencia visual del adapter y se corrigió un constraint huérfano en `item_task.xml`.
+
+### Archivos afectados
+- `TaskAdapter.java`
+- `TaskRecurrenceUtilsTest.java`
+- `DialogUtils.java`
+- `bottom_sheet_daily_reset_info.xml`
+- `item_task.xml`
+- `strings_tasks.xml`
+
+### Resultado
+El cronómetro de recurrencia queda bastante más seguro a nivel de adapter, el popup diario gana coherencia visual y el bloque puede darse por estabilizado sin señales de rotura en compilación ni en pruebas unitarias.
+
+### Pruebas realizadas
+- Ejecución de `.\gradlew.bat testDebugUnitTest`.
+- Ejecución de `.\gradlew.bat clean assembleDebug`.
+
+### Pendiente
+- La deuda de fondo sigue siendo la ya conocida: la UI de recurrencia continúa apoyándose en `lastCompletedAt` como caché visual temporal, mientras la validación real vive en historial persistido.
+- Este punto no se considera bloqueante para continuar, pero queda como siguiente refactor de fondo cuando se quiera cerrar definitivamente el modelo de hábitos.

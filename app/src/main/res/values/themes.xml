@@ -70,13 +70,19 @@
         <item name="android:fontFamily">@font/nunito_extrabold</item>
     </style>
 
-    <style name="LeveLife.Text.Headline">
+    <style name="LeveLife.Text.Headline" parent="LeveLife.Text">
         <item name="android:textColor">@color/app_text_primary</item>
         <item name="android:textSize">@dimen/text_size_headline</item>
         <item name="android:fontFamily">@font/nunito_extrabold</item>
     </style>
 
-    <style name="LeveLife.Text.Progress">
+    <style name="LeveLife.Text.TitleLarge" parent="LeveLife.Text">
+        <item name="android:textColor">@color/app_text_primary</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">@font/nunito_extrabold</item>
+    </style>
+
+    <style name="LeveLife.Text.Progress" parent="LeveLife.Text">
         <item name="android:textColor">@color/app_text_primary</item>
         <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:fontFamily">@font/nunito_bold</item>

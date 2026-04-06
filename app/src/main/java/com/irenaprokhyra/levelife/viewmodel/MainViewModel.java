@@ -20,6 +20,7 @@ public class MainViewModel extends AndroidViewModel {
     private LiveData<List<Furniture>> shopCatalog;
     private final MutableLiveData<String> errorMessages = new MutableLiveData<>();
     private final MutableLiveData<String> rewardMessage = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> showDailyTaskResetDialog = new MutableLiveData<>();
 
     public MainViewModel(Application application) {
         super(application);
@@ -41,6 +42,7 @@ public class MainViewModel extends AndroidViewModel {
     public LiveData<List<Furniture>> getShopCatalog() { return shopCatalog; }
     public LiveData<String> getErrorMessages() { return errorMessages; }
     public LiveData<String> getRewardMessage() { return rewardMessage; }
+    public LiveData<Boolean> getShowDailyTaskResetDialog() { return showDailyTaskResetDialog; }
 
     public void completeTask(Task task) {
         if (task == null) return;
@@ -63,6 +65,10 @@ public class MainViewModel extends AndroidViewModel {
                     message = getApplication().getString(R.string.reward_claimed, rewardXP, rewardBerries);
                 }
                 rewardMessage.postValue(message);
+
+                if (task.isRecurring() && Task.FREQUENCY_DAILY.equals(Task.normalizeFrequency(task.getFrequency()))) {
+                    showDailyTaskResetDialog.postValue(true);
+                }
             }
 
             @Override
@@ -74,6 +80,10 @@ public class MainViewModel extends AndroidViewModel {
 
     public void clearTaskCompletionMessage() {
         rewardMessage.setValue(null);
+    }
+
+    public void clearDailyTaskResetDialog() {
+        showDailyTaskResetDialog.setValue(null);
     }
 
     public void deleteTask(Task task) {

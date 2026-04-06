@@ -12,4 +12,7 @@ public interface TaskCompletionDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM task_completions WHERE task_id = :taskId AND completed_at >= :periodStart)")
     boolean hasCompletionSince(int taskId, long periodStart);
+
+    @Query("SELECT COUNT(*) FROM task_completions WHERE task_id = :taskId")
+    int countCompletionsForTask(int taskId);
 }

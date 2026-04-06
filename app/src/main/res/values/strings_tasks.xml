@@ -25,7 +25,13 @@
 
     <string name="item_task_reward_format">+%1$d XP | +%2$d bayas</string>
     <string name="item_task_reward_with_eco_format">+%1$d XP | +%2$d bayas | +%3$d Eco</string>
+    <string name="item_task_reward_berries_unit">bayas</string>
     <string name="task_meta_format">%1$s | %2$s</string>
+
+    <string name="dialog_daily_task_reset_title">Tarea diaria</string>
+    <string name="dialog_daily_task_reset_message">Esta tarea se reiniciara automaticamente. No necesitas volver a crearla y podras completarla de nuevo manana.</string>
+    <string name="dialog_daily_task_reset_button">Entendido</string>
+    <string name="task_reset_in_format">Reinicia en: %1$s</string>
 
     <string-array name="task_categories">
         <item>General</item>

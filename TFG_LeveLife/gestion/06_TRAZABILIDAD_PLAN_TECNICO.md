@@ -32,7 +32,7 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 - [x] Integración en creación y completado de tareas.
 - [x] Corrección del cálculo ante valores acentuados (`Fácil`, `Difícil`) mediante normalización reforzada.
 
-## 🔄 Fase 4: Hábitos recurrentes (En progreso)
+## ✅ Fase 4: Hábitos recurrentes (Finalizada técnicamente)
 **Objetivo:** Implementar recurrencia real mediante historial, no solo booleanos.
 
 - [x] Lógica MVP inicial de periodo actual en `TaskRecurrenceUtils.java`.
@@ -49,19 +49,18 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 - [x] Ampliar la cobertura de `TaskRecurrenceUtils`.
 - [x] Validar periodos diario, semanal y mensual.
 - [x] Validar el cálculo de inicio de periodo.
+- [x] Eliminar la validación heredada basada en `task.isCompleted()` desde `MainViewModel`.
+- [x] Corregir el estado visual de tareas recurrentes en `TaskAdapter`.
+- [x] Eliminar la ordenación por `isCompleted` en `TaskDao`.
+- [x] Simplificar `TaskCompletionDao` al uso real actual del proyecto.
 - [x] Pruebas unitarias exhaustivas de recurrencia y normalización temporal.
-- [~] Mantener `TaskRecurrenceUtils` como utilidad temporal pura.
-- [~] Mantener `lastCompletedAt` como compatibilidad visual temporal para la UI actual.
-- [ ] Revisar impacto final en `TaskAdapter` y `MainViewModel`.
-- [ ] Retirar `lastCompletedAt` cuando deje de ser necesario para compatibilidad visual.
-- [ ] Implementar rachas y estadísticas basadas en historial real.
-- [ ] Definir una semántica específica de duplicación por título, si finalmente se necesita.
+- [x] Validar integración de `MainRepository.completeTask(...)` sobre Room.
+- [x] Confirmar bloqueo por tarea y periodo mediante historial persistido.
 
-**Nota de estado:** la recurrencia real ya se apoya en historial persistido por tarea mediante `task_completions`. `MainRepository.completeTask(...)` consulta historial por tarea y periodo, `TaskRecurrenceUtils` queda consolidada como utilidad temporal pura y la UI sigue usando `lastCompletedAt` como compatibilidad visual temporal.
-
-**Fuera del alcance actual:** rachas, estadísticas y semántica específica de duplicación por título.
+**Nota de estado:** La lógica de negocio y persistencia para recurrencia está completada y validada mediante tests de integración. Se mantiene `lastCompletedAt` únicamente como caché visual para la UI actual (ver Deuda Técnica).
 
 ## 🔄 Fase 5: Reflejo en la UI (Parcialmente realizado)
+
 **Objetivo:** Mostrar la riqueza de información de las tareas y estabilizar la experiencia visual.
 
 - [x] `item_task.xml` actualizado para mostrar metadatos de tarea.
@@ -69,6 +68,12 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 - [x] BottomSheet de creación alineado con estilos globales.
 - [x] Limpieza de `themes.xml` y eliminación de hardcodes visuales en el formulario.
 - [x] Estabilización del login tras corregir el crash de inflado.
+- [x] Sustituir temporizadores por fila en `TaskAdapter` por un ticker compartido más seguro.
+- [x] Mejorar la UX de tareas diarias con un `BottomSheet` informativo específico para reinicio automático.
+- [x] Limpiar textos y recursos asociados al bloque diario en `strings_tasks.xml` y `bottom_sheet_daily_reset_info.xml`.
+- [x] Endurecimiento del formulario de tareas para exigir categoría, dificultad y frecuencia válidas.
+- [x] Limpieza del `reward preview` para que solo reaccione a factores que alteran realmente la recompensa.
+- [x] Reescritura de `strings_tasks.xml` para eliminar texto roto y mejorar legibilidad.
 - [ ] Implementar filtros en `TaskActivity` (Todas, Eco, Hábitos, Pendientes).
 - [ ] Revisar empty states y feedback visual final en inventario y tienda.
 
@@ -89,6 +94,7 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 - [x] `TaskRecurrenceUtilsTest`.
 - [x] Caso de prueba específico para dificultad acentuada.
 - [x] Validación repetida de `testDebugUnitTest`.
+- [x] Cobertura adicional de `TaskRecurrenceUtils` para tiempo hasta el siguiente periodo diario y formato con prefijo de días cuando supera 24 horas.
 
 ## 🔧 Trabajo transversal de estabilización (Realizado parcialmente)
 **Objetivo:** Reducir deuda técnica visual y mejorar mantenibilidad.
@@ -97,6 +103,8 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 - [x] Refactor de `DialogUtils`.
 - [x] Modularización de recursos de texto por dominio.
 - [x] Sustitución de selector roto por `app_button_primary_selector.xml`.
+- [x] Eliminación del modelo de temporizador por fila en `TaskAdapter`, sustituyéndolo por un ticker compartido con mejor control del ciclo de vida.
+- [x] Reparación idempotente del catálogo de tienda en bases antiguas mediante detección de elementos faltantes por `image_ref`.
 - [ ] Revisión final de recursos y posibles caracteres mal codificados.
 
 ---
@@ -108,5 +116,6 @@ Este documento relaciona el plan técnico planteado para LeveLife con su estado 
 - `Task.normalizeDifficulty(...)`
 - `Task.normalizeFrequency(...)`
 - `TaskRecurrenceUtils.isCompletedForCurrentPeriod(...)`
+- `TaskRecurrenceUtils.getStartOfPeriod(...)`
 - `MainRepository.completeTask(...)`
-- `TaskCompletionDao.insert(...)`
+

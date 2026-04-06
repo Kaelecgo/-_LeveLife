@@ -7,10 +7,10 @@
 - Consecuencia: Mejora la seguridad del proyecto y hace defendible la autenticación en memoria y TFG.
 
 ## DT-02 - Migraciones explícitas de Room como estrategia principal
-- Estado: Adoptada.
-- Contexto: `fallbackToDestructiveMigration()` comprometía el progreso del usuario.
-- Decisión: Evolucionar la base de datos mediante migraciones explícitas hasta la versión 7.
-- Consecuencia: Se preserva el progreso del usuario en cambios de esquema; el downgrade destructivo solo se tolera como salvaguarda de desarrollo.
+- Estado: Adoptada y ampliada.
+- Contexto: `fallbackToDestructiveMigration()` comprometía el progreso del usuario y dificultaba una evolución segura del esquema.
+- Decisión: Evolucionar la base de datos mediante migraciones explícitas de Room hasta la versión 8, incorporando también la tabla `task_completions` y sus índices como parte del modelo persistente.
+- Consecuencia: Se preserva el progreso del usuario en cambios de esquema, se facilita la evolución controlada del dominio y el downgrade destructivo solo se tolera como salvaguarda de desarrollo.
 
 ## DT-03 - Creación de tareas mediante BottomSheet y modelo intermedio `TaskDraft`
 - Estado: Adoptada.
@@ -31,10 +31,16 @@
 - Consecuencia: El sistema deja de depender del texto exacto mostrado al usuario y gana robustez frente a internacionalización y cambios de interfaz.
 
 ## DT-06 - Recurrencia MVP por periodo actual
-- Estado: Adoptada como solución intermedia.
-- Contexto: Implementar una entidad `TaskCompletion` completa era más costoso que el alcance inmediato de la versión.
-- Decisión: Resolver la recurrencia básica con `lastCompletedAt` y comprobación del periodo actual.
-- Consecuencia: La app soporta hábitos diarios, semanales y mensuales en modo MVP, pero las rachas e historial detallado quedan como trabajo futuro.
+- Estado: Adoptada como solución intermedia y posteriormente superada de forma parcial.
+- Contexto: En una fase anterior del proyecto, implementar una entidad `TaskCompletion` completa era más costoso que el alcance inmediato de la versión.
+- Decisión: Resolver inicialmente la recurrencia básica con `lastCompletedAt` y comprobación del periodo actual.
+- Consecuencia: La app pudo soportar hábitos diarios, semanales y mensuales en una fase MVP, sirviendo como puente técnico hasta la incorporación posterior de historial persistido real por tarea y periodo.
+
+## DT-06B - Transición de la recurrencia MVP a historial persistido por tarea y periodo
+- Estado: Adoptada.
+- Contexto: El enfoque inicial basado en `lastCompletedAt` resolvía el bloqueo básico por periodo, pero mezclaba demasiado lógica heredada, compatibilidad visual y persistencia simplificada.
+- Decisión: Desplazar la base real de la recurrencia hacia un historial persistido en `task_completions`, haciendo que `MainRepository.completeTask(...)` consulte completados previos por tarea y periodo antes de permitir nuevas recompensas.
+- Consecuencia: La recurrencia deja de depender principalmente de señales débiles como `isCompleted` o de una única marca temporal simplificada. `TaskRecurrenceUtils` se mantiene como utilidad temporal pura para cálculo de periodos y `lastCompletedAt` permanece solo como compatibilidad visual transitoria en la UI actual.
 
 ## DT-07 - Theming centralizado con Material 3 y estilos `LeveLife.*`
 - Estado: Adoptada y refinada.
@@ -65,3 +71,15 @@
 - Contexto: Riesgo de crash (`IllegalStateException`) si Room autogeneraba nombres de índices distintos a los de la migración manual en SQL.
 - Decisión: Forzar el atributo `name` en las anotaciones `@Index` de las entidades (ej. `TaskCompletion`) para obligar a que coincidan exactamente con la migración.
 - Consecuencia: Migraciones de esquema 100% estables y sin falsos positivos en la validación de integridad de Room.
+
+## DT-12 - Validación de formularios basada en valores de dominio válidos
+- Estado: Adoptada.
+- Contexto: La validación basada únicamente en comprobar que un texto no estuviera vacío permitía combinaciones inválidas en categoría, dificultad y frecuencia.
+- Decisión: Endurecer la validación del formulario para exigir valores válidos de dominio en lugar de aceptar cualquier texto no vacío.
+- Consecuencia: Se reduce la entrada de estados inconsistentes desde la UI, se protege mejor la lógica de recompensas y recurrencia, y el flujo de creación queda más coherente con el modelo interno.
+
+## DT-13 - Estrategia de Autoreparación de Datos (Self-healing) en `onOpen`
+- Estado: Adoptada.
+- Contexto: Durante la evolución del esquema (v6 -> v8), algunos registros de tareas quedaron con frecuencias nulas o valores heredados ("Normal") que rompían la nueva lógica de recurrencia y recompensas.
+- Decisión: Implementar `repairLegacyTaskFrequencies` en el callback `onOpen` de Room para detectar y corregir proactivamente registros inconsistentes en cada arranque de la aplicación.
+- Consecuencia: Se garantiza la estabilidad del sistema sin recurrir a migraciones destructivas, mejorando la experiencia de usuario y la robustez del modelo de datos frente a cambios de versiones.
