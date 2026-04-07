@@ -95,22 +95,33 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
             String priceText = itemView.getContext().getString(R.string.shop_item_price, furniture.getPrice());
             tvPrice.setText(priceText);
 
-            // >_ MEJORA UX | Validación Visual de Fondos _<
+            // --- CÓDIGO PARA LA IMAGEN ---
+            // Obtenemos el contexto para buscar el recurso por su nombre (String)
+            int imageResource = itemView.getContext().getResources().getIdentifier(
+                    furniture.getImageRef(), // Esto debe devolver el nombre del archivo, ej: "furn_bed"
+                    "drawable",
+                    itemView.getContext().getPackageName()
+            );
+
+            if (imageResource != 0) {
+                ivIcon.setImageResource(imageResource);
+            } else {
+                // Imagen por defecto por si el nombre falla
+                ivIcon.setImageResource(R.drawable.logo_with_no_bg512);
+            }
+            // -----------------------------
+
+            // Validación de fondos (tu código actual)
             if (ownedIds.contains(furniture.getId())) {
-                // Ya lo tiene comprado
                 btnBuy.setEnabled(false);
                 btnBuy.setText(R.string.shop_item_owned);
             } else if (balance >= furniture.getPrice()) {
                 btnBuy.setEnabled(true);
                 btnBuy.setText(R.string.common_action_buy);
             } else {
-                // No tiene dinero - botón deshabilitado
                 btnBuy.setEnabled(false);
                 btnBuy.setText(R.string.common_action_buy);
             }
-
-            // Más adelante cargaremos la imagen real basada en furniture.getImageRef()
-            // ivIcon.setImageResource(...);
 
             btnBuy.setOnClickListener(v -> listener.onBuyClick(furniture));
         }
