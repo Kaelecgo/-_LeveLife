@@ -10,13 +10,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
-import com.irenaprokhyra.levelife.model.PlacedFurniture;
+import com.irenaprokhyra.levelife.util.DialogUtils;
 import com.irenaprokhyra.levelife.view.InventoryAdapter;
 import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
-
 
 public class InventoryActivity extends AppCompatActivity {
 
@@ -46,7 +44,7 @@ public class InventoryActivity extends AppCompatActivity {
         setupObservers();
     }
 
-    private void initViews () {
+    private void initViews() {
         rvInventory = findViewById(R.id.rvInventory);
         rvInventory.setLayoutManager(new GridLayoutManager(this, 2));
 
@@ -55,6 +53,7 @@ public class InventoryActivity extends AppCompatActivity {
     }
 
     private void setupObservers() {
+
         viewModel.getInventory().observe(this, furnitureList -> {
             if (furnitureList == null || furnitureList.isEmpty()) {
                 Toast.makeText(this, getString(R.string.empty_inventory), Toast.LENGTH_SHORT).show();
@@ -70,57 +69,31 @@ public class InventoryActivity extends AppCompatActivity {
     }
 
     private void showSlotPicker(Furniture furniture) {
-        if (furniture == null) return;
-
-        CharSequence[] slotLabels = new CharSequence[] {
-                "Suelo",
-                "Pared",
-                "Escritorio",
-                "Decoración"
-        };
-
-        new MaterialAlertDialogBuilder(this)
-                .setTitle("Elegir zona")
-                .setItems(slotLabels, (dialog, which) -> {
-                    String slot = mapSlotFromIndex(which);
-                    placeFurnitureInRoom(furniture, slot);
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
-    }
-
-    private String mapSlotFromIndex(int which) {
-        switch (which) {
-            case 0:
-                return PlacedFurniture.SLOT_FLOOR;
-            case 1:
-                return PlacedFurniture.SLOT_WALL;
-            case 2:
-                return PlacedFurniture.SLOT_DESK;
-            case 3:
-            default:
-                return PlacedFurniture.SLOT_DECOR;
-        }
+        DialogUtils.showFurnitureSlotPickerBottomSheet(
+                this,
+                furniture,
+                slot -> placeFurnitureInRoom(furniture, slot)
+        );
     }
 
     private void placeFurnitureInRoom(Furniture furniture, String slot) {
-        viewModel.placeFurniture(furniture, slot, () -> {
-            runOnUiThread(() -> {
-                String message = getString(R.string.inventory_item_placed, furniture.getName());
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        viewModel.placeFurniture(furniture, slot, () -> runOnUiThread(() -> {
+            String message = getString(R.string.inventory_item_placed, furniture.getName());
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra("USER_ID", currentUserId);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                finish();
-            });
-        });
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("USER_ID", currentUserId);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        }));
     }
 
     private void setupNavigation() {
-        BottomNavigationView bottomNav= findViewById(R.id.bottomNavigationView);
-        if (bottomNav == null) return;
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        if (bottomNav == null) {
+            return;
+        }
 
         bottomNav.setSelectedItemId(R.id.nav_inventory);
 
@@ -136,16 +109,16 @@ public class InventoryActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
                 return true;
-            } else if (itemId == R.id.nav_inventory) { return true; }
-            else if (itemId == R.id.nav_tasks) {
+            } else if (itemId == R.id.nav_inventory) {
+                return true;
+            } else if (itemId == R.id.nav_tasks) {
                 Intent intent = new Intent(this, TaskActivity.class);
                 intent.putExtra("USER_ID", currentUserId);
                 startActivity(intent);
                 finish();
                 return true;
-            }
-            else if (itemId == R.id.nav_logout) {
-                com.irenaprokhyra.levelife.util.DialogUtils.showLogoutConfirmationDialog(this, this::performLogout);
+            } else if (itemId == R.id.nav_logout) {
+                DialogUtils.showLogoutConfirmationDialog(this, this::performLogout);
                 return false;
             }
             return false;

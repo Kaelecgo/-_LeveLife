@@ -24,13 +24,16 @@ import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
 
 import java.util.List;
 
-
 public class MainActivity extends AppCompatActivity {
 
     private int currentUserId;
     private MainViewModel viewModel;
 
-    private TextView tvMainSectionLabel, tvMainLevel, tvMainBerries, tvMainEcoCoins, tvMainXpText;
+    private TextView tvMainSectionLabel;
+    private TextView tvMainLevel;
+    private TextView tvMainBerries;
+    private TextView tvMainEcoCoins;
+    private TextView tvMainXpText;
     private ProgressBar pbMainXp;
     private BottomNavigationView bottomNavigationView;
 
@@ -134,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 DialogUtils.showLogoutConfirmationDialog(this, this::performLogout);
                 return false;
             }
-                return false;
+            return false;
         });
     }
 
@@ -156,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
                 tvMainSectionLabel.setText(getString(R.string.main_welcome_format, user.getName()));
             }
 
-            // Sincronización con strings_gamification.xml
             String xpText = getString(R.string.main_xp_format, user.getExperience(), user.getXpToNextLevel());
             tvMainXpText.setText(xpText);
 
@@ -178,36 +180,35 @@ public class MainActivity extends AppCompatActivity {
 
             lastKnownLevel = currentLevel;
             lastKnownProgress = currentProgress;
-
         } catch (Exception e) {
-            Log.e("MainActivity", "Error actualizando UI: " + e.getMessage());
+            Log.e("MainActivity", "Error updating UI", e);
         }
     }
 
     private void renderPlacedFurniture(List<PlacedFurnitureItem> placedFurnitureItems) {
-        Log.d("MainActivity", "renderPlacedFurniture: " + (placedFurnitureItems != null ? placedFurnitureItems.size() : "0") + " muebles recibidos.");
-
         if (placedFurnitureItems == null || placedFurnitureItems.isEmpty()) {
             clearPlacedFurnitureViews();
             layoutRoomEmptyState.setVisibility(View.VISIBLE);
             return;
         }
 
-        // IMPORTANTE: Ocultar el estado vacío y limpiar slots antiguos
         layoutRoomEmptyState.setVisibility(View.GONE);
         clearPlacedFurnitureViews();
 
         for (PlacedFurnitureItem item : placedFurnitureItems) {
-            if (item == null) continue;
+            if (item == null) {
+                continue;
+            }
 
             ImageView targetView = getTargetViewForSlot(item.getSlot());
-            if (targetView != null) {
-                int drawableResId = FurnitureDrawableResolver.resolveDrawableResId(this, item.getImageRef());
-                targetView.setImageResource(drawableResId);
-                targetView.setContentDescription(item.getName());
-                targetView.setVisibility(View.VISIBLE);
-                Log.d("MainActivity", "Mueble renderizado: " + item.getName() + " en " + item.getSlot());
+            if (targetView == null) {
+                continue;
             }
+
+            int drawableResId = FurnitureDrawableResolver.resolveDrawableResId(this, item.getImageRef());
+            targetView.setImageResource(drawableResId);
+            targetView.setContentDescription(item.getName());
+            targetView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -232,12 +233,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void clearImageView(ImageView imageView) {
-        if (imageView == null) return;
+        if (imageView == null) {
+            return;
+        }
         imageView.setImageDrawable(null);
         imageView.setVisibility(View.GONE);
         imageView.setContentDescription(null);
     }
-
 
     private void animateLevelUp(int targetLevel, int targetProgress) {
         android.animation.ObjectAnimator animateTo100 = android.animation.ObjectAnimator.ofInt(

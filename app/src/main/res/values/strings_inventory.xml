@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="my_room">Mi Habitación 🏠</string>
-    <string name="inventory_action_place">Colocar 👇🏼</string>
-    <string name="empty_inventory">Tu inventario está vacío. 🎒</string>
-    <string name="error_loading_inventory">Error cargando mochila. 🎒</string>
-    <string name="inventory_item_placed">¡%1$s colocado en tu habitación! 🛋️</string>
+    <string name="my_room">Mi habitación</string>
+    <string name="inventory_action_place">Colocar</string>
+    <string name="empty_inventory">Tu inventario está vacío.</string>
+    <string name="error_loading_inventory">Error cargando inventario.</string>
+    <string name="inventory_item_placed">¡%1$s colocado en tu habitación!</string>
+    <string name="inventory_item_meta_fallback">Objeto decorativo</string>
+
+    <string name="inventory_slot_picker_title">Elige una zona</string>
+    <string name="inventory_slot_picker_message">Selecciona dónde quieres colocar este mueble.</string>
+    <string name="inventory_slot_floor">Suelo</string>
+    <string name="inventory_slot_wall">Pared</string>
+    <string name="inventory_slot_desk">Escritorio</string>
+    <string name="inventory_slot_decor">Decoración</string>
+    <string name="inventory_slot_cancel">Cancelar</string>
+
+    <string name="inventory_empty_title">¡Tu inventario está vacío!</string>
+    <string name="inventory_empty_subtitle">Completa hábitos, gana bayas y visita la tienda para empezar a decorar tu espacio.</string>
 
     <string name="content_desc_furniture_icon">Icono del mueble</string>
 </resources>

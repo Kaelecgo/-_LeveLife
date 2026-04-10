@@ -3,11 +3,11 @@ package com.irenaprokhyra.levelife.view;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.button.MaterialButton;
 import com.irenaprokhyra.levelife.util.FurnitureDrawableResolver;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
@@ -35,7 +35,8 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
     @NonNull
     @Override
     public InventoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_furniture, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_inventory_furniture, parent, false);
         return new InventoryViewHolder(view);
     }
 
@@ -52,16 +53,16 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
 
 
     static class InventoryViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvPrice;
+        TextView tvName, tvMeta;
         ImageView ivIcon;
-        Button btnAction;
+        MaterialButton btnAction;
 
         public InventoryViewHolder (@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvFurnitureName);
-            tvPrice = itemView.findViewById(R.id.tvFurniturePrice);
+            tvMeta = itemView.findViewById(R.id.tvInventoryFurnitureMeta);
             ivIcon = itemView.findViewById(R.id.ivFurnitureIcon);
-            btnAction = itemView.findViewById(R.id.btnBuyFurniture);
+            btnAction = itemView.findViewById(R.id.btnPlaceFurniture);
         }
 
         public void bind (Furniture furniture, OnFurniturePlaceClickListener listener) {
@@ -72,7 +73,14 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
             );
             ivIcon.setImageResource(drawableResId);
 
-            tvPrice.setVisibility(View.GONE);
+            String meta = furniture.getCategory();
+            if (meta == null || meta.trim().isEmpty()) {
+                tvMeta.setVisibility(View.VISIBLE);
+                tvMeta.setText(R.string.inventory_item_meta_fallback);
+            } else {
+                tvMeta.setVisibility(View.VISIBLE);
+                tvMeta.setText(meta);
+            }
 
             btnAction.setText(itemView.getContext().getString(R.string.inventory_action_place));
             btnAction.setEnabled(true);

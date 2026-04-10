@@ -138,15 +138,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/spacing_medium"
-                android:layout_weight="1"
-                android:background="@drawable/bg_room_surface">
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/ivRoomBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="false"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    android:scaleX="1.20"
+                    android:scaleY="1.20"
+                    android:src="@drawable/room_bg_cozy_corner_v2" />
 
                 <ImageView
                     android:id="@+id/ivPlacedWall"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
                     android:layout_gravity="top|center_horizontal"
-                    android:layout_marginTop="@dimen/spacing_large"
+                    android:layout_marginTop="86dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/content_desc_furniture_icon"
                     android:scaleType="fitCenter"
@@ -156,9 +166,10 @@
 
                 <ImageView
                     android:id="@+id/ivPlacedDecor"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
+                    android:layout_width="82dp"
+                    android:layout_height="82dp"
                     android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_marginTop="36dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/content_desc_furniture_icon"
                     android:scaleType="fitCenter"
@@ -168,11 +179,11 @@
 
                 <ImageView
                     android:id="@+id/ivPlacedDesk"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
+                    android:layout_width="116dp"
+                    android:layout_height="116dp"
                     android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="@dimen/spacing_large"
-                    android:layout_marginBottom="@dimen/spacing_large"
+                    android:layout_marginEnd="42dp"
+                    android:layout_marginBottom="74dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/content_desc_furniture_icon"
                     android:scaleType="fitCenter"
@@ -182,10 +193,10 @@
 
                 <ImageView
                     android:id="@+id/ivPlacedFloor"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="156dp"
+                    android:layout_height="156dp"
                     android:layout_gravity="bottom|center_horizontal"
-                    android:layout_marginBottom="@dimen/spacing_medium"
+                    android:layout_marginBottom="48dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/content_desc_furniture_icon"
                     android:scaleType="fitCenter"
@@ -195,11 +206,16 @@
 
                 <LinearLayout
                     android:id="@+id/layoutRoomEmptyState"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginStart="@dimen/spacing_medium"
+                    android:layout_marginEnd="@dimen/spacing_medium"
+                    android:layout_marginBottom="@dimen/spacing_large"
+                    android:background="@drawable/bg_bottom_sheet_surface"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="@dimen/spacing_large">
+                    android:padding="@dimen/spacing_medium">
 
                     <TextView
                         android:id="@+id/tvRoomEmptyTitle"
@@ -212,11 +228,11 @@
                     <TextView
                         android:id="@+id/tvRoomEmptyDescription"
                         style="@style/LeveLife.Text.BodySecondary"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_small"
-                        android:layout_gravity="center_horizontal"
-                        android:maxWidth="280dp"
+                        android:gravity="center"
+                        android:maxWidth="240dp"
                         android:text="@string/main_room_empty_description"
                         android:textSize="@dimen/text_size_body"
                         android:textAlignment="center"/>

@@ -220,43 +220,8 @@ public class MainRepository {
     public void placeFurniture(int userId, Furniture furniture, String slot, PlacementCallback callback) {
         executor.execute(() -> {
             try {
-                Boolean result = db.runInTransaction(() -> {
-                    if (furniture == null) {
-                        return false;
-                    }
-
-                    if (!PlacedFurniture.isValidSlot(slot)) {
-                        return false;
-                    }
-
-                    User user = userDao.getUserById(userId);
-                    if (user == null) {
-                        return false;
-                    }
-
-                    if (furnitureDao.countUserFurniture(userId, furniture.getId()) <= 0) {
-                        return false;
-                    }
-
-                    long now = nowProvider.getAsLong();
-                    PlacedFurniture existingPlacement = placedFurnitureDao.getPlacedFurnitureForSlot(userId, slot);
-
-                    if (existingPlacement != null) {
-                        existingPlacement.setFurnitureId(furniture.getId());
-                        existingPlacement.setPlacedAt(now);
-                        placedFurnitureDao.updatePlacedFurniture(existingPlacement);
-                    } else {
-                        PlacedFurniture placedFurniture = new PlacedFurniture(
-                                userId,
-                                furniture.getId(),
-                                slot,
-                                now
-                        );
-                        placedFurnitureDao.insertPlacedFurniture(placedFurniture);
-                    }
-
-                    return true;
-                });
+                long now = nowProvider.getAsLong();
+                Boolean result = db.runInTransaction(() -> placeFurnitureInTransaction(userId, furniture, slot, now));
 
                 if (result != null && result) {
                     if (callback != null) {
@@ -271,6 +236,58 @@ public class MainRepository {
                 }
             }
         });
+    }
+
+    private boolean placeFurnitureInTransaction(int userId, Furniture furniture, String slot, long now) {
+        if (furniture == null || !PlacedFurniture.isValidSlot(slot)) {
+            return false;
+        }
+
+        User user = userDao.getUserById(userId);
+        if (user == null) {
+            return false;
+        }
+
+        if (furnitureDao.countUserFurniture(userId, furniture.getId()) <= 0) {
+            return false;
+        }
+
+        PlacedFurniture existingInTargetSlot = placedFurnitureDao.getPlacedFurnitureForSlot(userId, slot);
+        PlacedFurniture existingForFurniture =
+                placedFurnitureDao.getPlacedFurnitureByFurnitureId(userId, furniture.getId());
+
+        if (existingForFurniture != null) {
+            if (slot.equals(existingForFurniture.getSlot())) {
+                existingForFurniture.setPlacedAt(now);
+                placedFurnitureDao.updatePlacedFurniture(existingForFurniture);
+                return true;
+            }
+
+            if (existingInTargetSlot != null && existingInTargetSlot.getId() != existingForFurniture.getId()) {
+                placedFurnitureDao.removePlacedFurnitureForSlot(userId, slot);
+            }
+
+            existingForFurniture.setSlot(slot);
+            existingForFurniture.setPlacedAt(now);
+            placedFurnitureDao.updatePlacedFurniture(existingForFurniture);
+            return true;
+        }
+
+        if (existingInTargetSlot != null) {
+            existingInTargetSlot.setFurnitureId(furniture.getId());
+            existingInTargetSlot.setPlacedAt(now);
+            placedFurnitureDao.updatePlacedFurniture(existingInTargetSlot);
+            return true;
+        }
+
+        PlacedFurniture placedFurniture = new PlacedFurniture(
+                userId,
+                furniture.getId(),
+                slot,
+                now
+        );
+        placedFurnitureDao.insertPlacedFurniture(placedFurniture);
+        return true;
     }
 
     public void removePlacedFurniture(int userId, String slot, PlacementCallback callback) {

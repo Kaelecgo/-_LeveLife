@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.irenaprokhyra.levelife.R;
+import com.irenaprokhyra.levelife.model.Furniture;
+import com.irenaprokhyra.levelife.model.PlacedFurniture;
 import com.irenaprokhyra.levelife.model.Task;
 import com.irenaprokhyra.levelife.model.TaskDraft;
 import com.irenaprokhyra.levelife.model.TaskReward;
@@ -27,6 +30,10 @@ public final class DialogUtils {
 
     public interface OnTaskCreatedListener {
         void onTaskCreated(TaskDraft draft);
+    }
+
+    public interface OnFurnitureSlotSelectedListener {
+        void onSlotSelected(String slot);
     }
 
     public static void showCreateTaskBottomSheet(Context context, OnTaskCreatedListener listener) {
@@ -139,6 +146,47 @@ public final class DialogUtils {
         dialog.show();
     }
 
+    public static void showFurnitureSlotPickerBottomSheet(
+            Context context,
+            Furniture furniture,
+            OnFurnitureSlotSelectedListener listener
+    ) {
+        if (context == null || furniture == null || listener == null) {
+            return;
+        }
+
+        BottomSheetDialog dialog = new BottomSheetDialog(context, R.style.LeveLife_BottomSheetDialog);
+        View view = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_furniture_slot_picker, null);
+        dialog.setContentView(view);
+
+        FrameLayout bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        if (bottomSheet != null) {
+            bottomSheet.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        }
+        view.setBackgroundResource(R.drawable.bg_bottom_sheet_surface);
+
+        ImageView ivFurniturePreview = view.findViewById(R.id.ivFurniturePreview);
+        TextView tvFurnitureName = view.findViewById(R.id.tvFurniturePreviewName);
+        MaterialButton btnFloor = view.findViewById(R.id.btnSlotFloor);
+        MaterialButton btnWall = view.findViewById(R.id.btnSlotWall);
+        MaterialButton btnDesk = view.findViewById(R.id.btnSlotDesk);
+        MaterialButton btnDecor = view.findViewById(R.id.btnSlotDecor);
+        MaterialButton btnCancel = view.findViewById(R.id.btnCancelSlotPicker);
+
+        int drawableResId = FurnitureDrawableResolver.resolveDrawableResId(context, furniture.getImageRef());
+        ivFurniturePreview.setImageResource(drawableResId);
+        ivFurniturePreview.setContentDescription(furniture.getName());
+        tvFurnitureName.setText(furniture.getName());
+
+        bindSlotButton(btnFloor, PlacedFurniture.SLOT_FLOOR, listener, dialog);
+        bindSlotButton(btnWall, PlacedFurniture.SLOT_WALL, listener, dialog);
+        bindSlotButton(btnDesk, PlacedFurniture.SLOT_DESK, listener, dialog);
+        bindSlotButton(btnDecor, PlacedFurniture.SLOT_DECOR, listener, dialog);
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
     private static void bindDropdown(
             Context context,
             MaterialAutoCompleteTextView dropdown,
@@ -184,6 +232,18 @@ public final class DialogUtils {
 
     private static String readText(TextView view) {
         return view.getText() != null ? view.getText().toString().trim() : "";
+    }
+
+    private static void bindSlotButton(
+            MaterialButton button,
+            String slot,
+            OnFurnitureSlotSelectedListener listener,
+            BottomSheetDialog dialog
+    ) {
+        button.setOnClickListener(v -> {
+            listener.onSlotSelected(slot);
+            dialog.dismiss();
+        });
     }
 
     private static final class SimpleTextWatcher implements TextWatcher {

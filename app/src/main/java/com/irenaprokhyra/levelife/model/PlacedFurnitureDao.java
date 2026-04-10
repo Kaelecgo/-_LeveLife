@@ -17,14 +17,11 @@ public interface PlacedFurnitureDao {
     @Update
     void updatePlacedFurniture(PlacedFurniture placedFurniture);
 
-    @Query("SELECT * FROM placed_furniture WHERE user_id = :userId")
-    LiveData<List<PlacedFurniture>> getPlacedFurnitureForUserLiveData(int userId);
-
-    @Query("SELECT * FROM placed_furniture WHERE user_id = :userId")
-    List<PlacedFurniture> getPlacedFurnitureForUser(int userId);
-
     @Query("SELECT * FROM placed_furniture WHERE user_id = :userId AND slot = :slot LIMIT 1")
     PlacedFurniture getPlacedFurnitureForSlot(int userId, String slot);
+
+    @Query("SELECT * FROM placed_furniture WHERE user_id = :userId AND furniture_id = :furnitureId LIMIT 1")
+    PlacedFurniture getPlacedFurnitureByFurnitureId(int userId, int furnitureId);
 
     @Query("DELETE FROM placed_furniture WHERE user_id = :userId AND slot = :slot")
     void removePlacedFurnitureForSlot(int userId, String slot);
