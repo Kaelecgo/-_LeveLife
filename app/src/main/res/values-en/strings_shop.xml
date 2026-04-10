@@ -3,6 +3,7 @@
     <string name="shop_balance_format">Your Berries: %1$d 🫐</string>
     <string name="shop_item_price">%1$d 🫐</string>
     <string name="shop_item_owned">Purchased 🛋️</string>
+    <string name="shop_item_no_money">No balance 💸</string>
     <string name="toast_furniture_selected">Selected: %1$s for %2$d 🫐</string>
     <string name="success_buy_furniture">Successfully bought: %1$s! 🎉</string>
     <string name="error_not_enough_berries">Not enough berries to buy this 😅</string>

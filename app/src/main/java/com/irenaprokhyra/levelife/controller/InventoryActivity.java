@@ -2,8 +2,9 @@ package com.irenaprokhyra.levelife.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
-
+import android.view.View;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -12,11 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
-import com.irenaprokhyra.levelife.model.MainRepository;
+import com.irenaprokhyra.levelife.util.DialogUtils;
 import com.irenaprokhyra.levelife.view.InventoryAdapter;
 import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
-
-import java.util.List;
 
 public class InventoryActivity extends AppCompatActivity {
 
@@ -24,6 +23,8 @@ public class InventoryActivity extends AppCompatActivity {
     private MainViewModel viewModel;
     private RecyclerView rvInventory;
     private InventoryAdapter adapter;
+    private View layoutEmptyState;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,45 +47,64 @@ public class InventoryActivity extends AppCompatActivity {
         setupObservers();
     }
 
-    private void initViews () {
+    private void initViews() {
         rvInventory = findViewById(R.id.rvInventory);
+        layoutEmptyState = findViewById(R.id.layout_empty_state);
         rvInventory.setLayoutManager(new GridLayoutManager(this, 2));
 
-        // >_ PASAMOS EL METODO COMO REFERENCIA PARA LA LÓGICA DE A3 _<
-        adapter = new InventoryAdapter(this::placeFurnitureInRoom);
+        adapter = new InventoryAdapter(this::showSlotPicker);
         rvInventory.setAdapter(adapter);
     }
 
     private void setupObservers() {
+
         viewModel.getInventory().observe(this, furnitureList -> {
-            if (furnitureList == null || furnitureList.isEmpty()) {
-                Toast.makeText(this, getString(R.string.empty_inventory), Toast.LENGTH_SHORT).show();
-            }
             adapter.setInventoryList(furnitureList);
+
+            if (furnitureList == null || furnitureList.isEmpty()) {
+                rvInventory.setVisibility(View.GONE);
+                layoutEmptyState.setVisibility(View.VISIBLE);
+            } else {
+                // Hay muebles: Mostramos lista, ocultamos Feedback Layout
+                rvInventory.setVisibility(View.VISIBLE);
+                layoutEmptyState.setVisibility(View.GONE);
+            }
+        });
+
+        viewModel.getErrorMessages().observe(this, message -> {
+            if (message != null && !message.trim().isEmpty()) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
-    // >_ LA LÓGICA (Colocar el mueble) _<
-    private void placeFurnitureInRoom(Furniture furniture) {
-        // En el próximo hito, aquí guardaremos el ID del mueble activo en SharedPreferences
-        // o en la BD para que el mapa sepa qué PNG dibujar
-
-        // Por ahora, damos feedback de éxito usando el string parametrizado
-        String successMsg = getString(R.string.inventory_item_placed, furniture.getName());
-        Toast.makeText(this, successMsg, Toast.LENGTH_SHORT).show();
-
-        // Opcional: Cerrar el inventario para simular que volvemos a la habitación
-        // finish();
-
+    private void showSlotPicker(Furniture furniture) {
+        DialogUtils.showFurnitureSlotPickerBottomSheet(
+                this,
+                furniture,
+                slot -> placeFurnitureInRoom(furniture, slot)
+        );
     }
 
+    private void placeFurnitureInRoom(Furniture furniture, String slot) {
+        viewModel.placeFurniture(furniture, slot, () -> runOnUiThread(() -> {
+            String message = getString(R.string.inventory_item_placed, furniture.getName());
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("USER_ID", currentUserId);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        }));
+    }
 
     private void setupNavigation() {
-        BottomNavigationView bottomNav= findViewById(R.id.bottomNavigationView);
-        if (bottomNav == null) return;
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        if (bottomNav == null) {
+            return;
+        }
 
-        //bottomNav.setItemIconTintList(null);
         bottomNav.setSelectedItemId(R.id.nav_inventory);
 
         bottomNav.setOnItemSelectedListener(item -> {
@@ -99,17 +119,16 @@ public class InventoryActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
                 return true;
-            }
-            else if (itemId == R.id.nav_inventory) { return true; }
-            else if (itemId == R.id.nav_tasks) {
+            } else if (itemId == R.id.nav_inventory) {
+                return true;
+            } else if (itemId == R.id.nav_tasks) {
                 Intent intent = new Intent(this, TaskActivity.class);
                 intent.putExtra("USER_ID", currentUserId);
                 startActivity(intent);
                 finish();
                 return true;
-            }
-            else if (itemId == R.id.nav_logout) {
-                com.irenaprokhyra.levelife.util.DialogUtils.showLogoutConfirmationDialog(this, this::performLogout);
+            } else if (itemId == R.id.nav_logout) {
+                DialogUtils.showLogoutConfirmationDialog(this, this::performLogout);
                 return false;
             }
             return false;

@@ -17,6 +17,7 @@ public class MainRepository {
     private final TaskDao taskDao;
     private final FurnitureDao furnitureDao;
     private final TaskCompletionDao taskCompletionDao;
+    private final PlacedFurnitureDao placedFurnitureDao;
     private final Executor executor;
     private final LongSupplier nowProvider;
 
@@ -32,6 +33,7 @@ public class MainRepository {
         this.taskDao = db.taskDao();
         this.furnitureDao = db.furnitureDao();
         this.taskCompletionDao = db.taskCompletionDao();
+        this.placedFurnitureDao = db.placedFurnitureDao();
         this.executor = executor;
         this.nowProvider = nowProvider;
     }
@@ -211,6 +213,110 @@ public class MainRepository {
         return furnitureDao.getInventoryForUserLiveData(userId);
     }
 
+    public LiveData<List<PlacedFurnitureItem>> getPlacedFurnitureItemsForUserLiveData(int userId) {
+        return placedFurnitureDao.getPlacedFurnitureItemsForUserLiveData(userId);
+    }
+
+    public void placeFurniture(int userId, Furniture furniture, String slot, PlacementCallback callback) {
+        executor.execute(() -> {
+            try {
+                long now = nowProvider.getAsLong();
+                Boolean result = db.runInTransaction(() -> placeFurnitureInTransaction(userId, furniture, slot, now));
+
+                if (result != null && result) {
+                    if (callback != null) {
+                        callback.onSuccess();
+                    }
+                } else if (callback != null) {
+                    callback.onError("No se pudo colocar el mueble");
+                }
+            } catch (Exception e) {
+                if (callback != null) {
+                    callback.onError("Error en la base de datos: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    private boolean placeFurnitureInTransaction(int userId, Furniture furniture, String slot, long now) {
+        if (furniture == null || !PlacedFurniture.isValidSlot(slot)) {
+            return false;
+        }
+
+        User user = userDao.getUserById(userId);
+        if (user == null) {
+            return false;
+        }
+
+        if (furnitureDao.countUserFurniture(userId, furniture.getId()) <= 0) {
+            return false;
+        }
+
+        PlacedFurniture existingInTargetSlot = placedFurnitureDao.getPlacedFurnitureForSlot(userId, slot);
+        PlacedFurniture existingForFurniture =
+                placedFurnitureDao.getPlacedFurnitureByFurnitureId(userId, furniture.getId());
+
+        if (existingForFurniture != null) {
+            if (slot.equals(existingForFurniture.getSlot())) {
+                existingForFurniture.setPlacedAt(now);
+                placedFurnitureDao.updatePlacedFurniture(existingForFurniture);
+                return true;
+            }
+
+            if (existingInTargetSlot != null && existingInTargetSlot.getId() != existingForFurniture.getId()) {
+                placedFurnitureDao.removePlacedFurnitureForSlot(userId, slot);
+            }
+
+            existingForFurniture.setSlot(slot);
+            existingForFurniture.setPlacedAt(now);
+            placedFurnitureDao.updatePlacedFurniture(existingForFurniture);
+            return true;
+        }
+
+        if (existingInTargetSlot != null) {
+            existingInTargetSlot.setFurnitureId(furniture.getId());
+            existingInTargetSlot.setPlacedAt(now);
+            placedFurnitureDao.updatePlacedFurniture(existingInTargetSlot);
+            return true;
+        }
+
+        PlacedFurniture placedFurniture = new PlacedFurniture(
+                userId,
+                furniture.getId(),
+                slot,
+                now
+        );
+        placedFurnitureDao.insertPlacedFurniture(placedFurniture);
+        return true;
+    }
+
+    public void removePlacedFurniture(int userId, String slot, PlacementCallback callback) {
+        executor.execute(() -> {
+            try {
+                Boolean result = db.runInTransaction(() -> {
+                    if (!PlacedFurniture.isValidSlot(slot)) { return false; }
+
+                    User user = userDao.getUserById(userId);
+                    if (user == null) { return false; }
+
+                    placedFurnitureDao.removePlacedFurnitureForSlot(userId, slot);
+                    return true;
+                });
+                if (result != null && result) {
+                    if (callback != null) {
+                        callback.onSuccess();
+                    }
+                } else if (callback != null) {
+                    callback.onError("No se pudo retirar el mueble");
+                }
+            } catch (Exception e) {
+                if (callback != null) {
+                    callback.onError("Error en la base de datos: " + e.getMessage());
+                }
+            }
+        });
+    }
+
     public void purchaseFurniture(int userId, Furniture furniture, PurchaseCallback callback) {
         executor.execute(() -> {
             try {
@@ -224,11 +330,10 @@ public class MainRepository {
                         return false;
                     }
 
-                    if (user.getBerries() < furniture.getPrice()) {
+                    if (!user.spendBerries(furniture.getPrice())) {
                         return false;
                     }
 
-                    user.setBerries(user.getBerries() - furniture.getPrice());
                     userDao.updateUser(user);
                     userDao.insertUserFurnitureCrossRef(new UserFurnitureCrossRef(userId, furniture.getId()));
                     return true;
@@ -305,6 +410,11 @@ public class MainRepository {
 
     public interface TaskCompleteCallback {
         void onSuccess(int rewardXP, int rewardBerries, int ecoReward, boolean leveledUp);
+        void onError(String message);
+    }
+
+    public interface PlacementCallback {
+        void onSuccess();
         void onError(String message);
     }
 }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/spacing_small"
+    app:cardBackgroundColor="@color/app_surface_card"
+    app:cardCornerRadius="@dimen/corner_radius_medium"
+    app:cardElevation="@dimen/elevation_low">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_medium">
+
+        <ImageView
+            android:id="@+id/ivFurnitureIcon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/content_desc_furniture_icon"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_with_no_bg512" />
+
+        <TextView
+            android:id="@+id/tvFurnitureName"
+            style="@style/LeveLife.Text.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:gravity="center"
+            android:text="@string/placeholder_furniture_name" />
+
+        <TextView
+            android:id="@+id/tvInventoryFurnitureMeta"
+            style="@style/LeveLife.Text.BodySecondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_tiny"
+            android:gravity="center"
+            android:text="@string/inventory_item_meta_fallback" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPlaceFurniture"
+            style="@style/LeveLife.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:text="@string/inventory_action_place" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
