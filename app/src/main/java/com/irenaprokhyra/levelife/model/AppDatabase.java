@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
                 TaskCompletion.class,
                 PlacedFurniture.class
         },
-        version = 9,
+        version = 10,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -158,6 +158,14 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_9_10 = new Migration(9, 10) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            rebuildTasksTable(database);
+            rebuildPlacedFurnitureTable(database);
+        }
+    };
+
 
     public abstract UserDao userDao();
 
@@ -187,7 +195,8 @@ public abstract class AppDatabase extends RoomDatabase {
                                     MIGRATION_5_6,
                                     MIGRATION_6_7,
                                     MIGRATION_7_8,
-                                    MIGRATION_8_9
+                                    MIGRATION_8_9,
+                                    MIGRATION_9_10
                             )
                             .addCallback(sRoomDatabaseCallback)
                             .build();
@@ -244,6 +253,137 @@ public abstract class AppDatabase extends RoomDatabase {
         }
 
         return candidate;
+    }
+
+    private static void rebuildTasksTable(@NonNull SupportSQLiteDatabase database) {
+        Set<String> taskColumns = getTableColumns(database, "tasks");
+        if (taskColumns.isEmpty()) {
+            return;
+        }
+
+        database.execSQL("DROP TABLE IF EXISTS `tasks_migrated_v10`");
+        database.execSQL(
+                "CREATE TABLE IF NOT EXISTS `tasks_migrated_v10` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`user_id` INTEGER NOT NULL, " +
+                        "`reward_berries` INTEGER NOT NULL, " +
+                        "`reward_xp` INTEGER NOT NULL, " +
+                        "`eco_reward` INTEGER NOT NULL DEFAULT 0, " +
+                        "`is_eco_task` INTEGER NOT NULL DEFAULT 0, " +
+                        "`last_completed_at` INTEGER NOT NULL DEFAULT 0, " +
+                        "`title` TEXT, " +
+                        "`description` TEXT, " +
+                        "`category` TEXT, " +
+                        "`difficulty` TEXT, " +
+                        "`isCompleted` INTEGER NOT NULL, " +
+                        "`frequency` TEXT, " +
+                        "FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE" +
+                        ")"
+        );
+
+        String difficultyExpr = taskColumns.contains("difficulty")
+                ? "COALESCE(`difficulty`, '" + Task.DIFFICULTY_MEDIUM + "')"
+                : "'" + Task.DIFFICULTY_MEDIUM + "'";
+        String frequencyExpr = taskColumns.contains("frequency")
+                ? "COALESCE(NULLIF(`frequency`, ''), '" + Task.FREQUENCY_ONCE + "')"
+                : "'" + Task.FREQUENCY_ONCE + "'";
+        String ecoRewardExpr = taskColumns.contains("eco_reward") ? "COALESCE(`eco_reward`, 0)" : "0";
+        String isEcoTaskExpr = taskColumns.contains("is_eco_task") ? "COALESCE(`is_eco_task`, 0)" : "0";
+        String lastCompletedAtExpr = taskColumns.contains("last_completed_at") ? "COALESCE(`last_completed_at`, 0)" : "0";
+        String isCompletedExpr = taskColumns.contains("isCompleted") ? "COALESCE(`isCompleted`, 0)" : "0";
+
+        database.execSQL(
+                "INSERT INTO `tasks_migrated_v10` (" +
+                        "`id`, `user_id`, `reward_berries`, `reward_xp`, `eco_reward`, `is_eco_task`, `last_completed_at`, " +
+                        "`title`, `description`, `category`, `difficulty`, `isCompleted`, `frequency`" +
+                        ") " +
+                        "SELECT " +
+                        "`id`, `user_id`, `reward_berries`, `reward_xp`, " +
+                        ecoRewardExpr + ", " +
+                        isEcoTaskExpr + ", " +
+                        lastCompletedAtExpr + ", " +
+                        "`title`, `description`, `category`, " +
+                        difficultyExpr + ", " +
+                        isCompletedExpr + ", " +
+                        frequencyExpr + " " +
+                        "FROM `tasks`"
+        );
+
+        database.execSQL("DROP TABLE `tasks`");
+        database.execSQL("ALTER TABLE `tasks_migrated_v10` RENAME TO `tasks`");
+        database.execSQL("CREATE INDEX IF NOT EXISTS `index_tasks_user_id` ON `tasks` (`user_id`)");
+    }
+
+    private static void rebuildPlacedFurnitureTable(@NonNull SupportSQLiteDatabase database) {
+        Set<String> placedFurnitureColumns = getTableColumns(database, "placed_furniture");
+        if (placedFurnitureColumns.isEmpty()) {
+            database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `placed_furniture` (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`user_id` INTEGER NOT NULL, " +
+                            "`furniture_id` INTEGER NOT NULL, " +
+                            "`slot` TEXT NOT NULL, " +
+                            "`placed_at` INTEGER NOT NULL, " +
+                            "FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE, " +
+                            "FOREIGN KEY(`furniture_id`) REFERENCES `furniture`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE" +
+                            ")"
+            );
+        } else {
+            database.execSQL("DROP TABLE IF EXISTS `placed_furniture_migrated_v10`");
+            database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `placed_furniture_migrated_v10` (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`user_id` INTEGER NOT NULL, " +
+                            "`furniture_id` INTEGER NOT NULL, " +
+                            "`slot` TEXT NOT NULL, " +
+                            "`placed_at` INTEGER NOT NULL, " +
+                            "FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE, " +
+                            "FOREIGN KEY(`furniture_id`) REFERENCES `furniture`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE" +
+                            ")"
+            );
+
+            String placedAtExpr = placedFurnitureColumns.contains("placed_at") ? "COALESCE(`placed_at`, 0)" : "0";
+
+            database.execSQL(
+                    "INSERT OR REPLACE INTO `placed_furniture_migrated_v10` (`id`, `user_id`, `furniture_id`, `slot`, `placed_at`) " +
+                            "SELECT `id`, `user_id`, `furniture_id`, `slot`, " + placedAtExpr + " " +
+                            "FROM `placed_furniture` " +
+                            "WHERE `user_id` IS NOT NULL AND `furniture_id` IS NOT NULL AND `slot` IS NOT NULL"
+            );
+
+            database.execSQL("DROP TABLE `placed_furniture`");
+            database.execSQL("ALTER TABLE `placed_furniture_migrated_v10` RENAME TO `placed_furniture`");
+        }
+
+        database.execSQL(
+                "CREATE INDEX IF NOT EXISTS `index_placed_furniture_user_id` " +
+                        "ON `placed_furniture` (`user_id`)"
+        );
+        database.execSQL(
+                "CREATE INDEX IF NOT EXISTS `index_placed_furniture_furniture_id` " +
+                        "ON `placed_furniture` (`furniture_id`)"
+        );
+        database.execSQL(
+                "CREATE UNIQUE INDEX IF NOT EXISTS `index_placed_furniture_user_id_slot` " +
+                        "ON `placed_furniture` (`user_id`, `slot`)"
+        );
+    }
+
+    @NonNull
+    private static Set<String> getTableColumns(@NonNull SupportSQLiteDatabase database, @NonNull String tableName) {
+        Set<String> columns = new HashSet<>();
+        Cursor cursor = database.query("PRAGMA table_info(`" + tableName + "`)");
+
+        try {
+            int nameColumn = cursor.getColumnIndex("name");
+            while (cursor.moveToNext()) {
+                columns.add(cursor.getString(nameColumn));
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return columns;
     }
 
     private static void seedFurnitureCatalog(SupportSQLiteDatabase db) {

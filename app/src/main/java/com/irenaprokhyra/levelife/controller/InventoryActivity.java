@@ -2,6 +2,7 @@ package com.irenaprokhyra.levelife.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +23,8 @@ public class InventoryActivity extends AppCompatActivity {
     private MainViewModel viewModel;
     private RecyclerView rvInventory;
     private InventoryAdapter adapter;
+    private View layoutEmptyState;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,7 @@ public class InventoryActivity extends AppCompatActivity {
 
     private void initViews() {
         rvInventory = findViewById(R.id.rvInventory);
+        layoutEmptyState = findViewById(R.id.layout_empty_state);
         rvInventory.setLayoutManager(new GridLayoutManager(this, 2));
 
         adapter = new InventoryAdapter(this::showSlotPicker);
@@ -55,10 +59,16 @@ public class InventoryActivity extends AppCompatActivity {
     private void setupObservers() {
 
         viewModel.getInventory().observe(this, furnitureList -> {
-            if (furnitureList == null || furnitureList.isEmpty()) {
-                Toast.makeText(this, getString(R.string.empty_inventory), Toast.LENGTH_SHORT).show();
-            }
             adapter.setInventoryList(furnitureList);
+
+            if (furnitureList == null || furnitureList.isEmpty()) {
+                rvInventory.setVisibility(View.GONE);
+                layoutEmptyState.setVisibility(View.VISIBLE);
+            } else {
+                // Hay muebles: Mostramos lista, ocultamos Feedback Layout
+                rvInventory.setVisibility(View.VISIBLE);
+                layoutEmptyState.setVisibility(View.GONE);
+            }
         });
 
         viewModel.getErrorMessages().observe(this, message -> {
