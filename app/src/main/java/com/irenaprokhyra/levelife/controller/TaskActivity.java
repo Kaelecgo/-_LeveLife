@@ -110,7 +110,7 @@ public class TaskActivity extends AppCompatActivity {
         });
         fabAddTask.setOnLongClickListener(v -> {
             viewModel.resetFrequencyInfoHints();
-            Toast.makeText(this, "Avisos de frecuencia reiniciados", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.tasks_frequency_feedbacks_reset), Toast.LENGTH_SHORT).show();
             return true;
         });
     }

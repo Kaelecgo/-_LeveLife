@@ -11,9 +11,15 @@ import com.irenaprokhyra.levelife.model.MainRepository;
 import com.irenaprokhyra.levelife.model.PlacedFurnitureItem;
 import com.irenaprokhyra.levelife.model.User;
 import com.irenaprokhyra.levelife.model.Task;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MainViewModel extends AndroidViewModel {
+    private static final String FREQUENCY_HINT_PREFS = "LeveLife_Prefs";
+    private static final String FREQUENCY_HINTS_USER_KEY_PREFIX = "shown_frequency_hints_user_";
+
     private final MainRepository repository;
     private int currentUserId = -1;
     private LiveData<User> user;
@@ -123,32 +129,70 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     private void checkAndShowFrequencyInfo(Task task) {
-        String frequency = Task.normalizeFrequency(task.getFrequency());
-        android.content.SharedPreferences prefs = getApplication().getSharedPreferences("LeveLife_Prefs", android.content.Context.MODE_PRIVATE);
-        String key = "info_shown_" + frequency.toLowerCase().replace(" ", "_");
-
-        if (!prefs.getBoolean(key, false)) {
-            FrequencyInfo info = null;
-            switch (frequency) {
-                case Task.FREQUENCY_DAILY:
-                    info = new FrequencyInfo(R.string.dialog_daily_task_reset_title, R.string.dialog_daily_task_reset_message);
-                    break;
-                case Task.FREQUENCY_WEEKLY:
-                    info = new FrequencyInfo(R.string.dialog_weekly_task_reset_title, R.string.dialog_weekly_task_reset_message);
-                    break;
-                case Task.FREQUENCY_MONTHLY:
-                    info = new FrequencyInfo(R.string.dialog_monthly_task_reset_title, R.string.dialog_monthly_task_reset_message);
-                    break;
-                case Task.FREQUENCY_ONCE:
-                    info = new FrequencyInfo(R.string.dialog_once_task_info_title, R.string.dialog_once_task_info_message);
-                    break;
-            }
-
-            if (info != null) {
-                showFrequencyInfoDialog.postValue(info);
-                prefs.edit().putBoolean(key, true).apply();
-            }
+        if (currentUserId == -1 || task == null) {
+            return;
         }
+
+        String frequencyKey = getFrequencyHintValue(task.getFrequency());
+        FrequencyInfo info = getFrequencyInfo(task.getFrequency());
+        if (frequencyKey == null || info == null) {
+            return;
+        }
+
+        android.content.SharedPreferences prefs = getFrequencyHintPreferences();
+        String userKey = buildFrequencyHintsUserKey(currentUserId);
+        Set<String> shownFrequencies = new HashSet<>(prefs.getStringSet(userKey, Collections.emptySet()));
+
+        if (shownFrequencies.contains(frequencyKey)) {
+            return;
+        }
+
+        shownFrequencies.add(frequencyKey);
+        prefs.edit().putStringSet(userKey, shownFrequencies).commit();
+        showFrequencyInfoDialog.postValue(info);
+    }
+
+    private FrequencyInfo getFrequencyInfo(String rawFrequency) {
+        String frequency = Task.normalizeFrequency(rawFrequency);
+        switch (frequency) {
+            case Task.FREQUENCY_DAILY:
+                return new FrequencyInfo(R.string.dialog_daily_task_reset_title, R.string.dialog_daily_task_reset_message);
+            case Task.FREQUENCY_WEEKLY:
+                return new FrequencyInfo(R.string.dialog_weekly_task_reset_title, R.string.dialog_weekly_task_reset_message);
+            case Task.FREQUENCY_MONTHLY:
+                return new FrequencyInfo(R.string.dialog_monthly_task_reset_title, R.string.dialog_monthly_task_reset_message);
+            case Task.FREQUENCY_ONCE:
+                return new FrequencyInfo(R.string.dialog_once_task_info_title, R.string.dialog_once_task_info_message);
+            default:
+                return null;
+        }
+    }
+
+    private String getFrequencyHintValue(String rawFrequency) {
+        String frequency = Task.normalizeFrequency(rawFrequency);
+        switch (frequency) {
+            case Task.FREQUENCY_DAILY:
+                return "daily";
+            case Task.FREQUENCY_WEEKLY:
+                return "weekly";
+            case Task.FREQUENCY_MONTHLY:
+                return "monthly";
+            case Task.FREQUENCY_ONCE:
+                return "once";
+            default:
+                return null;
+        }
+    }
+
+    private android.content.SharedPreferences getFrequencyHintPreferences() {
+        return getApplication().getSharedPreferences(
+                FREQUENCY_HINT_PREFS,
+                android.content.Context.MODE_PRIVATE
+        );
+    }
+
+    private String buildFrequencyHintsUserKey(int userId) {
+        return FREQUENCY_HINTS_USER_KEY_PREFIX + userId;
     }
 
     public void clearFrequencyInfoDialog() {
@@ -156,14 +200,13 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void resetFrequencyInfoHints() {
-        android.content.SharedPreferences prefs = getApplication()
-                .getSharedPreferences("LeveLife_Prefs", android.content.Context.MODE_PRIVATE);
+        if (currentUserId == -1) {
+            return;
+        }
 
-        prefs.edit()
-                .remove("info_shown_" + Task.FREQUENCY_DAILY.toLowerCase().replace(" ", "_"))
-                .remove("info_shown_" + Task.FREQUENCY_WEEKLY.toLowerCase().replace(" ", "_"))
-                .remove("info_shown_" + Task.FREQUENCY_MONTHLY.toLowerCase().replace(" ", "_"))
-                .remove("info_shown_" + Task.FREQUENCY_ONCE.toLowerCase().replace(" ", "_"))
+        getFrequencyHintPreferences()
+                .edit()
+                .remove(buildFrequencyHintsUserKey(currentUserId))
                 .apply();
     }
 
