@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
                 TaskCompletion.class,
                 PlacedFurniture.class
         },
-        version = 10,
+        version = 11,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -166,6 +166,15 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_10_11 = new Migration(10, 11) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL(
+                    "ALTER TABLE `users` ADD COLUMN `seen_frequency_hints_mask` INTEGER NOT NULL DEFAULT 0"
+            );
+        }
+    };
+
 
     public abstract UserDao userDao();
 
@@ -196,7 +205,8 @@ public abstract class AppDatabase extends RoomDatabase {
                                     MIGRATION_6_7,
                                     MIGRATION_7_8,
                                     MIGRATION_8_9,
-                                    MIGRATION_9_10
+                                    MIGRATION_9_10,
+                                    MIGRATION_10_11
                             )
                             .addCallback(sRoomDatabaseCallback)
                             .build();

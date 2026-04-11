@@ -95,6 +95,19 @@ public class MainRepository {
         executor.execute(() -> userDao.updateUser(user));
     }
 
+    public void markFrequencyHintSeenIfNeeded(int userId, int hintFlag, BooleanCallback callback) {
+        executor.execute(() -> {
+            boolean updated = userDao.markFrequencyHintSeenIfNeeded(userId, hintFlag) > 0;
+            if (callback != null) {
+                callback.onResult(updated);
+            }
+        });
+    }
+
+    public void resetFrequencyHints(int userId) {
+        executor.execute(() -> userDao.resetFrequencyHints(userId));
+    }
+
     public void registerUser(String username, String rawPassword, RegistrationCallback callback) {
         executor.execute(() -> {
             try {

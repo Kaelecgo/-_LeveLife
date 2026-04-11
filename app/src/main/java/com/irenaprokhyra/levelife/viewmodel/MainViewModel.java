@@ -11,15 +11,9 @@ import com.irenaprokhyra.levelife.model.MainRepository;
 import com.irenaprokhyra.levelife.model.PlacedFurnitureItem;
 import com.irenaprokhyra.levelife.model.User;
 import com.irenaprokhyra.levelife.model.Task;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class MainViewModel extends AndroidViewModel {
-    private static final String FREQUENCY_HINT_PREFS = "LeveLife_Prefs";
-    private static final String FREQUENCY_HINTS_USER_KEY_PREFIX = "shown_frequency_hints_user_";
-
     private final MainRepository repository;
     private int currentUserId = -1;
     private LiveData<User> user;
@@ -133,23 +127,17 @@ public class MainViewModel extends AndroidViewModel {
             return;
         }
 
-        String frequencyKey = getFrequencyHintValue(task.getFrequency());
+        int frequencyHintFlag = getFrequencyHintFlag(task.getFrequency());
         FrequencyInfo info = getFrequencyInfo(task.getFrequency());
-        if (frequencyKey == null || info == null) {
+        if (frequencyHintFlag == 0 || info == null) {
             return;
         }
 
-        android.content.SharedPreferences prefs = getFrequencyHintPreferences();
-        String userKey = buildFrequencyHintsUserKey(currentUserId);
-        Set<String> shownFrequencies = new HashSet<>(prefs.getStringSet(userKey, Collections.emptySet()));
-
-        if (shownFrequencies.contains(frequencyKey)) {
-            return;
-        }
-
-        shownFrequencies.add(frequencyKey);
-        prefs.edit().putStringSet(userKey, shownFrequencies).commit();
-        showFrequencyInfoDialog.postValue(info);
+        repository.markFrequencyHintSeenIfNeeded(currentUserId, frequencyHintFlag, wasMarked -> {
+            if (wasMarked) {
+                showFrequencyInfoDialog.postValue(info);
+            }
+        });
     }
 
     private FrequencyInfo getFrequencyInfo(String rawFrequency) {
@@ -168,31 +156,20 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
-    private String getFrequencyHintValue(String rawFrequency) {
+    private int getFrequencyHintFlag(String rawFrequency) {
         String frequency = Task.normalizeFrequency(rawFrequency);
         switch (frequency) {
             case Task.FREQUENCY_DAILY:
-                return "daily";
+                return User.FREQUENCY_HINT_DAILY;
             case Task.FREQUENCY_WEEKLY:
-                return "weekly";
+                return User.FREQUENCY_HINT_WEEKLY;
             case Task.FREQUENCY_MONTHLY:
-                return "monthly";
+                return User.FREQUENCY_HINT_MONTHLY;
             case Task.FREQUENCY_ONCE:
-                return "once";
+                return User.FREQUENCY_HINT_ONCE;
             default:
-                return null;
+                return 0;
         }
-    }
-
-    private android.content.SharedPreferences getFrequencyHintPreferences() {
-        return getApplication().getSharedPreferences(
-                FREQUENCY_HINT_PREFS,
-                android.content.Context.MODE_PRIVATE
-        );
-    }
-
-    private String buildFrequencyHintsUserKey(int userId) {
-        return FREQUENCY_HINTS_USER_KEY_PREFIX + userId;
     }
 
     public void clearFrequencyInfoDialog() {
@@ -204,10 +181,7 @@ public class MainViewModel extends AndroidViewModel {
             return;
         }
 
-        getFrequencyHintPreferences()
-                .edit()
-                .remove(buildFrequencyHintsUserKey(currentUserId))
-                .apply();
+        repository.resetFrequencyHints(currentUserId);
     }
 
     public void clearTaskCompletionMessage() {

@@ -23,6 +23,10 @@ public interface UserDao {
     void updateBerries(int userId, int amount);
     @Query("SELECT COUNT(*) FROM users WHERE user_name = :username")
     int checkUserExists(String username);
+    @Query("UPDATE users SET seen_frequency_hints_mask = seen_frequency_hints_mask | :hintFlag WHERE id = :userId AND (seen_frequency_hints_mask & :hintFlag) = 0")
+    int markFrequencyHintSeenIfNeeded(int userId, int hintFlag);
+    @Query("UPDATE users SET seen_frequency_hints_mask = 0 WHERE id = :userId")
+    void resetFrequencyHints(int userId);
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertUserFurnitureCrossRef(UserFurnitureCrossRef crossRef);
 }
