@@ -88,6 +88,11 @@
         <item name="android:fontFamily">@font/nunito_bold</item>
     </style>
 
+    <style name="LeveLife.Text.Link" parent="LeveLife.Text.Body">
+        <item name="android:textColor">@color/app_text_accent</item>
+        <item name="android:fontFamily">@font/nunito_bold</item>
+    </style>
+
     <!-- INPUTS -->
     <style name="LeveLife.EditText" parent="Widget.AppCompat.EditText">
         <item name="android:fontFamily">@font/nunito_light</item>
@@ -107,24 +112,44 @@
     </style>
 
     <!-- BUTTONS -->
-    <style name="LeveLife.Button" parent="Widget.Material3.Button">
+    <style name="LeveLife.Button.Base" parent="Widget.Material3.Button">
         <item name="android:fontFamily">@font/nunito_bold</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:textSize">@dimen/text_size_body</item>
-        <item name="android:textColor">@color/neutral_white</item>
-        <item name="backgroundTint">@color/app_button_primary_selector</item>
-        <item name="cornerRadius">@dimen/corner_radius_xlarge</item>
-        <item name="android:paddingStart">@dimen/spacing_large</item>
-        <item name="android:paddingEnd">@dimen/spacing_large</item>
-        <item name="android:paddingTop">@dimen/spacing_small</item>
-        <item name="android:paddingBottom">@dimen/spacing_small</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="cornerRadius">@dimen/button_radius_capsule</item>
+        <item name="android:paddingStart">@dimen/button_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/button_padding_horizontal</item>
         <item name="iconPadding">@dimen/spacing_small</item>
         <item name="elevation">@dimen/elevation_low</item>
     </style>
 
-    <style name="LeveLife.Text.Link" parent="LeveLife.Text.Body">
-        <item name="android:textColor">@color/app_text_accent</item>
+    <style name="LeveLife.Button" parent="LeveLife.Button.Base">
+        <item name="android:textColor">@color/neutral_white</item>
+        <item name="backgroundTint">@color/app_button_primary_selector</item>
+    </style>
+
+    <style name="LeveLife.Button.Success" parent="LeveLife.Button.Base">
+        <item name="android:textColor">@color/neutral_white</item>
+        <item name="backgroundTint">@color/app_button_success_selector</item>
+    </style>
+
+    <style name="LeveLife.Button.Secondary" parent="LeveLife.Button.Base">
+        <item name="android:textColor">@color/app_text_primary</item>
+        <item name="backgroundTint">@color/app_button_secondary_selector</item>
+        <item name="strokeColor">@color/app_text_secondary</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="LeveLife.Button.Danger" parent="LeveLife.Button.Base">
+        <item name="android:textColor">@color/neutral_white</item>
+        <item name="backgroundTint">@color/app_button_danger_selector</item>
+    </style>
+
+    <style name="LeveLife.Button.Ghost" parent="Widget.Material3.Button.TextButton">
         <item name="android:fontFamily">@font/nunito_bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/app_text_accent</item>
     </style>
 
     <style name="LeveLife.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">

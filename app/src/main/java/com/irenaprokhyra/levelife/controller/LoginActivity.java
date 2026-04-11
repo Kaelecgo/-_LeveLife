@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.MainRepository;
 import com.irenaprokhyra.levelife.model.User;
+import com.irenaprokhyra.levelife.util.SessionManager;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -25,7 +26,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         repository = MainRepository.getInstance(getApplication());
 
         checkSession();
@@ -36,31 +36,27 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkSession() {
-        int savedUserId = getSharedPreferences("LeveLifeSession", MODE_PRIVATE)
-                .getInt("saved_user_id", -1);
-
-        if (savedUserId != -1) {
-            repository.getUserById(savedUserId, new MainRepository.LoginCallback() {
-                @Override
-                public void onSuccess(User user) {
-                    navigateToMain(user.getId());
-                }
-
-                @Override
-                public void onError(String message) {
-                    getSharedPreferences("LeveLifeSession", MODE_PRIVATE)
-                            .edit()
-                            .clear()
-                            .apply();
-
-                    runOnUiThread(() -> Toast.makeText(
-                            LoginActivity.this,
-                            getString(R.string.error_session_expired),
-                            Toast.LENGTH_SHORT
-                    ).show());
-                }
-            });
+        int savedUserId = SessionManager.getSavedUserId(this);
+        if (savedUserId == -1) {
+            return;
         }
+
+        repository.getUserById(savedUserId, new MainRepository.LoginCallback() {
+            @Override
+            public void onSuccess(User user) {
+                navigateToMain(user.getId());
+            }
+
+            @Override
+            public void onError(String message) {
+                SessionManager.clearSession(LoginActivity.this);
+                runOnUiThread(() -> Toast.makeText(
+                        LoginActivity.this,
+                        getString(R.string.error_session_expired),
+                        Toast.LENGTH_SHORT
+                ).show());
+            }
+        });
     }
 
     private void initViews() {
@@ -103,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(User user) {
                 runOnUiThread(() -> {
-                    saveSession(user.getId());
+                    SessionManager.saveSession(LoginActivity.this, user.getId());
                     String welcome = getString(R.string.welcome_message, user.getName());
                     Toast.makeText(LoginActivity.this, welcome, Toast.LENGTH_SHORT).show();
                     navigateToMain(user.getId());
@@ -121,13 +117,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void saveSession(int userId) {
-        getSharedPreferences("LeveLifeSession", MODE_PRIVATE)
-                .edit()
-                .putInt("saved_user_id", userId)
-                .apply();
-    }
-
     private void navigateToMain(int userId) {
         runOnUiThread(() -> {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -142,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int userId) {
                 runOnUiThread(() -> {
-                    saveSession(userId);
+                    SessionManager.saveSession(LoginActivity.this, userId);
                     String welcome = getString(R.string.welcome_message, username);
                     Toast.makeText(LoginActivity.this, welcome, Toast.LENGTH_SHORT).show();
                     navigateToMain(userId);

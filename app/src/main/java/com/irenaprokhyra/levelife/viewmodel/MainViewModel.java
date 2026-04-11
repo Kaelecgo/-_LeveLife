@@ -155,6 +155,18 @@ public class MainViewModel extends AndroidViewModel {
         showFrequencyInfoDialog.postValue(null);
     }
 
+    public void resetFrequencyInfoHints() {
+        android.content.SharedPreferences prefs = getApplication()
+                .getSharedPreferences("LeveLife_Prefs", android.content.Context.MODE_PRIVATE);
+
+        prefs.edit()
+                .remove("info_shown_" + Task.FREQUENCY_DAILY.toLowerCase().replace(" ", "_"))
+                .remove("info_shown_" + Task.FREQUENCY_WEEKLY.toLowerCase().replace(" ", "_"))
+                .remove("info_shown_" + Task.FREQUENCY_MONTHLY.toLowerCase().replace(" ", "_"))
+                .remove("info_shown_" + Task.FREQUENCY_ONCE.toLowerCase().replace(" ", "_"))
+                .apply();
+    }
+
     public void clearTaskCompletionMessage() {
         rewardMessage.setValue(null);
     }

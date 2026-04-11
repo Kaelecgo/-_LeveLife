@@ -1,6 +1,7 @@
 package com.irenaprokhyra.levelife.util;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -28,8 +29,7 @@ public final class DialogUtils {
     private DialogUtils() {
     }
 
-    private static final int MATERIAL_BOTTOM_SHEET_ID =
-            com.google.android.material.bottomsheet.R.id.design_bottom_sheet;
+    private static final int MATERIAL_BOTTOM_SHEET_ID = resolveMaterialBottomSheetId();
 
     public interface OnTaskCreatedListener {
         void onTaskCreated(TaskDraft draft);
@@ -296,6 +296,14 @@ public final class DialogUtils {
 
     private static String readText(TextView view) {
         return view.getText() != null ? view.getText().toString().trim() : "";
+    }
+
+    private static int resolveMaterialBottomSheetId() {
+        return Resources.getSystem().getIdentifier(
+                "design_bottom_sheet",
+                "id",
+                "com.google.android.material"
+        );
     }
 
     private static void bindSlotButton(
