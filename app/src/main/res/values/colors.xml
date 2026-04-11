@@ -2,6 +2,7 @@
 <resources>
     <!-- PALETA BASE (Colores "Físicos") -->
 
+
     <!-- Marca / Logo -->
     <color name="brand_green_dark">#328661</color>
     <color name="brand_green_light">#B0F58D</color>
@@ -67,5 +68,12 @@
     <color name="room_surface_top">#F7F0E5</color>
     <color name="room_surface_bottom">#EEDFCB</color>
     <color name="room_border">#E5D5BF</color>
+
+    <!-- BOTONES SEMÁNTICOS -->
+    <color name="app_button_success">@color/brand_green_dark</color>
+    <color name="app_button_secondary_bg">@color/cozy_tan</color>
+    <color name="app_button_secondary_text">@color/app_text_primary</color>
+    <color name="app_button_danger">#C97A63</color>
+    <color name="app_button_danger_dark">#B26854</color>
 
 </resources>

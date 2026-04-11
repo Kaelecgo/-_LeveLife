@@ -15,11 +15,13 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.irenaprokhyra.levelife.R;
+import com.irenaprokhyra.levelife.model.MainRepository;
 import com.irenaprokhyra.levelife.model.PlacedFurniture;
 import com.irenaprokhyra.levelife.model.PlacedFurnitureItem;
 import com.irenaprokhyra.levelife.model.User;
 import com.irenaprokhyra.levelife.util.DialogUtils;
 import com.irenaprokhyra.levelife.util.FurnitureDrawableResolver;
+import com.irenaprokhyra.levelife.util.SessionManager;
 import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int currentUserId;
     private MainViewModel viewModel;
+    private MainRepository repository;
 
     private TextView tvMainSectionLabel;
     private TextView tvMainLevel;
@@ -50,13 +53,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        repository = MainRepository.getInstance(getApplication());
 
         currentUserId = getIntent().getIntExtra("USER_ID", -1);
         if (currentUserId == -1) {
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
+            currentUserId = SessionManager.getSavedUserId(this);
+        }
+
+        if (currentUserId == -1) {
+            redirectToLogin();
             return;
         }
+
+        validateActiveSession();
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         viewModel.init(currentUserId);
@@ -268,16 +277,43 @@ public class MainActivity extends AppCompatActivity {
 
     private void performLogout() {
         clearSessionPreferences();
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+        redirectToLogin();
     }
 
     private void clearSessionPreferences() {
-        getSharedPreferences("LeveLifeSession", MODE_PRIVATE)
-                .edit()
-                .clear()
-                .apply();
+        SessionManager.clearSession(this);
+    }
+
+    private void validateActiveSession() {
+        int savedUserId = SessionManager.getSavedUserId(this);
+        if (savedUserId != currentUserId) {
+            SessionManager.saveSession(this, currentUserId);
+        }
+
+        repository.getUserById(currentUserId, new MainRepository.LoginCallback() {
+            @Override
+            public void onSuccess(User user) {
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(() -> {
+                    clearSessionPreferences();
+                    Toast.makeText(
+                            MainActivity.this,
+                            getString(R.string.error_session_expired),
+                            Toast.LENGTH_SHORT
+                    ).show();
+                    redirectToLogin();
+                });
+            }
+        });
+    }
+
+    private void redirectToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

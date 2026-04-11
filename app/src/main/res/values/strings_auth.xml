@@ -4,6 +4,7 @@
     <string name="hint_username">>_Usuario</string>
     <string name="hint_password">>_Contraseña</string>
 
+    <string name="auth_subtitle">Tu progreso empieza aquí ✨</string>
     <string name="auth_action_login">>_Iniciar aventura 🚀</string>
     <string name="auth_action_register">>_Registrarse 📝</string>
 

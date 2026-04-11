@@ -42,6 +42,7 @@
     <string name="dialog_once_task_info_title">Tarea finalizada</string>
     <string name="dialog_once_task_info_message">Esta tarea era de un solo uso y no se restablecera. Si quieres limpiar tu lista, puedes eliminarla deslizando la tarea hacia un lado.</string>
     <string name="dialog_task_reset_button">Entendido</string>
+    <string name="tasks_frequency_feedbacks_reset">Avisos de frecuencia reiniciados para este usuario.</string>
     <string name="task_reset_in_format">Reinicia en: %1$s</string>
 
     <string-array name="task_categories">

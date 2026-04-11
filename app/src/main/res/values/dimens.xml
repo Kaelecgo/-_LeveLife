@@ -33,4 +33,9 @@
     <dimen name="progress_bar_height">24dp</dimen>
 
     <dimen name="bottom_nav_height">72dp</dimen>
+
+    <!-- Botón cápsula -->
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="button_radius_capsule">28dp</dimen>
+    <dimen name="button_padding_horizontal">20dp</dimen>
 </resources>

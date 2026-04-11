@@ -108,6 +108,11 @@ public class TaskActivity extends AppCompatActivity {
                 viewModel.insertTask(newTask);
             });
         });
+        fabAddTask.setOnLongClickListener(v -> {
+            viewModel.resetFrequencyInfoHints();
+            Toast.makeText(this, getString(R.string.tasks_frequency_feedbacks_reset), Toast.LENGTH_SHORT).show();
+            return true;
+        });
     }
 
     private Task buildTaskFromDraft(TaskDraft draft) {

@@ -2,10 +2,10 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:alpha="0.38"
-        android:color="@color/app_button_primary"
+        android:color="@color/app_button_danger"
         android:state_enabled="false" />
     <item
-        android:color="@color/brand_purple_light"
+        android:color="@color/app_button_danger_dark"
         android:state_pressed="true" />
-    <item android:color="@color/app_button_primary" />
+    <item android:color="@color/app_button_danger" />
 </selector>

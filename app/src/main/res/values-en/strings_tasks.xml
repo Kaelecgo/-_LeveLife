@@ -42,7 +42,7 @@
     <string name="dialog_once_task_info_title">Task completed</string>
     <string name="dialog_once_task_info_message">This task was one-time only and will not reset. If you want to clean up your list, you can remove it by swiping the task to one side.</string>
     <string name="dialog_task_reset_button">Got it</string>
-    <string name="dialog_daily_task_reset_button">Got it</string>
+    <string name="tasks_frequency_feedbacks_reset">Frequency tips reset for this user.</string>
     <string name="task_reset_in_format">Resets in: %1$s</string>
 
     <string-array name="task_categories">

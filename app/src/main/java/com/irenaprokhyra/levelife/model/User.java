@@ -13,6 +13,10 @@ import androidx.room.Index;
 public class User {
 
     private static final int BASE_XP_PER_LEVEL = 100;
+    public static final int FREQUENCY_HINT_DAILY = 1;
+    public static final int FREQUENCY_HINT_WEEKLY = 1 << 1;
+    public static final int FREQUENCY_HINT_MONTHLY = 1 << 2;
+    public static final int FREQUENCY_HINT_ONCE = 1 << 3;
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -30,6 +34,9 @@ public class User {
     @ColumnInfo(name = "eco_coins", defaultValue = "0")
     private int ecoCoins;
 
+    @ColumnInfo(name = "seen_frequency_hints_mask", defaultValue = "0")
+    private int seenFrequencyHintsMask;
+
     public User() {}
 
     @Ignore
@@ -40,6 +47,7 @@ public class User {
         this.experience = 0;
         this.berries = 0;
         this.ecoCoins = 0;
+        this.seenFrequencyHintsMask = 0;
     }
 
     public int getId() { return id; }
@@ -62,6 +70,11 @@ public class User {
 
     public int getEcoCoins() { return ecoCoins; }
     public void setEcoCoins(int ecoCoins) { this.ecoCoins = ecoCoins; }
+
+    public int getSeenFrequencyHintsMask() { return seenFrequencyHintsMask; }
+    public void setSeenFrequencyHintsMask(int seenFrequencyHintsMask) {
+        this.seenFrequencyHintsMask = seenFrequencyHintsMask;
+    }
 
     public int getXpToNextLevel() {
         return this.level * BASE_XP_PER_LEVEL;
