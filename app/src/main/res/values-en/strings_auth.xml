@@ -4,6 +4,7 @@
     <string name="hint_username">>_Username</string>
     <string name="hint_password">>_Password</string>
 
+    <string name="auth_subtitle">Your progress starts here ✨</string>
     <string name="auth_action_login">>_Start Adventure 🚀</string>
     <string name="auth_action_register">>_Register 📝</string>
 

@@ -28,7 +28,8 @@ public final class DialogUtils {
     private DialogUtils() {
     }
 
-    private static final int MATERIAL_BOTTOM_SHEET_ID = com.google.android.material.bottomsheet.R.id.design_bottom_sheet;
+    private static final int MATERIAL_BOTTOM_SHEET_ID =
+            com.google.android.material.bottomsheet.R.id.design_bottom_sheet;
 
     public interface OnTaskCreatedListener {
         void onTaskCreated(TaskDraft draft);
