@@ -2,13 +2,16 @@
 <resources>
     <string name="app_name">LeveLife</string>
 
-    <string name="common_loading">Loading... ⏳</string>
-    <string name="common_action_yes">Yes ✅</string>
-    <string name="common_action_no">No ❌</string>
-    <string name="common_action_create">Create ✨</string>
-    <string name="common_action_buy">Buy 🛒</string>
-    <string name="common_action_logout">Logout 🚪</string>
-    <string name="common_error_session_lost">Error: Session lost 🔐</string>
+    <string name="common_loading">Loading...</string>
+    <string name="common_action_yes">Yes</string>
+    <string name="common_action_no">No</string>
+    <string name="common_action_create">Create</string>
+    <string name="common_action_save">Save</string>
+    <string name="common_action_delete">Delete</string>
+    <string name="common_action_cancel">Cancel</string>
+    <string name="common_action_buy">Buy</string>
+    <string name="common_action_logout">Logout</string>
+    <string name="common_error_session_lost">Error: session lost</string>
 
     <string name="dialog_logout_message">Are you sure you want to exit?</string>
 </resources>

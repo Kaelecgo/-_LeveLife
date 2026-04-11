@@ -39,6 +39,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_large"
-        android:text="@string/dialog_daily_task_reset_button" />
+        android:text="@string/dialog_task_reset_button" />
 
 </LinearLayout>

@@ -46,7 +46,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private boolean tickerRunning;
 
     public interface OnTaskActionListener {
-        void onTaskClick(Task task);
+        void onTaskComplete(Task task);
+        void onTaskEdit(Task task);
     }
 
     public TaskAdapter(OnTaskActionListener listener) {
@@ -229,12 +230,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 ivRewardEcoIcon.clearColorFilter();
 
                 cbCompleted.setEnabled(true);
-                cbCompleted.setOnClickListener(v -> listener.onTaskClick(task));
+                cbCompleted.setOnClickListener(v -> listener.onTaskComplete(task));
                 tvResetTimer.setVisibility(View.GONE);
             }
 
             cbCompleted.setOnCheckedChangeListener(null);
             cbCompleted.setChecked(completedForCurrentPeriod);
+            itemView.setOnClickListener(v -> listener.onTaskEdit(task));
             bindTimer(task);
         }
 

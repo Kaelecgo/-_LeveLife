@@ -23,7 +23,17 @@ public class MainViewModel extends AndroidViewModel {
     private LiveData<List<PlacedFurnitureItem>> placedFurniture;
     private final MutableLiveData<String> errorMessages = new MutableLiveData<>();
     private final MutableLiveData<String> rewardMessage = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> showDailyTaskResetDialog = new MutableLiveData<>();
+    public static class FrequencyInfo {
+        public final int titleRes;
+        public final int messageRes;
+
+        public FrequencyInfo(int titleRes, int messageRes) {
+            this.titleRes = titleRes;
+            this.messageRes = messageRes;
+        }
+    }
+
+    private final MutableLiveData<FrequencyInfo> showFrequencyInfoDialog = new MutableLiveData<>();
 
     public MainViewModel(Application application) {
         super(application);
@@ -69,8 +79,8 @@ public class MainViewModel extends AndroidViewModel {
         return rewardMessage;
     }
 
-    public LiveData<Boolean> getShowDailyTaskResetDialog() {
-        return showDailyTaskResetDialog;
+    public LiveData<FrequencyInfo> getShowFrequencyInfoDialog() {
+        return showFrequencyInfoDialog;
     }
 
     public void completeTask(Task task) {
@@ -102,9 +112,7 @@ public class MainViewModel extends AndroidViewModel {
                 }
                 rewardMessage.postValue(message);
 
-                if (task.isRecurring() && Task.FREQUENCY_DAILY.equals(Task.normalizeFrequency(task.getFrequency()))) {
-                    showDailyTaskResetDialog.postValue(true);
-                }
+                checkAndShowFrequencyInfo(task);
             }
 
             @Override
@@ -114,12 +122,41 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    public void clearTaskCompletionMessage() {
-        rewardMessage.setValue(null);
+    private void checkAndShowFrequencyInfo(Task task) {
+        String frequency = Task.normalizeFrequency(task.getFrequency());
+        android.content.SharedPreferences prefs = getApplication().getSharedPreferences("LeveLife_Prefs", android.content.Context.MODE_PRIVATE);
+        String key = "info_shown_" + frequency.toLowerCase().replace(" ", "_");
+
+        if (!prefs.getBoolean(key, false)) {
+            FrequencyInfo info = null;
+            switch (frequency) {
+                case Task.FREQUENCY_DAILY:
+                    info = new FrequencyInfo(R.string.dialog_daily_task_reset_title, R.string.dialog_daily_task_reset_message);
+                    break;
+                case Task.FREQUENCY_WEEKLY:
+                    info = new FrequencyInfo(R.string.dialog_weekly_task_reset_title, R.string.dialog_weekly_task_reset_message);
+                    break;
+                case Task.FREQUENCY_MONTHLY:
+                    info = new FrequencyInfo(R.string.dialog_monthly_task_reset_title, R.string.dialog_monthly_task_reset_message);
+                    break;
+                case Task.FREQUENCY_ONCE:
+                    info = new FrequencyInfo(R.string.dialog_once_task_info_title, R.string.dialog_once_task_info_message);
+                    break;
+            }
+
+            if (info != null) {
+                showFrequencyInfoDialog.postValue(info);
+                prefs.edit().putBoolean(key, true).apply();
+            }
+        }
     }
 
-    public void clearDailyTaskResetDialog() {
-        showDailyTaskResetDialog.setValue(null);
+    public void clearFrequencyInfoDialog() {
+        showFrequencyInfoDialog.postValue(null);
+    }
+
+    public void clearTaskCompletionMessage() {
+        rewardMessage.setValue(null);
     }
 
     public void deleteTask(Task task) {
@@ -128,6 +165,10 @@ public class MainViewModel extends AndroidViewModel {
 
     public void insertTask(Task task) {
         repository.insertTask(task);
+    }
+
+    public void updateTask(Task task) {
+        repository.updateTask(task);
     }
 
     public void purchaseFurniture(Furniture furniture, Runnable onSuccess) {

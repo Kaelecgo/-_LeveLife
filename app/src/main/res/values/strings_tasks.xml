@@ -10,11 +10,16 @@
 
     <!-- Formulario de creacion -->
     <string name="tasks_dialog_new_title">Nueva tarea</string>
+    <string name="tasks_dialog_edit_title">Editar tarea</string>
+    <string name="tasks_dialog_delete_title">Eliminar tarea</string>
+    <string name="tasks_dialog_delete_message">Esta accion eliminara la tarea de forma permanente. Quieres continuar?</string>
     <string name="tasks_hint_title">Que tienes que hacer?</string>
     <string name="tasks_hint_description">Anade una descripcion breve</string>
     <string name="tasks_hint_category">Categoria</string>
     <string name="tasks_hint_difficulty">Dificultad</string>
     <string name="tasks_hint_frequency">Frecuencia</string>
+    <string name="tasks_updated_message">Tarea actualizada: %1$s</string>
+    <string name="tasks_deleted_message">Tarea eliminada: %1$s</string>
 
     <string name="dialog_task_reward_preview_title">Vista previa de recompensa</string>
     <string name="dialog_task_reward_preview">%1$d XP | %2$d bayas</string>
@@ -30,7 +35,13 @@
 
     <string name="dialog_daily_task_reset_title">Tarea diaria</string>
     <string name="dialog_daily_task_reset_message">Esta tarea se reiniciara automaticamente. No necesitas volver a crearla y podras completarla de nuevo manana.</string>
-    <string name="dialog_daily_task_reset_button">Entendido</string>
+    <string name="dialog_weekly_task_reset_title">Tarea semanal</string>
+    <string name="dialog_weekly_task_reset_message">Esta tarea se reiniciara cada lunes. Podras volver a completarla la proxima semana para ganar mas recompensas.</string>
+    <string name="dialog_monthly_task_reset_title">Tarea mensual</string>
+    <string name="dialog_monthly_task_reset_message">Esta tarea se reiniciara el primer dia de cada mes. ¡Un gran reto para mantener la constancia!</string>
+    <string name="dialog_once_task_info_title">Tarea finalizada</string>
+    <string name="dialog_once_task_info_message">Esta tarea era de un solo uso y no se restablecera. Si quieres limpiar tu lista, puedes eliminarla deslizando la tarea hacia un lado.</string>
+    <string name="dialog_task_reset_button">Entendido</string>
     <string name="task_reset_in_format">Reinicia en: %1$s</string>
 
     <string-array name="task_categories">

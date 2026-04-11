@@ -10,11 +10,16 @@
 
     <!-- Creation form -->
     <string name="tasks_dialog_new_title">New task</string>
+    <string name="tasks_dialog_edit_title">Edit task</string>
+    <string name="tasks_dialog_delete_title">Delete task</string>
+    <string name="tasks_dialog_delete_message">This action will permanently delete the task. Do you want to continue?</string>
     <string name="tasks_hint_title">What do you need to do?</string>
     <string name="tasks_hint_description">Add a short description</string>
     <string name="tasks_hint_category">Category</string>
     <string name="tasks_hint_difficulty">Difficulty</string>
     <string name="tasks_hint_frequency">Frequency</string>
+    <string name="tasks_updated_message">Task updated: %1$s</string>
+    <string name="tasks_deleted_message">Task deleted: %1$s</string>
 
     <string name="dialog_task_reward_preview_title">Reward preview</string>
     <string name="dialog_task_reward_preview">%1$d XP | %2$d berries</string>
@@ -30,6 +35,13 @@
 
     <string name="dialog_daily_task_reset_title">Daily task</string>
     <string name="dialog_daily_task_reset_message">This task will restart automatically. You do not need to recreate it, and you will be able to complete it again tomorrow.</string>
+    <string name="dialog_weekly_task_reset_title">Weekly task</string>
+    <string name="dialog_weekly_task_reset_message">This task resets every Monday. You will be able to complete it again next week to earn more rewards.</string>
+    <string name="dialog_monthly_task_reset_title">Monthly task</string>
+    <string name="dialog_monthly_task_reset_message">This task resets on the first day of each month. A great challenge to stay consistent.</string>
+    <string name="dialog_once_task_info_title">Task completed</string>
+    <string name="dialog_once_task_info_message">This task was one-time only and will not reset. If you want to clean up your list, you can remove it by swiping the task to one side.</string>
+    <string name="dialog_task_reset_button">Got it</string>
     <string name="dialog_daily_task_reset_button">Got it</string>
     <string name="task_reset_in_format">Resets in: %1$s</string>
 

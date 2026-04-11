@@ -28,6 +28,8 @@ public final class DialogUtils {
     private DialogUtils() {
     }
 
+    private static final int MATERIAL_BOTTOM_SHEET_ID = com.google.android.material.bottomsheet.R.id.design_bottom_sheet;
+
     public interface OnTaskCreatedListener {
         void onTaskCreated(TaskDraft draft);
     }
@@ -37,6 +39,36 @@ public final class DialogUtils {
     }
 
     public static void showCreateTaskBottomSheet(Context context, OnTaskCreatedListener listener) {
+        showTaskBottomSheet(
+                context,
+                null,
+                R.string.tasks_dialog_new_title,
+                R.string.common_action_create,
+                listener
+        );
+    }
+
+    public static void showEditTaskBottomSheet(
+            Context context,
+            TaskDraft initialDraft,
+            OnTaskCreatedListener listener
+    ) {
+        showTaskBottomSheet(
+                context,
+                initialDraft,
+                R.string.tasks_dialog_edit_title,
+                R.string.common_action_save,
+                listener
+        );
+    }
+
+    private static void showTaskBottomSheet(
+            Context context,
+            TaskDraft initialDraft,
+            int titleResId,
+            int actionResId,
+            OnTaskCreatedListener listener
+    ) {
         if (listener == null) {
             return;
         }
@@ -45,7 +77,7 @@ public final class DialogUtils {
         View view = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_create_task, null);
         dialog.setContentView(view);
 
-        FrameLayout bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        FrameLayout bottomSheet = dialog.findViewById(MATERIAL_BOTTOM_SHEET_ID);
         if (bottomSheet != null) {
             bottomSheet.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         }
@@ -57,6 +89,7 @@ public final class DialogUtils {
         MaterialAutoCompleteTextView actTaskCategory = view.findViewById(R.id.actTaskCategory);
         MaterialAutoCompleteTextView actTaskDifficulty = view.findViewById(R.id.actTaskDifficulty);
         MaterialAutoCompleteTextView actTaskFrequency = view.findViewById(R.id.actTaskFrequency);
+        TextView tvTaskSheetTitle = view.findViewById(R.id.tvTaskSheetTitle);
         TextView tvRewardXP = view.findViewById(R.id.tvRewardXP);
         TextView tvRewardBerries = view.findViewById(R.id.tvRewardBerries);
         TextView tvRewardEco = view.findViewById(R.id.tvRewardEco);
@@ -66,6 +99,16 @@ public final class DialogUtils {
         bindDropdown(context, actTaskCategory, R.array.task_categories, 0);
         bindDropdown(context, actTaskDifficulty, R.array.task_difficulties, 1);
         bindDropdown(context, actTaskFrequency, R.array.task_frequencies, 0);
+        tvTaskSheetTitle.setText(titleResId);
+        btnCreateTask.setText(actionResId);
+
+        if (initialDraft != null) {
+            etTaskTitle.setText(initialDraft.getTitle());
+            etTaskDescription.setText(initialDraft.getDescription());
+            actTaskCategory.setText(initialDraft.getCategory(), false);
+            actTaskDifficulty.setText(initialDraft.getDifficulty(), false);
+            actTaskFrequency.setText(initialDraft.getFrequency(), false);
+        }
 
         Runnable updateRewardPreview = () -> renderRewardPreview(
                 context,
@@ -108,6 +151,19 @@ public final class DialogUtils {
         dialog.show();
     }
 
+    public static void showDeleteTaskConfirmationDialog(Context context, Runnable onConfirm) {
+        new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.tasks_dialog_delete_title)
+                .setMessage(R.string.tasks_dialog_delete_message)
+                .setPositiveButton(R.string.common_action_delete, (dialog, which) -> {
+                    if (onConfirm != null) {
+                        onConfirm.run();
+                    }
+                })
+                .setNegativeButton(R.string.common_action_cancel, null)
+                .show();
+    }
+
     public static void showLogoutConfirmationDialog(Context context, Runnable onConfirm) {
         new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.common_action_logout)
@@ -129,18 +185,25 @@ public final class DialogUtils {
                 .show();
     }
 
-    public static void showDailyTaskResetInfoDialog(Context context) {
+    public static void showTaskFrequencyInfoDialog(Context context, int titleRes, int messageRes) {
         BottomSheetDialog dialog = new BottomSheetDialog(context, R.style.LeveLife_BottomSheetDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_daily_reset_info, null);
         dialog.setContentView(view);
 
-        FrameLayout bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        FrameLayout bottomSheet = dialog.findViewById(MATERIAL_BOTTOM_SHEET_ID);
         if (bottomSheet != null) {
             bottomSheet.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         }
         view.setBackgroundResource(R.drawable.bg_bottom_sheet_surface);
 
+        TextView tvTitle = view.findViewById(R.id.tvDailyResetTitle);
+        TextView tvMessage = view.findViewById(R.id.tvDailyResetMessage);
         MaterialButton btnUnderstood = view.findViewById(R.id.btnUnderstood);
+
+        tvTitle.setText(titleRes);
+        tvMessage.setText(messageRes);
+        btnUnderstood.setText(R.string.dialog_task_reset_button);
+
         btnUnderstood.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
@@ -159,7 +222,7 @@ public final class DialogUtils {
         View view = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_furniture_slot_picker, null);
         dialog.setContentView(view);
 
-        FrameLayout bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        FrameLayout bottomSheet = dialog.findViewById(MATERIAL_BOTTOM_SHEET_ID);
         if (bottomSheet != null) {
             bottomSheet.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         }

@@ -34,4 +34,23 @@ public class TaskDraft {
     public boolean isEcoTask() {
         return reward.getEcoReward() > 0;
     }
+
+    public static TaskDraft fromTask(Task task) {
+        if (task == null) {
+            return null;
+        }
+
+        return new TaskDraft(
+                task.getTitle(),
+                task.getDescription(),
+                task.getCategory(),
+                task.getDifficulty(),
+                task.getFrequency(),
+                new TaskReward(
+                        task.getRewardXP(),
+                        task.getRewardBerries(),
+                        task.getEcoReward()
+                )
+        );
+    }
 }

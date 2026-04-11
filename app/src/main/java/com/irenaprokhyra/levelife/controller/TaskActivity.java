@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.TaskDraft;
 import com.irenaprokhyra.levelife.model.Task;
@@ -58,11 +59,19 @@ public class TaskActivity extends AppCompatActivity {
         tvEmptyState = findViewById(R.id.tvEmptyState);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new TaskAdapter(task -> {
-            if (currentUser == null) return;
-            
-            // La lógica atómica ahora devuelve las recompensas a través del ViewModel
-            viewModel.completeTask(task);
+        adapter = new TaskAdapter(new TaskAdapter.OnTaskActionListener() {
+            @Override
+            public void onTaskComplete(Task task) {
+                if (currentUser == null) {
+                    return;
+                }
+                viewModel.completeTask(task);
+            }
+
+            @Override
+            public void onTaskEdit(Task task) {
+                showEditTaskDialog(task);
+            }
         });
         recyclerView.setAdapter(adapter);
 
@@ -76,7 +85,18 @@ public class TaskActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getBindingAdapterPosition();
                 Task taskToDelete = adapter.getTaskAt(position);
-                viewModel.deleteTask(taskToDelete);
+                adapter.notifyItemChanged(position);
+                DialogUtils.showDeleteTaskConfirmationDialog(
+                        TaskActivity.this,
+                        () -> {
+                            viewModel.deleteTask(taskToDelete);
+                            Snackbar.make(
+                                    recyclerView,
+                                    getString(R.string.tasks_deleted_message, taskToDelete.getTitle()),
+                                    Snackbar.LENGTH_SHORT
+                            ).show();
+                        }
+                );
             }
         };
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
@@ -103,6 +123,34 @@ public class TaskActivity extends AppCompatActivity {
                 draft.getFrequency(),
                 draft.isEcoTask()
         );
+    }
+
+    private void showEditTaskDialog(Task task) {
+        if (task == null) {
+            return;
+        }
+
+        DialogUtils.showEditTaskBottomSheet(this, TaskDraft.fromTask(task), draft -> {
+            updateTaskFromDraft(task, draft);
+            viewModel.updateTask(task);
+            Toast.makeText(
+                    this,
+                    getString(R.string.tasks_updated_message, task.getTitle()),
+                    Toast.LENGTH_SHORT
+            ).show();
+        });
+    }
+
+    private void updateTaskFromDraft(Task task, TaskDraft draft) {
+        task.setTitle(draft.getTitle());
+        task.setDescription(draft.getDescription());
+        task.setCategory(draft.getCategory());
+        task.setDifficulty(draft.getDifficulty());
+        task.setFrequency(draft.getFrequency());
+        task.setRewardXP(draft.getReward().getRewardXP());
+        task.setRewardBerries(draft.getReward().getRewardBerries());
+        task.setEcoReward(draft.getReward().getEcoReward());
+        task.setEcoTask(draft.isEcoTask());
     }
 
     private void setupObservers() {
@@ -136,10 +184,10 @@ public class TaskActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.getShowDailyTaskResetDialog().observe(this, show -> {
-            if (show != null && show) {
-                DialogUtils.showDailyTaskResetInfoDialog(this);
-                viewModel.clearDailyTaskResetDialog();
+        viewModel.getShowFrequencyInfoDialog().observe(this, info -> {
+            if (info != null) {
+                DialogUtils.showTaskFrequencyInfoDialog(this, info.titleRes, info.messageRes);
+                viewModel.clearFrequencyInfoDialog();
             }
         });
 
