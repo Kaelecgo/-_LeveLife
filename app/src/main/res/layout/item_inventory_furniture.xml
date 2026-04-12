@@ -42,6 +42,16 @@
             android:gravity="center"
             android:text="@string/inventory_item_meta_fallback" />
 
+        <TextView
+            android:id="@+id/tvInventoryPlacementStatus"
+            style="@style/LeveLife.Text.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_tiny"
+            android:gravity="center"
+            android:textColor="@color/app_text_accent"
+            android:visibility="gone" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPlaceFurniture"
             style="@style/LeveLife.Button"

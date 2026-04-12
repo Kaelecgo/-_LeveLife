@@ -12,11 +12,14 @@ import com.irenaprokhyra.levelife.util.FurnitureDrawableResolver;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.InventoryViewHolder> {
 
     private List<Furniture> inventoryList = new ArrayList<>();
+    private Map<Integer, String> placedFurnitureSlots = new HashMap<>();
     private final OnFurniturePlaceClickListener listener;
 
     public interface OnFurniturePlaceClickListener {
@@ -32,6 +35,13 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
         notifyDataSetChanged();
     }
 
+    public void setPlacedFurnitureSlots(Map<Integer, String> placedFurnitureSlots) {
+        this.placedFurnitureSlots = placedFurnitureSlots != null
+                ? new HashMap<>(placedFurnitureSlots)
+                : new HashMap<>();
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public InventoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -43,7 +53,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
     @Override
     public void onBindViewHolder(@NonNull InventoryViewHolder holder, int position) {
         Furniture furniture = inventoryList.get(position);
-        holder.bind(furniture, listener);
+        holder.bind(furniture, placedFurnitureSlots, listener);
     }
 
     @Override
@@ -53,7 +63,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
 
 
     static class InventoryViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvMeta;
+        TextView tvName, tvMeta, tvPlacementStatus;
         ImageView ivIcon;
         MaterialButton btnAction;
 
@@ -61,11 +71,16 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
             super(itemView);
             tvName = itemView.findViewById(R.id.tvFurnitureName);
             tvMeta = itemView.findViewById(R.id.tvInventoryFurnitureMeta);
+            tvPlacementStatus = itemView.findViewById(R.id.tvInventoryPlacementStatus);
             ivIcon = itemView.findViewById(R.id.ivFurnitureIcon);
             btnAction = itemView.findViewById(R.id.btnPlaceFurniture);
         }
 
-        public void bind (Furniture furniture, OnFurniturePlaceClickListener listener) {
+        public void bind(
+                Furniture furniture,
+                Map<Integer, String> placedFurnitureSlots,
+                OnFurniturePlaceClickListener listener
+        ) {
             tvName.setText(furniture.getName());
             int drawableResId = FurnitureDrawableResolver.resolveDrawableResId(
                     itemView.getContext(),
@@ -82,7 +97,23 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
                 tvMeta.setText(meta);
             }
 
-            btnAction.setText(itemView.getContext().getString(R.string.inventory_action_place));
+            String placedSlotLabel = placedFurnitureSlots.get(furniture.getId());
+            boolean isPlaced = placedSlotLabel != null && !placedSlotLabel.trim().isEmpty();
+
+            if (isPlaced) {
+                tvPlacementStatus.setVisibility(View.VISIBLE);
+                tvPlacementStatus.setText(
+                        itemView.getContext().getString(
+                                R.string.inventory_item_placed_in_slot,
+                                placedSlotLabel
+                        )
+                );
+                btnAction.setText(itemView.getContext().getString(R.string.inventory_action_move));
+            } else {
+                tvPlacementStatus.setVisibility(View.GONE);
+                btnAction.setText(itemView.getContext().getString(R.string.inventory_action_place));
+            }
+
             btnAction.setEnabled(true);
 
             btnAction.setOnClickListener(v -> listener.onPlaceClick(furniture));

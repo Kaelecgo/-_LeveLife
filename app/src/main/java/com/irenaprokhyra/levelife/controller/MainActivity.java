@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.irenaprokhyra.levelife.R;
+import com.irenaprokhyra.levelife.model.Furniture;
 import com.irenaprokhyra.levelife.model.MainRepository;
 import com.irenaprokhyra.levelife.model.PlacedFurniture;
 import com.irenaprokhyra.levelife.model.PlacedFurnitureItem;
@@ -24,7 +25,9 @@ import com.irenaprokhyra.levelife.util.FurnitureDrawableResolver;
 import com.irenaprokhyra.levelife.util.SessionManager;
 import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private MainRepository repository;
 
     private TextView tvMainSectionLabel;
+    private TextView tvRoomSubtitle;
     private TextView tvMainLevel;
     private TextView tvMainBerries;
     private TextView tvMainEcoCoins;
@@ -45,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView ivPlacedFloor;
     private ImageView ivPlacedDesk;
     private ImageView ivPlacedDecor;
+    private final Map<String, PlacedFurnitureItem> placedFurnitureBySlot = new HashMap<>();
 
     private int lastKnownLevel = -1;
     private int lastKnownProgress = -1;
@@ -86,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViews() {
         tvMainSectionLabel = findViewById(R.id.tvMainSectionLabel);
+        tvRoomSubtitle = findViewById(R.id.tvRoomSubtitle);
         tvMainLevel = findViewById(R.id.tvMainLevel);
         tvMainBerries = findViewById(R.id.tvMainBerries);
         tvMainEcoCoins = findViewById(R.id.tvMainEcoCoins);
@@ -97,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         ivPlacedFloor = findViewById(R.id.ivPlacedFloor);
         ivPlacedDesk = findViewById(R.id.ivPlacedDesk);
         ivPlacedDecor = findViewById(R.id.ivPlacedDecor);
+        bindPlacedFurnitureClickListeners();
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setItemIconTintList(null);
@@ -195,13 +202,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void renderPlacedFurniture(List<PlacedFurnitureItem> placedFurnitureItems) {
+        placedFurnitureBySlot.clear();
+
         if (placedFurnitureItems == null || placedFurnitureItems.isEmpty()) {
             clearPlacedFurnitureViews();
             layoutRoomEmptyState.setVisibility(View.VISIBLE);
+            if (tvRoomSubtitle != null) {
+                tvRoomSubtitle.setText(R.string.main_room_subtitle);
+            }
             return;
         }
 
         layoutRoomEmptyState.setVisibility(View.GONE);
+        if (tvRoomSubtitle != null) {
+            tvRoomSubtitle.setText(R.string.main_room_tap_hint);
+        }
         clearPlacedFurnitureViews();
 
         for (PlacedFurnitureItem item : placedFurnitureItems) {
@@ -209,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
                 continue;
             }
 
+            placedFurnitureBySlot.put(item.getSlot(), item);
             ImageView targetView = getTargetViewForSlot(item.getSlot());
             if (targetView == null) {
                 continue;
@@ -248,6 +264,110 @@ public class MainActivity extends AppCompatActivity {
         imageView.setImageDrawable(null);
         imageView.setVisibility(View.GONE);
         imageView.setContentDescription(null);
+    }
+
+    private void bindPlacedFurnitureClickListeners() {
+        ivPlacedWall.setOnClickListener(v -> showPlacedFurnitureActions(PlacedFurniture.SLOT_WALL));
+        ivPlacedFloor.setOnClickListener(v -> showPlacedFurnitureActions(PlacedFurniture.SLOT_FLOOR));
+        ivPlacedDesk.setOnClickListener(v -> showPlacedFurnitureActions(PlacedFurniture.SLOT_DESK));
+        ivPlacedDecor.setOnClickListener(v -> showPlacedFurnitureActions(PlacedFurniture.SLOT_DECOR));
+    }
+
+    private void showPlacedFurnitureActions(String slot) {
+        PlacedFurnitureItem item = placedFurnitureBySlot.get(slot);
+        if (item == null) {
+            return;
+        }
+
+        DialogUtils.showPlacedFurnitureManagementDialog(
+                this,
+                item.getName(),
+                () -> openMoveFurnitureFlow(item),
+                () -> confirmRemovePlacedFurniture(item)
+        );
+    }
+
+    private void openMoveFurnitureFlow(PlacedFurnitureItem item) {
+        Furniture furniture = new Furniture();
+        furniture.setId(item.getFurnitureId());
+        furniture.setName(item.getName());
+        furniture.setImageRef(item.getImageRef());
+        furniture.setCategory(item.getCategory());
+        furniture.setType(item.getType());
+
+        DialogUtils.showFurnitureSlotPickerBottomSheet(
+                this,
+                furniture,
+                selectedSlot -> handleMoveFurnitureSelection(item, furniture, selectedSlot)
+        );
+    }
+
+    private void handleMoveFurnitureSelection(
+            PlacedFurnitureItem sourceItem,
+            Furniture furniture,
+            String selectedSlot
+    ) {
+        String slotLabel = getSlotLabel(selectedSlot);
+        if (selectedSlot.equals(sourceItem.getSlot())) {
+            Toast.makeText(
+                    this,
+                    getString(R.string.inventory_slot_already_selected, slotLabel),
+                    Toast.LENGTH_SHORT
+            ).show();
+            return;
+        }
+
+        PlacedFurnitureItem occupyingFurniture = placedFurnitureBySlot.get(selectedSlot);
+        if (occupyingFurniture != null && occupyingFurniture.getFurnitureId() != sourceItem.getFurnitureId()) {
+            DialogUtils.showReplaceFurnitureConfirmationDialog(
+                    this,
+                    slotLabel,
+                    occupyingFurniture.getName(),
+                    sourceItem.getName(),
+                    () -> moveFurnitureToSlot(furniture, selectedSlot)
+            );
+            return;
+        }
+
+        moveFurnitureToSlot(furniture, selectedSlot);
+    }
+
+    private void moveFurnitureToSlot(Furniture furniture, String slot) {
+        String slotLabel = getSlotLabel(slot);
+        viewModel.placeFurniture(furniture, slot, () -> runOnUiThread(() -> Toast.makeText(
+                this,
+                getString(R.string.inventory_item_repositioned, furniture.getName(), slotLabel),
+                Toast.LENGTH_SHORT
+        ).show()));
+    }
+
+    private void confirmRemovePlacedFurniture(PlacedFurnitureItem item) {
+        DialogUtils.showRemovePlacedFurnitureConfirmationDialog(
+                this,
+                item.getName(),
+                () -> removePlacedFurniture(item)
+        );
+    }
+
+    private void removePlacedFurniture(PlacedFurnitureItem item) {
+        viewModel.removePlacedFurniture(item.getSlot(), () -> runOnUiThread(() -> Toast.makeText(
+                this,
+                getString(R.string.inventory_item_removed, item.getName()),
+                Toast.LENGTH_SHORT
+        ).show()));
+    }
+
+    private String getSlotLabel(String slot) {
+        if (PlacedFurniture.SLOT_FLOOR.equals(slot)) {
+            return getString(R.string.inventory_slot_floor);
+        } else if (PlacedFurniture.SLOT_WALL.equals(slot)) {
+            return getString(R.string.inventory_slot_wall);
+        } else if (PlacedFurniture.SLOT_DESK.equals(slot)) {
+            return getString(R.string.inventory_slot_desk);
+        } else if (PlacedFurniture.SLOT_DECOR.equals(slot)) {
+            return getString(R.string.inventory_slot_decor);
+        }
+        return slot;
     }
 
     private void animateLevelUp(int targetLevel, int targetProgress) {
