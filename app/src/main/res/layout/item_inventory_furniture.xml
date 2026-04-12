@@ -8,56 +8,75 @@
     app:cardCornerRadius="@dimen/corner_radius_medium"
     app:cardElevation="@dimen/elevation_low">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="@dimen/spacing_medium">
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/ivFurnitureIcon"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/content_desc_furniture_icon"
-            android:scaleType="fitCenter"
-            android:src="@drawable/logo_with_no_bg512" />
-
-        <TextView
-            android:id="@+id/tvFurnitureName"
-            style="@style/LeveLife.Text.Title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:gravity="center"
-            android:text="@string/placeholder_furniture_name" />
-
-        <TextView
-            android:id="@+id/tvInventoryFurnitureMeta"
-            style="@style/LeveLife.Text.BodySecondary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_tiny"
-            android:gravity="center"
-            android:text="@string/inventory_item_meta_fallback" />
-
-        <TextView
-            android:id="@+id/tvInventoryPlacementStatus"
-            style="@style/LeveLife.Text.Label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_tiny"
-            android:gravity="center"
-            android:textColor="@color/app_text_accent"
-            android:visibility="gone" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPlaceFurniture"
-            style="@style/LeveLife.Button"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:text="@string/inventory_action_place" />
-    </LinearLayout>
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_medium">
+
+            <ImageView
+                android:id="@+id/ivFurnitureIcon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/content_desc_furniture_icon"
+                android:scaleType="fitCenter"
+                android:src="@drawable/logo_with_no_bg512" />
+
+            <TextView
+                android:id="@+id/tvFurnitureName"
+                style="@style/LeveLife.Text.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:gravity="center"
+                android:text="@string/placeholder_furniture_name" />
+
+            <TextView
+                android:id="@+id/tvInventoryFurnitureMeta"
+                style="@style/LeveLife.Text.BodySecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_tiny"
+                android:gravity="center"
+                android:text="@string/inventory_item_meta_fallback" />
+
+            <TextView
+                android:id="@+id/tvInventoryPlacementStatus"
+                style="@style/LeveLife.Text.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_tiny"
+                android:gravity="center"
+                android:textColor="@color/app_text_accent"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPlaceFurniture"
+                style="@style/LeveLife.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:text="@string/inventory_action_place" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnDeleteFurniture"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Borrar"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_menu_delete"
+            app:tint="@android:color/holo_red_dark" />
+
+    </FrameLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -133,7 +133,7 @@
                 android:layout_marginTop="@dimen/spacing_tiny"
                 android:text="@string/main_room_subtitle" />
 
-            <FrameLayout
+            <AbsoluteLayout
                 android:id="@+id/roomContainer"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -144,7 +144,8 @@
                     android:id="@+id/ivRoomBackground"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:adjustViewBounds="false"
+                    android:layout_x="0dp"
+                    android:layout_y="0dp"
                     android:contentDescription="@null"
                     android:scaleType="centerCrop"
                     android:scaleX="1.20"
@@ -155,8 +156,8 @@
                     android:id="@+id/ivPlacedWall"
                     android:layout_width="96dp"
                     android:layout_height="96dp"
-                    android:layout_gravity="top|center_horizontal"
-                    android:layout_marginTop="86dp"
+                    android:layout_x="150dp"
+                    android:layout_y="50dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/content_desc_furniture_icon"
                     android:scaleType="fitCenter"
@@ -168,8 +169,8 @@
                     android:id="@+id/ivPlacedDecor"
                     android:layout_width="82dp"
                     android:layout_height="82dp"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_marginTop="36dp"
+                    android:layout_x="100dp"
+                    android:layout_y="150dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/content_desc_furniture_icon"
                     android:scaleType="fitCenter"
@@ -181,9 +182,8 @@
                     android:id="@+id/ivPlacedDesk"
                     android:layout_width="116dp"
                     android:layout_height="116dp"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="42dp"
-                    android:layout_marginBottom="74dp"
+                    android:layout_x="200dp"
+                    android:layout_y="200dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/content_desc_furniture_icon"
                     android:scaleType="fitCenter"
@@ -195,8 +195,8 @@
                     android:id="@+id/ivPlacedFloor"
                     android:layout_width="156dp"
                     android:layout_height="156dp"
-                    android:layout_gravity="bottom|center_horizontal"
-                    android:layout_marginBottom="48dp"
+                    android:layout_x="120dp"
+                    android:layout_y="250dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/content_desc_furniture_icon"
                     android:scaleType="fitCenter"
@@ -208,10 +208,8 @@
                     android:id="@+id/layoutRoomEmptyState"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center_horizontal"
-                    android:layout_marginStart="@dimen/spacing_medium"
-                    android:layout_marginEnd="@dimen/spacing_medium"
-                    android:layout_marginBottom="@dimen/spacing_large"
+                    android:layout_x="50dp"
+                    android:layout_y="300dp"
                     android:background="@drawable/bg_bottom_sheet_surface"
                     android:gravity="center"
                     android:orientation="vertical"
@@ -236,11 +234,9 @@
                         android:text="@string/main_room_empty_description"
                         android:textSize="@dimen/text_size_body"
                         android:textAlignment="center"/>
-
                 </LinearLayout>
-            </FrameLayout>
+            </AbsoluteLayout>
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
 
     <include

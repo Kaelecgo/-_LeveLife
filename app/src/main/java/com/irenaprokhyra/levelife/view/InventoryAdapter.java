@@ -3,6 +3,7 @@ package com.irenaprokhyra.levelife.view;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -20,13 +21,15 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
 
     private List<Furniture> inventoryList = new ArrayList<>();
     private Map<Integer, String> placedFurnitureSlots = new HashMap<>();
-    private final OnFurniturePlaceClickListener listener;
+    private final OnFurnitureInteractionListener listener;
 
-    public interface OnFurniturePlaceClickListener {
+    // Interfaz para gestionar las dos acciones del inventario
+    public interface OnFurnitureInteractionListener {
         void onPlaceClick(Furniture furniture);
+        void onDeleteClick(Furniture furniture);
     }
 
-    public InventoryAdapter(OnFurniturePlaceClickListener listener) {
+    public InventoryAdapter(OnFurnitureInteractionListener listener) {
         this.listener = listener;
     }
 
@@ -36,7 +39,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
     }
 
     public void setPlacedFurnitureSlots(Map<Integer, String> placedFurnitureSlots) {
-        this.placedFurnitureSlots = placedFurnitureSlots != null
+        this.placedFurnitureSlots = (placedFurnitureSlots != null)
                 ? new HashMap<>(placedFurnitureSlots)
                 : new HashMap<>();
         notifyDataSetChanged();
@@ -61,62 +64,60 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
         return inventoryList.size();
     }
 
-
     static class InventoryViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvMeta, tvPlacementStatus;
         ImageView ivIcon;
         MaterialButton btnAction;
+        ImageButton btnDelete;
 
-        public InventoryViewHolder (@NonNull View itemView) {
+        public InventoryViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvFurnitureName);
             tvMeta = itemView.findViewById(R.id.tvInventoryFurnitureMeta);
             tvPlacementStatus = itemView.findViewById(R.id.tvInventoryPlacementStatus);
             ivIcon = itemView.findViewById(R.id.ivFurnitureIcon);
             btnAction = itemView.findViewById(R.id.btnPlaceFurniture);
+            btnDelete = itemView.findViewById(R.id.btnDeleteFurniture);
         }
 
-        public void bind(
-                Furniture furniture,
-                Map<Integer, String> placedFurnitureSlots,
-                OnFurniturePlaceClickListener listener
-        ) {
+        public void bind(Furniture furniture, Map<Integer, String> placedFurnitureSlots, OnFurnitureInteractionListener listener) {
             tvName.setText(furniture.getName());
-            int drawableResId = FurnitureDrawableResolver.resolveDrawableResId(
-                    itemView.getContext(),
-                    furniture.getImageRef()
-            );
-            ivIcon.setImageResource(drawableResId);
+            ivIcon.setImageResource(FurnitureDrawableResolver.resolveDrawableResId(itemView.getContext(), furniture.getImageRef()));
 
-            String meta = furniture.getCategory();
-            if (meta == null || meta.trim().isEmpty()) {
-                tvMeta.setVisibility(View.VISIBLE);
-                tvMeta.setText(R.string.inventory_item_meta_fallback);
-            } else {
-                tvMeta.setVisibility(View.VISIBLE);
-                tvMeta.setText(meta);
-            }
+            // 1. COMPROBACIÓN: ¿Está el ID de este mueble en el mapa de colocados?
+            boolean isPlaced = placedFurnitureSlots.containsKey(furniture.getId());
 
-            String placedSlotLabel = placedFurnitureSlots.get(furniture.getId());
-            boolean isPlaced = placedSlotLabel != null && !placedSlotLabel.trim().isEmpty();
-
+            // 2. CAMBIO DE TEXTO DINÁMICO
             if (isPlaced) {
                 tvPlacementStatus.setVisibility(View.VISIBLE);
-                tvPlacementStatus.setText(
-                        itemView.getContext().getString(
-                                R.string.inventory_item_placed_in_slot,
-                                placedSlotLabel
-                        )
-                );
-                btnAction.setText(itemView.getContext().getString(R.string.inventory_action_move));
+                tvPlacementStatus.setText("Ya en la habitación");
+                btnAction.setText("Move"); // Texto cuando ya está puesto
             } else {
                 tvPlacementStatus.setVisibility(View.GONE);
-                btnAction.setText(itemView.getContext().getString(R.string.inventory_action_place));
+                btnAction.setText("Place"); // Texto cuando está guardado
             }
 
-            btnAction.setEnabled(true);
+            // 3. EL CLIC: Independientemente del texto, ejecuta la misma acción
+            btnAction.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onPlaceClick(furniture);
+                }
+            });
 
-            btnAction.setOnClickListener(v -> listener.onPlaceClick(furniture));
+            // 4. PAPELERA: Solo se ve si está colocado
+            if (btnDelete != null) {
+                btnDelete.setVisibility(isPlaced ? View.VISIBLE : View.GONE);
+                btnDelete.setOnClickListener(v -> listener.onDeleteClick(furniture));
+            }
+            // Dentro del método bind en InventoryAdapter.java
+            btnAction.setOnClickListener(v -> {
+                android.util.Log.d("InventoryDebug", "Botón pulsado para: " + furniture.getName());
+                if (listener != null) {
+                    listener.onPlaceClick(furniture);
+                } else {
+                    android.util.Log.e("InventoryDebug", "¡El listener es NULO!");
+                }
+            });
         }
     }
 }
