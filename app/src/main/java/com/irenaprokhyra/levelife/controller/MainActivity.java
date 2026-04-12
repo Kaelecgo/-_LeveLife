@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView ivPlacedWall, ivPlacedFloor, ivPlacedDesk, ivPlacedDecor;
     private final Map<String, PlacedFurnitureItem> placedFurnitureBySlot = new HashMap<>();
 
-    // Variables de control
     private int xDelta, yDelta;
     private ScaleGestureDetector scaleGestureDetector;
     private View viewActiva;
@@ -86,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         ivPlacedDesk = findViewById(R.id.ivPlacedDesk);
         ivPlacedDecor = findViewById(R.id.ivPlacedDecor);
 
-        // Configuramos el comportamiento de cada mueble
         configurarMueble(ivPlacedWall, PlacedFurniture.SLOT_WALL);
         configurarMueble(ivPlacedFloor, PlacedFurniture.SLOT_FLOOR);
         configurarMueble(ivPlacedDesk, PlacedFurniture.SLOT_DESK);
@@ -97,18 +95,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configurarMueble(ImageView iv, String slot) {
-        // Solo dejamos el listener de movimiento y escala
         iv.setOnTouchListener(muebleTouchListener);
-
-        // BORRA O COMENTA ESTA PARTE:
-    /*
-    iv.setOnLongClickListener(v -> {
-        showPlacedFurnitureActions(slot);
-        return true;
-    });
-    */
-
-        // Si quieres que el LongClick no haga nada absoluto:
         iv.setOnLongClickListener(null);
     }
 
@@ -137,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
             }
-            return false; // Importante para que el LongClick funcione
+            return false;
         }
     };
 
@@ -146,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
         public boolean onScale(ScaleGestureDetector detector) {
             if (viewActiva != null) {
                 float scale = viewActiva.getScaleX() * detector.getScaleFactor();
-                // Ponemos límites para que no desaparezca ni ocupe toda la pantalla
                 scale = Math.max(0.2f, Math.min(scale, 3.0f));
                 viewActiva.setScaleX(scale);
                 viewActiva.setScaleY(scale);
@@ -171,22 +157,16 @@ public class MainActivity extends AppCompatActivity {
             if (target != null) {
                 target.setImageResource(FurnitureDrawableResolver.resolveDrawableResId(this, item.getImageRef()));
                 target.setVisibility(View.VISIBLE);
-
-                // Si la base de datos ya tiene coordenadas, aquí deberías aplicarlas:
-                // AbsoluteLayout.LayoutParams params = (AbsoluteLayout.LayoutParams) target.getLayoutParams();
-                // params.x = item.getPosX(); ...
             }
         }
     }
-
-    // --- MÉTODOS DE NAVEGACIÓN Y UI (Sin cambios) ---
 
     private void showPlacedFurnitureActions(String slot) {
         PlacedFurnitureItem item = placedFurnitureBySlot.get(slot);
         if (item == null) return;
         DialogUtils.showPlacedFurnitureManagementDialog(this, item.getName(),
-                () -> navigateTo(InventoryActivity.class), // Move: Te lleva al inventario
-                () -> confirmRemovePlacedFurniture(item)   // Remove: Lo quita
+                () -> navigateTo(InventoryActivity.class),
+                () -> confirmRemovePlacedFurniture(item)
         );
     }
 

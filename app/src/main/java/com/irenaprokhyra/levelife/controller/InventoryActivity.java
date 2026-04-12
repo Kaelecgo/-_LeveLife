@@ -52,13 +52,11 @@ public class InventoryActivity extends AppCompatActivity {
         adapter = new InventoryAdapter(new InventoryAdapter.OnFurnitureInteractionListener() {
             @Override
             public void onPlaceClick(Furniture furniture) {
-                // Ejecutamos la lógica de colocar/mover
                 placeFurnitureDirectly(furniture);
             }
 
             @Override
             public void onDeleteClick(Furniture furniture) {
-                // Ejecutamos la lógica de borrado
                 confirmDeleteFurniture(furniture);
             }
         });
@@ -67,18 +65,16 @@ public class InventoryActivity extends AppCompatActivity {
     }
 
     private void placeFurnitureDirectly(Furniture furniture) {
-        // 1. Navegamos inmediatamente a la habitación para dar fluidez
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("USER_ID", currentUserId);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
 
-        // 2. Registramos la colocación en el ViewModel en segundo plano
         viewModel.placeFurniture(furniture, furniture.getType(), () -> {
-            // Se guarda silenciosamente mientras el usuario ya está en la habitación
+            // Callback vacío
         });
 
-        finish(); // Cerramos el inventario
+        finish();
     }
 
     private void confirmDeleteFurniture(Furniture furniture) {
@@ -104,7 +100,6 @@ public class InventoryActivity extends AppCompatActivity {
     }
 
     private void setupObservers() {
-        // Observador para actualizar qué muebles tienen el botón "Move" y la papelera
         viewModel.getPlacedFurniture().observe(this, placedItems -> {
             Map<Integer, String> slotsMap = new HashMap<>();
             if (placedItems != null) {
@@ -115,7 +110,6 @@ public class InventoryActivity extends AppCompatActivity {
             adapter.setPlacedFurnitureSlots(slotsMap);
         });
 
-        // Observador para la lista de muebles que posee el usuario
         viewModel.getInventory().observe(this, list -> {
             if (list != null) {
                 adapter.setInventoryList(list);
@@ -148,7 +142,6 @@ public class InventoryActivity extends AppCompatActivity {
                 finish();
                 return true;
             } else if (itemId == R.id.nav_logout) {
-                // Diálogo de cerrar sesión
                 DialogUtils.showLogoutConfirmationDialog(this, this::performLogout);
                 return false;
             }
@@ -157,10 +150,8 @@ public class InventoryActivity extends AppCompatActivity {
     }
 
     private void performLogout() {
-        // Limpiamos la sesión
         getSharedPreferences("LeveLifeSession", MODE_PRIVATE).edit().clear().apply();
 
-        // Volvemos al Login borrando el historial de actividades
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

@@ -23,7 +23,6 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
     private Map<Integer, String> placedFurnitureSlots = new HashMap<>();
     private final OnFurnitureInteractionListener listener;
 
-    // Interfaz para gestionar las dos acciones del inventario
     public interface OnFurnitureInteractionListener {
         void onPlaceClick(Furniture furniture);
         void onDeleteClick(Furniture furniture);
@@ -84,40 +83,31 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
             tvName.setText(furniture.getName());
             ivIcon.setImageResource(FurnitureDrawableResolver.resolveDrawableResId(itemView.getContext(), furniture.getImageRef()));
 
-            // 1. COMPROBACIÓN: ¿Está el ID de este mueble en el mapa de colocados?
             boolean isPlaced = placedFurnitureSlots.containsKey(furniture.getId());
 
-            // 2. CAMBIO DE TEXTO DINÁMICO
             if (isPlaced) {
                 tvPlacementStatus.setVisibility(View.VISIBLE);
                 tvPlacementStatus.setText("Ya en la habitación");
-                btnAction.setText("Move"); // Texto cuando ya está puesto
+                btnAction.setText("Move");
             } else {
                 tvPlacementStatus.setVisibility(View.GONE);
-                btnAction.setText("Place"); // Texto cuando está guardado
+                btnAction.setText("Place");
             }
 
-            // 3. EL CLIC: Independientemente del texto, ejecuta la misma acción
             btnAction.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onPlaceClick(furniture);
                 }
             });
 
-            // 4. PAPELERA: Solo se ve si está colocado
             if (btnDelete != null) {
                 btnDelete.setVisibility(isPlaced ? View.VISIBLE : View.GONE);
-                btnDelete.setOnClickListener(v -> listener.onDeleteClick(furniture));
+                btnDelete.setOnClickListener(v -> {
+                    if (listener != null) {
+                        listener.onDeleteClick(furniture);
+                    }
+                });
             }
-            // Dentro del método bind en InventoryAdapter.java
-            btnAction.setOnClickListener(v -> {
-                android.util.Log.d("InventoryDebug", "Botón pulsado para: " + furniture.getName());
-                if (listener != null) {
-                    listener.onPlaceClick(furniture);
-                } else {
-                    android.util.Log.e("InventoryDebug", "¡El listener es NULO!");
-                }
-            });
         }
     }
 }
