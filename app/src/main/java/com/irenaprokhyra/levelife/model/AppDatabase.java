@@ -22,9 +22,10 @@ import java.util.concurrent.Executors;
                 Furniture.class,
                 UserFurnitureCrossRef.class,
                 TaskCompletion.class,
-                PlacedFurniture.class
+                PlacedFurniture.class,
+                UserFrequencyHint.class
         },
-        version = 11,
+        version = 12,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -175,6 +176,24 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_11_12 = new Migration(11, 12) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `user_frequency_hints` (" +
+                            "`user_id` INTEGER NOT NULL, " +
+                            "`frequency` TEXT NOT NULL, " +
+                            "PRIMARY KEY(`user_id`, `frequency`), " +
+                            "FOREIGN KEY(`user_id`) REFERENCES `users`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE" +
+                            ")"
+            );
+            database.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_user_frequency_hints_user_id` " +
+                            "ON `user_frequency_hints` (`user_id`)"
+            );
+        }
+    };
+
 
     public abstract UserDao userDao();
 
@@ -185,6 +204,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract TaskCompletionDao taskCompletionDao();
 
     public abstract PlacedFurnitureDao placedFurnitureDao();
+
+    public abstract UserFrequencyHintDao userFrequencyHintDao();
 
     public static AppDatabase getInstance(final Context context) {
         if (INSTANCE == null) {
@@ -206,7 +227,8 @@ public abstract class AppDatabase extends RoomDatabase {
                                     MIGRATION_7_8,
                                     MIGRATION_8_9,
                                     MIGRATION_9_10,
-                                    MIGRATION_10_11
+                                    MIGRATION_10_11,
+                                    MIGRATION_11_12
                             )
                             .addCallback(sRoomDatabaseCallback)
                             .build();

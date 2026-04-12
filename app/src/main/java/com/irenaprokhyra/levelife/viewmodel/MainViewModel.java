@@ -127,13 +127,13 @@ public class MainViewModel extends AndroidViewModel {
             return;
         }
 
-        int frequencyHintFlag = getFrequencyHintFlag(task.getFrequency());
+        String normalizedFrequency = Task.normalizeFrequency(task.getFrequency());
         FrequencyInfo info = getFrequencyInfo(task.getFrequency());
-        if (frequencyHintFlag == 0 || info == null) {
+        if (normalizedFrequency.isEmpty() || info == null) {
             return;
         }
 
-        repository.markFrequencyHintSeenIfNeeded(currentUserId, frequencyHintFlag, wasMarked -> {
+        repository.markFrequencyHintSeenIfNeeded(currentUserId, normalizedFrequency, wasMarked -> {
             if (wasMarked) {
                 showFrequencyInfoDialog.postValue(info);
             }
@@ -153,22 +153,6 @@ public class MainViewModel extends AndroidViewModel {
                 return new FrequencyInfo(R.string.dialog_once_task_info_title, R.string.dialog_once_task_info_message);
             default:
                 return null;
-        }
-    }
-
-    private int getFrequencyHintFlag(String rawFrequency) {
-        String frequency = Task.normalizeFrequency(rawFrequency);
-        switch (frequency) {
-            case Task.FREQUENCY_DAILY:
-                return User.FREQUENCY_HINT_DAILY;
-            case Task.FREQUENCY_WEEKLY:
-                return User.FREQUENCY_HINT_WEEKLY;
-            case Task.FREQUENCY_MONTHLY:
-                return User.FREQUENCY_HINT_MONTHLY;
-            case Task.FREQUENCY_ONCE:
-                return User.FREQUENCY_HINT_ONCE;
-            default:
-                return 0;
         }
     }
 

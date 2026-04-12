@@ -281,18 +281,16 @@ public final class DialogUtils {
             Runnable onMove,
             Runnable onRemove
     ) {
-        String[] actions = new String[]{
-                context.getString(R.string.inventory_manage_action_move),
-                context.getString(R.string.inventory_manage_action_remove)
-        };
-
         new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.inventory_manage_furniture_title)
                 .setMessage(context.getString(R.string.inventory_manage_furniture_message, furnitureName))
-                .setItems(actions, (dialog, which) -> {
-                    if (which == 0 && onMove != null) {
+                .setPositiveButton(R.string.inventory_manage_action_move, (dialog, which) -> {
+                    if (onMove != null) {
                         onMove.run();
-                    } else if (which == 1 && onRemove != null) {
+                    }
+                })
+                .setNeutralButton(R.string.inventory_manage_action_remove, (dialog, which) -> {
+                    if (onRemove != null) {
                         onRemove.run();
                     }
                 })

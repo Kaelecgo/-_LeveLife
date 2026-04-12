@@ -18,6 +18,7 @@ public class MainRepository {
     private final FurnitureDao furnitureDao;
     private final TaskCompletionDao taskCompletionDao;
     private final PlacedFurnitureDao placedFurnitureDao;
+    private final UserFrequencyHintDao userFrequencyHintDao;
     private final Executor executor;
     private final LongSupplier nowProvider;
 
@@ -34,6 +35,7 @@ public class MainRepository {
         this.furnitureDao = db.furnitureDao();
         this.taskCompletionDao = db.taskCompletionDao();
         this.placedFurnitureDao = db.placedFurnitureDao();
+        this.userFrequencyHintDao = db.userFrequencyHintDao();
         this.executor = executor;
         this.nowProvider = nowProvider;
     }
@@ -95,9 +97,12 @@ public class MainRepository {
         executor.execute(() -> userDao.updateUser(user));
     }
 
-    public void markFrequencyHintSeenIfNeeded(int userId, int hintFlag, BooleanCallback callback) {
+    public void markFrequencyHintSeenIfNeeded(int userId, String frequency, BooleanCallback callback) {
         executor.execute(() -> {
-            boolean updated = userDao.markFrequencyHintSeenIfNeeded(userId, hintFlag) > 0;
+            String normalizedFrequency = Task.normalizeFrequency(frequency);
+            boolean updated = userFrequencyHintDao.insert(
+                    new UserFrequencyHint(userId, normalizedFrequency)
+            ) != -1L;
             if (callback != null) {
                 callback.onResult(updated);
             }
@@ -105,7 +110,7 @@ public class MainRepository {
     }
 
     public void resetFrequencyHints(int userId) {
-        executor.execute(() -> userDao.resetFrequencyHints(userId));
+        executor.execute(() -> userFrequencyHintDao.deleteAllForUser(userId));
     }
 
     public void registerUser(String username, String rawPassword, RegistrationCallback callback) {
