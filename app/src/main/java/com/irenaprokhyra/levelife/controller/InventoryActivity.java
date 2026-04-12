@@ -13,9 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
+import com.irenaprokhyra.levelife.model.PlacedFurnitureItem;
 import com.irenaprokhyra.levelife.util.DialogUtils;
 import com.irenaprokhyra.levelife.view.InventoryAdapter;
 import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InventoryActivity extends AppCompatActivity {
 
@@ -24,6 +29,8 @@ public class InventoryActivity extends AppCompatActivity {
     private RecyclerView rvInventory;
     private InventoryAdapter adapter;
     private View layoutEmptyState;
+    private final Map<Integer, PlacedFurnitureItem> placedFurnitureByFurnitureId = new HashMap<>();
+    private final Map<String, PlacedFurnitureItem> placedFurnitureBySlot = new HashMap<>();
 
 
     @Override
@@ -57,7 +64,6 @@ public class InventoryActivity extends AppCompatActivity {
     }
 
     private void setupObservers() {
-
         viewModel.getInventory().observe(this, furnitureList -> {
             adapter.setInventoryList(furnitureList);
 
@@ -71,6 +77,8 @@ public class InventoryActivity extends AppCompatActivity {
             }
         });
 
+        viewModel.getPlacedFurniture().observe(this, this::updatePlacedFurnitureState);
+
         viewModel.getErrorMessages().observe(this, message -> {
             if (message != null && !message.trim().isEmpty()) {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -82,13 +90,45 @@ public class InventoryActivity extends AppCompatActivity {
         DialogUtils.showFurnitureSlotPickerBottomSheet(
                 this,
                 furniture,
-                slot -> placeFurnitureInRoom(furniture, slot)
+                slot -> handlePlacementRequest(furniture, slot)
         );
     }
 
+    private void handlePlacementRequest(Furniture furniture, String slot) {
+        PlacedFurnitureItem sameFurniture = placedFurnitureByFurnitureId.get(furniture.getId());
+        String slotLabel = getSlotLabel(slot);
+
+        if (sameFurniture != null && slot.equals(sameFurniture.getSlot())) {
+            Toast.makeText(
+                    this,
+                    getString(R.string.inventory_slot_already_selected, slotLabel),
+                    Toast.LENGTH_SHORT
+            ).show();
+            return;
+        }
+
+        PlacedFurnitureItem occupyingFurniture = placedFurnitureBySlot.get(slot);
+        if (occupyingFurniture != null && occupyingFurniture.getFurnitureId() != furniture.getId()) {
+            DialogUtils.showReplaceFurnitureConfirmationDialog(
+                    this,
+                    slotLabel,
+                    occupyingFurniture.getName(),
+                    furniture.getName(),
+                    () -> placeFurnitureInRoom(furniture, slot)
+            );
+            return;
+        }
+
+        placeFurnitureInRoom(furniture, slot);
+    }
+
     private void placeFurnitureInRoom(Furniture furniture, String slot) {
+        boolean repositioned = placedFurnitureByFurnitureId.containsKey(furniture.getId());
+        String slotLabel = getSlotLabel(slot);
         viewModel.placeFurniture(furniture, slot, () -> runOnUiThread(() -> {
-            String message = getString(R.string.inventory_item_placed, furniture.getName());
+            String message = repositioned
+                    ? getString(R.string.inventory_item_repositioned, furniture.getName(), slotLabel)
+                    : getString(R.string.inventory_item_placed, furniture.getName());
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(this, MainActivity.class);
@@ -97,6 +137,38 @@ public class InventoryActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }));
+    }
+
+    private void updatePlacedFurnitureState(List<PlacedFurnitureItem> placedFurnitureItems) {
+        placedFurnitureByFurnitureId.clear();
+        placedFurnitureBySlot.clear();
+
+        Map<Integer, String> placedFurnitureSlots = new HashMap<>();
+        if (placedFurnitureItems != null) {
+            for (PlacedFurnitureItem item : placedFurnitureItems) {
+                if (item == null) {
+                    continue;
+                }
+                placedFurnitureByFurnitureId.put(item.getFurnitureId(), item);
+                placedFurnitureBySlot.put(item.getSlot(), item);
+                placedFurnitureSlots.put(item.getFurnitureId(), getSlotLabel(item.getSlot()));
+            }
+        }
+
+        adapter.setPlacedFurnitureSlots(placedFurnitureSlots);
+    }
+
+    private String getSlotLabel(String slot) {
+        if ("floor".equals(slot)) {
+            return getString(R.string.inventory_slot_floor);
+        } else if ("wall".equals(slot)) {
+            return getString(R.string.inventory_slot_wall);
+        } else if ("desk".equals(slot)) {
+            return getString(R.string.inventory_slot_desk);
+        } else if ("decor".equals(slot)) {
+            return getString(R.string.inventory_slot_decor);
+        }
+        return slot;
     }
 
     private void setupNavigation() {

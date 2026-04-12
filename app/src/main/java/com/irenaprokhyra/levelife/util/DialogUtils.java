@@ -251,6 +251,70 @@ public final class DialogUtils {
         dialog.show();
     }
 
+    public static void showReplaceFurnitureConfirmationDialog(
+            Context context,
+            String slotLabel,
+            String currentFurnitureName,
+            String nextFurnitureName,
+            Runnable onConfirm
+    ) {
+        new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.inventory_replace_slot_title)
+                .setMessage(context.getString(
+                        R.string.inventory_replace_slot_message,
+                        slotLabel,
+                        currentFurnitureName,
+                        nextFurnitureName
+                ))
+                .setPositiveButton(R.string.common_action_continue, (dialog, which) -> {
+                    if (onConfirm != null) {
+                        onConfirm.run();
+                    }
+                })
+                .setNegativeButton(R.string.common_action_cancel, null)
+                .show();
+    }
+
+    public static void showPlacedFurnitureManagementDialog(
+            Context context,
+            String furnitureName,
+            Runnable onMove,
+            Runnable onRemove
+    ) {
+        new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.inventory_manage_furniture_title)
+                .setMessage(context.getString(R.string.inventory_manage_furniture_message, furnitureName))
+                .setPositiveButton(R.string.inventory_manage_action_move, (dialog, which) -> {
+                    if (onMove != null) {
+                        onMove.run();
+                    }
+                })
+                .setNeutralButton(R.string.inventory_manage_action_remove, (dialog, which) -> {
+                    if (onRemove != null) {
+                        onRemove.run();
+                    }
+                })
+                .setNegativeButton(R.string.common_action_cancel, null)
+                .show();
+    }
+
+    public static void showRemovePlacedFurnitureConfirmationDialog(
+            Context context,
+            String furnitureName,
+            Runnable onConfirm
+    ) {
+        new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.inventory_remove_furniture_title)
+                .setMessage(context.getString(R.string.inventory_remove_furniture_message, furnitureName))
+                .setPositiveButton(R.string.common_action_delete, (dialog, which) -> {
+                    if (onConfirm != null) {
+                        onConfirm.run();
+                    }
+                })
+                .setNegativeButton(R.string.common_action_cancel, null)
+                .show();
+    }
+
     private static void bindDropdown(
             Context context,
             MaterialAutoCompleteTextView dropdown,

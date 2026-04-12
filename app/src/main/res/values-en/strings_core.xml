@@ -8,6 +8,7 @@
     <string name="common_action_create">Create</string>
     <string name="common_action_save">Save</string>
     <string name="common_action_delete">Delete</string>
+    <string name="common_action_continue">Continue</string>
     <string name="common_action_cancel">Cancel</string>
     <string name="common_action_buy">Buy</string>
     <string name="common_action_logout">Logout</string>

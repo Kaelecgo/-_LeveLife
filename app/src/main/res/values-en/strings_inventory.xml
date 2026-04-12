@@ -2,10 +2,14 @@
 <resources>
     <string name="my_room">My room</string>
     <string name="inventory_action_place">Place</string>
+    <string name="inventory_action_move">Move</string>
     <string name="empty_inventory">Your inventory is empty.</string>
     <string name="error_loading_inventory">Error loading inventory.</string>
-    <string name="inventory_item_placed">%1$s placed in your room!</string>
+    <string name="inventory_item_placed">%1$s placed in your room.</string>
+    <string name="inventory_item_repositioned">%1$s moved to %2$s.</string>
+    <string name="inventory_item_removed">%1$s has been removed from your room.</string>
     <string name="inventory_item_meta_fallback">Decor item</string>
+    <string name="inventory_item_placed_in_slot">Placed in: %1$s</string>
 
     <string name="inventory_slot_picker_title">Choose a spot</string>
     <string name="inventory_slot_picker_message">Select where you want to place this furniture.</string>
@@ -14,9 +18,20 @@
     <string name="inventory_slot_desk">Desk</string>
     <string name="inventory_slot_decor">Decor</string>
     <string name="inventory_slot_cancel">Cancel</string>
+    <string name="inventory_slot_already_selected">This furniture is already placed in %1$s.</string>
 
-    <string name="inventory_empty_title">Your inventory is empty!</string>
+    <string name="inventory_replace_slot_title">Replace furniture</string>
+    <string name="inventory_replace_slot_message">The %1$s area is already occupied by %2$s. If you continue, it will be replaced by %3$s.</string>
+
+    <string name="inventory_empty_title">Your inventory is empty.</string>
     <string name="inventory_empty_subtitle">Complete habits, earn berries, and visit the shop to start decorating your space.</string>
+
+    <string name="inventory_manage_furniture_title">Manage furniture</string>
+    <string name="inventory_manage_furniture_message">What do you want to do with %1$s?</string>
+    <string name="inventory_manage_action_move">Move</string>
+    <string name="inventory_manage_action_remove">Remove</string>
+    <string name="inventory_remove_furniture_title">Remove furniture</string>
+    <string name="inventory_remove_furniture_message">%1$s will be removed from your room, but it will remain in your inventory.</string>
 
     <string name="content_desc_furniture_icon">Furniture icon</string>
 </resources>
