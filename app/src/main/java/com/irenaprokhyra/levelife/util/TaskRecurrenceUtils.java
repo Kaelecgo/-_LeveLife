@@ -52,6 +52,22 @@ public final class TaskRecurrenceUtils {
         return 0L;
     }
 
+    public static int getFrequencyPriority(String frequency) {
+        String normalized = Task.normalizeFrequency(frequency);
+        switch (normalized) {
+            case Task.FREQUENCY_ONCE:
+                return 1;
+            case Task.FREQUENCY_DAILY:
+                return 2;
+            case Task.FREQUENCY_WEEKLY:
+                return 3;
+            case Task.FREQUENCY_MONTHLY:
+                return 4;
+            default:
+                return 5;
+        }
+    }
+
     public static String getFrequencyLabel(Task task) {
         if (task == null || task.getFrequency() == null) {
             return Task.FREQUENCY_ONCE;

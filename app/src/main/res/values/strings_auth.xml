@@ -13,7 +13,6 @@
     <string name="error_session_expired">Tu sesión ha caducado, por favor entra de nuevo</string>
     <string name="error_user_exists">El nombre de usuario ya existe</string>
 
-
-    <string name="welcome_message">Hola de nuevo, %1$s!</string>
+    <string name="welcome_message">¡Hola de nuevo, %1$s!</string>
     <string name="register_success">¡Usuario creado con éxito! Ahora puedes entrar</string>
 </resources>

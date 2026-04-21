@@ -20,15 +20,15 @@ import androidx.room.PrimaryKey;
         indices = {@Index(value = "user_id")}
 )
 public class Task {
-    public static final String CATEGORY_HEALTH = "Salud y Fisico";
+    public static final String CATEGORY_HEALTH = "Salud y Físico";
     public static final String CATEGORY_ECO = "Sostenibilidad";
     public static final String CATEGORY_FOCUS = "Estudio y trabajo";
     public static final String CATEGORY_SOCIAL = "Social y Ocio";
     public static final String CATEGORY_GENERAL = "General";
 
-    public static final String DIFFICULTY_EASY = "Facil";
+    public static final String DIFFICULTY_EASY = "Fácil";
     public static final String DIFFICULTY_MEDIUM = "Media";
-    public static final String DIFFICULTY_HARD = "Dificil";
+    public static final String DIFFICULTY_HARD = "Difícil";
 
     public static final String FREQUENCY_ONCE = "Una vez";
     public static final String FREQUENCY_DAILY = "Diaria";
@@ -207,7 +207,6 @@ public class Task {
             return FREQUENCY_MONTHLY;
         }
 
-        // Compatibilidad legacy: versiones antiguas guardaban "Normal"
         if (startsWithLabel(normalized, "Normal")) {
             return FREQUENCY_ONCE;
         }
@@ -234,6 +233,8 @@ public class Task {
     }
 
     private static boolean startsWithLabel(String value, String prefix) {
-        return value.regionMatches(true, 0, prefix, 0, prefix.length());
+        String normalizedValue = normalizeLabel(value);
+        String normalizedPrefix = normalizeLabel(prefix);
+        return normalizedValue.regionMatches(true, 0, normalizedPrefix, 0, normalizedPrefix.length());
     }
 }

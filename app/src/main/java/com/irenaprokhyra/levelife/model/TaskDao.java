@@ -21,6 +21,17 @@ public interface TaskDao {
     @Query("SELECT * FROM tasks WHERE id = :id LIMIT 1")
     Task getTaskById(int id);
 
-    @Query("SELECT * FROM tasks WHERE user_id = :userId ORDER BY id ASC")
+    @Query("SELECT * FROM tasks WHERE user_id = :userId " +
+            "ORDER BY CASE frequency " +
+            "WHEN 'Una vez' THEN 1 " +
+            "WHEN 'Once' THEN 1 " +
+            "WHEN 'Normal' THEN 1 " +
+            "WHEN 'Diaria' THEN 2 " +
+            "WHEN 'Daily' THEN 2 " +
+            "WHEN 'Semanal' THEN 3 " +
+            "WHEN 'Weekly' THEN 3 " +
+            "WHEN 'Mensual' THEN 4 " +
+            "WHEN 'Monthly' THEN 4 " +
+            "ELSE 5 END, id ASC")
     LiveData<List<Task>> getTasksByUserIdLiveData(int userId);
 }

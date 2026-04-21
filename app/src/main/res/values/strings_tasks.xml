@@ -1,5 +1,5 @@
 <resources>
-    <!-- Tareas y habitos -->
+    <!-- Tareas y hábitos -->
     <string name="tasks_empty_state">No tienes tareas pendientes. Descansa un momento o crea una nueva.</string>
     <string name="error_load_tasks">Error: no se pudieron cargar las tareas.</string>
     <string name="content_desc_add_task">Añadir nueva tarea</string>
@@ -8,19 +8,19 @@
     <string name="tasks_preview_title">Tarea de ejemplo</string>
     <string name="tasks_preview_category">Categoría</string>
 
-    <!-- Formulario de creacion -->
+    <!-- Formulario de creación -->
     <string name="tasks_dialog_new_title">Nueva tarea</string>
     <string name="tasks_dialog_edit_title">Editar tarea</string>
     <string name="tasks_dialog_delete_title">Eliminar tarea</string>
-    <string name="tasks_dialog_delete_message">Esta accion eliminará la tarea de forma permanente. ¿Quieres continuar?</string>
-    <string name="tasks_hint_title">¿Que tienes que hacer?</string>
+    <string name="tasks_dialog_delete_message">Esta acción eliminará la tarea de forma permanente. ¿Quieres continuar?</string>
+    <string name="tasks_hint_title">¿Qué tienes que hacer?</string>
     <string name="tasks_hint_description">Añade una descripción breve</string>
     <string name="tasks_hint_category">Categoría</string>
     <string name="tasks_hint_difficulty">Dificultad</string>
     <string name="tasks_hint_frequency">Frecuencia</string>
     <string name="tasks_updated_message">Tarea actualizada: %1$s</string>
     <string name="tasks_deleted_message">Tarea eliminada: %1$s</string>
-    <string name="tasks_economy_guide_title">Como funcionan tus recompensas</string>
+    <string name="tasks_economy_guide_title">Cómo funcionan tus recompensas</string>
     <string name="tasks_economy_guide_message">Cada tarea muestra su XP y sus bayas. Las tareas de Sostenibilidad también dan EcoCoins, que podrás gastar en muebles eco dentro de la tienda.</string>
     <string name="tasks_economy_guide_action">Ver tienda</string>
 
@@ -50,16 +50,16 @@
 
     <string-array name="task_categories">
         <item>General</item>
-        <item>Salud y Fisico</item>
+        <item>Salud y Físico</item>
         <item>Estudio y trabajo</item>
         <item>Social y Ocio</item>
         <item>Sostenibilidad</item>
     </string-array>
 
     <string-array name="task_difficulties">
-        <item>Facil</item>
+        <item>Fácil</item>
         <item>Media</item>
-        <item>Dificil</item>
+        <item>Difícil</item>
     </string-array>
 
     <string-array name="task_frequencies">

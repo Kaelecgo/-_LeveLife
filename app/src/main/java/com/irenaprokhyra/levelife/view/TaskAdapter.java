@@ -56,7 +56,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public void setTasks(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
-        this.tasks.sort(Comparator.comparing(TaskRecurrenceUtils::isCompletedForCurrentPeriod));
+        this.tasks.sort(Comparator
+                .comparing(TaskRecurrenceUtils::isCompletedForCurrentPeriod)
+                .thenComparing(task -> TaskRecurrenceUtils.getFrequencyPriority(task.getFrequency()))
+                .thenComparingInt(Task::getId));
         notifyDataSetChanged();
         syncTickerState();
     }

@@ -46,7 +46,7 @@ public class TaskRewardCalculatorTest {
     }
 
     @Test
-    public void calculateRewards_emojiLabels_areNormalized() {
+    public void calculateRewards_legacyLabels_areNormalized() {
         TaskReward reward = TaskRewardCalculator.calculateRewards(
                 "Dificil fire",
                 "Sostenibilidad eco"
@@ -82,10 +82,10 @@ public class TaskRewardCalculatorTest {
     }
 
     @Test
-    public void calculateRewards_whitespaceAndEmojiNoise_areIgnored() {
+    public void calculateRewards_whitespaceNoise_isIgnored() {
         TaskReward reward = TaskRewardCalculator.calculateRewards(
-                "   Difícil 🔥   ",
-                "   Sostenibilidad ♻️   "
+                "   Difícil fuego   ",
+                "   Sostenibilidad reciclaje   "
         );
 
         assertEquals(40, reward.getRewardXP());
@@ -149,7 +149,7 @@ public class TaskRewardCalculatorTest {
     public void calculateRewards_generalCategoryNeverGrantsEcoCoins() {
         TaskReward reward = TaskRewardCalculator.calculateRewards(
                 "Media",
-                "General 🌍"
+                "General planeta"
         );
 
         assertEquals(20, reward.getRewardXP());
