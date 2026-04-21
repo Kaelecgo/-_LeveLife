@@ -2,10 +2,7 @@ package com.irenaprokhyra.levelife.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.AbsoluteLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -17,13 +14,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.irenaprokhyra.levelife.R;
-import com.irenaprokhyra.levelife.model.Furniture;
-import com.irenaprokhyra.levelife.model.MainRepository;
 import com.irenaprokhyra.levelife.model.PlacedFurniture;
 import com.irenaprokhyra.levelife.model.PlacedFurnitureItem;
 import com.irenaprokhyra.levelife.model.User;
 import com.irenaprokhyra.levelife.util.DialogUtils;
 import com.irenaprokhyra.levelife.util.FurnitureDrawableResolver;
+import com.irenaprokhyra.levelife.util.RoomPlacementRules;
 import com.irenaprokhyra.levelife.util.SessionManager;
 import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
 
@@ -35,29 +31,34 @@ public class MainActivity extends AppCompatActivity {
 
     private int currentUserId;
     private MainViewModel viewModel;
-    private MainRepository repository;
 
-    private TextView tvMainSectionLabel, tvRoomSubtitle, tvMainLevel, tvMainBerries, tvMainEcoCoins, tvMainXpText;
+    private TextView tvMainSectionLabel;
+    private TextView tvMainLevel;
+    private TextView tvMainBerries;
+    private TextView tvMainEcoCoins;
     private ProgressBar pbMainXp;
     private BottomNavigationView bottomNavigationView;
 
     private View layoutRoomEmptyState;
-    private ImageView ivPlacedWall, ivPlacedFloor, ivPlacedDesk, ivPlacedDecor;
+    private ImageView ivPlacedWallShowcase;
+    private ImageView ivPlacedBedNook;
+    private ImageView ivPlacedRugCenter;
+    private ImageView ivPlacedFloorLeft;
+    private ImageView ivPlacedFloorRight;
+    private ImageView ivPlacedSurfaceLeft;
+    private ImageView ivPlacedSurfaceRight;
     private final Map<String, PlacedFurnitureItem> placedFurnitureBySlot = new HashMap<>();
-
-    private int xDelta, yDelta;
-    private ScaleGestureDetector scaleGestureDetector;
-    private View viewActiva;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        repository = MainRepository.getInstance(getApplication());
         currentUserId = SessionManager.getSavedUserId(this);
-
-        if (currentUserId == -1) { redirectToLogin(); return; }
+        if (currentUserId == -1) {
+            redirectToLogin();
+            return;
+        }
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         viewModel.init(currentUserId);
@@ -66,79 +67,42 @@ public class MainActivity extends AppCompatActivity {
         setupObservers();
         setupNavigation();
         setupBackButtonBlock();
-
-        scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
     }
 
     private void initViews() {
         tvMainSectionLabel = findViewById(R.id.tvMainSectionLabel);
-        tvRoomSubtitle = findViewById(R.id.tvRoomSubtitle);
         tvMainLevel = findViewById(R.id.tvMainLevel);
         tvMainBerries = findViewById(R.id.tvMainBerries);
         tvMainEcoCoins = findViewById(R.id.tvMainEcoCoins);
-        tvMainXpText = findViewById(R.id.tvMainXpText);
         pbMainXp = findViewById(R.id.pbMainXp);
         layoutRoomEmptyState = findViewById(R.id.layoutRoomEmptyState);
 
-        ivPlacedWall = findViewById(R.id.ivPlacedWall);
-        ivPlacedFloor = findViewById(R.id.ivPlacedFloor);
-        ivPlacedDesk = findViewById(R.id.ivPlacedDesk);
-        ivPlacedDecor = findViewById(R.id.ivPlacedDecor);
+        ivPlacedWallShowcase = findViewById(R.id.ivPlacedWallShowcase);
+        ivPlacedBedNook = findViewById(R.id.ivPlacedBedNook);
+        ivPlacedRugCenter = findViewById(R.id.ivPlacedRugCenter);
+        ivPlacedFloorLeft = findViewById(R.id.ivPlacedFloorLeft);
+        ivPlacedFloorRight = findViewById(R.id.ivPlacedFloorRight);
+        ivPlacedSurfaceLeft = findViewById(R.id.ivPlacedSurfaceLeft);
+        ivPlacedSurfaceRight = findViewById(R.id.ivPlacedSurfaceRight);
 
-        configurarMueble(ivPlacedWall, PlacedFurniture.SLOT_WALL);
-        configurarMueble(ivPlacedFloor, PlacedFurniture.SLOT_FLOOR);
-        configurarMueble(ivPlacedDesk, PlacedFurniture.SLOT_DESK);
-        configurarMueble(ivPlacedDecor, PlacedFurniture.SLOT_DECOR);
+        configureFurnitureView(ivPlacedWallShowcase, PlacedFurniture.SLOT_WALL_SHOWCASE);
+        configureFurnitureView(ivPlacedBedNook, PlacedFurniture.SLOT_BED_NOOK);
+        configureFurnitureView(ivPlacedRugCenter, PlacedFurniture.SLOT_RUG_CENTER);
+        configureFurnitureView(ivPlacedFloorLeft, PlacedFurniture.SLOT_FLOOR_LEFT);
+        configureFurnitureView(ivPlacedFloorRight, PlacedFurniture.SLOT_FLOOR_RIGHT);
+        configureFurnitureView(ivPlacedSurfaceLeft, PlacedFurniture.SLOT_SURFACE_LEFT);
+        configureFurnitureView(ivPlacedSurfaceRight, PlacedFurniture.SLOT_SURFACE_RIGHT);
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setItemIconTintList(null);
     }
 
-    private void configurarMueble(ImageView iv, String slot) {
-        iv.setOnTouchListener(muebleTouchListener);
-        iv.setOnLongClickListener(null);
-    }
-
-    private final View.OnTouchListener muebleTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent event) {
-            viewActiva = view;
-            scaleGestureDetector.onTouchEvent(event);
-
-            final int x = (int) event.getRawX();
-            final int y = (int) event.getRawY();
-
-            switch (event.getAction() & MotionEvent.ACTION_MASK) {
-                case MotionEvent.ACTION_DOWN:
-                    AbsoluteLayout.LayoutParams lParams = (AbsoluteLayout.LayoutParams) view.getLayoutParams();
-                    xDelta = x - lParams.x;
-                    yDelta = y - lParams.y;
-                    break;
-
-                case MotionEvent.ACTION_MOVE:
-                    if (!scaleGestureDetector.isInProgress()) {
-                        AbsoluteLayout.LayoutParams layoutParams = (AbsoluteLayout.LayoutParams) view.getLayoutParams();
-                        layoutParams.x = x - xDelta;
-                        layoutParams.y = y - yDelta;
-                        view.setLayoutParams(layoutParams);
-                    }
-                    break;
-            }
-            return false;
-        }
-    };
-
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            if (viewActiva != null) {
-                float scale = viewActiva.getScaleX() * detector.getScaleFactor();
-                scale = Math.max(0.2f, Math.min(scale, 3.0f));
-                viewActiva.setScaleX(scale);
-                viewActiva.setScaleY(scale);
-            }
+    private void configureFurnitureView(ImageView imageView, String slot) {
+        imageView.setOnClickListener(v -> showPlacedFurnitureActions(slot));
+        imageView.setOnLongClickListener(v -> {
+            showPlacedFurnitureActions(slot);
             return true;
-        }
+        });
     }
 
     private void renderPlacedFurniture(List<PlacedFurnitureItem> items) {
@@ -152,49 +116,82 @@ public class MainActivity extends AppCompatActivity {
 
         layoutRoomEmptyState.setVisibility(View.GONE);
         for (PlacedFurnitureItem item : items) {
-            placedFurnitureBySlot.put(item.getSlot(), item);
-            ImageView target = getTargetViewForSlot(item.getSlot());
-            if (target != null) {
-                target.setImageResource(FurnitureDrawableResolver.resolveDrawableResId(this, item.getImageRef()));
-                target.setVisibility(View.VISIBLE);
+            String visualSlot = RoomPlacementRules.normalizeStoredSlot(
+                    item.getSlot(),
+                    item.getType(),
+                    item.getImageRef()
+            );
+            placedFurnitureBySlot.put(visualSlot, item);
+
+            ImageView target = getTargetViewForSlot(visualSlot);
+            if (target == null) {
+                continue;
             }
+
+            target.setImageResource(FurnitureDrawableResolver.resolveDrawableResId(this, item.getImageRef()));
+            target.setContentDescription(item.getName());
+            target.setVisibility(View.VISIBLE);
         }
     }
 
     private void showPlacedFurnitureActions(String slot) {
         PlacedFurnitureItem item = placedFurnitureBySlot.get(slot);
-        if (item == null) return;
-        DialogUtils.showPlacedFurnitureManagementDialog(this, item.getName(),
+        if (item == null) {
+            return;
+        }
+
+        DialogUtils.showPlacedFurnitureManagementDialog(
+                this,
+                item.getName(),
                 () -> navigateTo(InventoryActivity.class),
                 () -> confirmRemovePlacedFurniture(item)
         );
     }
 
     private void confirmRemovePlacedFurniture(PlacedFurnitureItem item) {
-        DialogUtils.showRemovePlacedFurnitureConfirmationDialog(this, item.getName(), () -> {
-            viewModel.removePlacedFurniture(item.getSlot(), () -> {
-                runOnUiThread(() -> Toast.makeText(this, "Eliminado", Toast.LENGTH_SHORT).show());
-            });
-        });
+        DialogUtils.showRemovePlacedFurnitureConfirmationDialog(this, item.getName(), () ->
+                viewModel.removePlacedFurniture(item.getSlot(), () -> runOnUiThread(() ->
+                        Toast.makeText(this, "Eliminado", Toast.LENGTH_SHORT).show()
+                )));
     }
 
     private ImageView getTargetViewForSlot(String slot) {
-        if (PlacedFurniture.SLOT_WALL.equals(slot)) return ivPlacedWall;
-        if (PlacedFurniture.SLOT_FLOOR.equals(slot)) return ivPlacedFloor;
-        if (PlacedFurniture.SLOT_DESK.equals(slot)) return ivPlacedDesk;
-        if (PlacedFurniture.SLOT_DECOR.equals(slot)) return ivPlacedDecor;
-        return null;
+        switch (slot) {
+            case PlacedFurniture.SLOT_WALL_SHOWCASE:
+                return ivPlacedWallShowcase;
+            case PlacedFurniture.SLOT_BED_NOOK:
+                return ivPlacedBedNook;
+            case PlacedFurniture.SLOT_RUG_CENTER:
+                return ivPlacedRugCenter;
+            case PlacedFurniture.SLOT_FLOOR_LEFT:
+                return ivPlacedFloorLeft;
+            case PlacedFurniture.SLOT_FLOOR_RIGHT:
+                return ivPlacedFloorRight;
+            case PlacedFurniture.SLOT_SURFACE_LEFT:
+                return ivPlacedSurfaceLeft;
+            case PlacedFurniture.SLOT_SURFACE_RIGHT:
+                return ivPlacedSurfaceRight;
+            default:
+                return null;
+        }
     }
 
     private void clearPlacedFurnitureViews() {
-        ivPlacedWall.setVisibility(View.GONE);
-        ivPlacedFloor.setVisibility(View.GONE);
-        ivPlacedDesk.setVisibility(View.GONE);
-        ivPlacedDecor.setVisibility(View.GONE);
+        ivPlacedWallShowcase.setVisibility(View.GONE);
+        ivPlacedBedNook.setVisibility(View.GONE);
+        ivPlacedRugCenter.setVisibility(View.GONE);
+        ivPlacedFloorLeft.setVisibility(View.GONE);
+        ivPlacedFloorRight.setVisibility(View.GONE);
+        ivPlacedSurfaceLeft.setVisibility(View.GONE);
+        ivPlacedSurfaceRight.setVisibility(View.GONE);
     }
 
     private void setupObservers() {
-        viewModel.getUser().observe(this, user -> { if (user != null) updateUI(user); });
+        viewModel.getUser().observe(this, user -> {
+            if (user != null) {
+                updateUI(user);
+            }
+        });
         viewModel.getPlacedFurniture().observe(this, this::renderPlacedFurniture);
     }
 
@@ -209,10 +206,18 @@ public class MainActivity extends AppCompatActivity {
     private void setupNavigation() {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.nav_home) return true;
-            if (id == R.id.nav_shop) navigateTo(ShopActivity.class);
-            if (id == R.id.nav_inventory) navigateTo(InventoryActivity.class);
-            if (id == R.id.nav_tasks) navigateTo(TaskActivity.class);
+            if (id == R.id.nav_home) {
+                return true;
+            }
+            if (id == R.id.nav_shop) {
+                navigateTo(ShopActivity.class);
+            }
+            if (id == R.id.nav_inventory) {
+                navigateTo(InventoryActivity.class);
+            }
+            if (id == R.id.nav_tasks) {
+                navigateTo(TaskActivity.class);
+            }
             return true;
         });
     }
@@ -225,7 +230,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupBackButtonBlock() {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override public void handleOnBackPressed() { moveTaskToBack(true); }
+            @Override
+            public void handleOnBackPressed() {
+                moveTaskToBack(true);
+            }
         });
     }
 

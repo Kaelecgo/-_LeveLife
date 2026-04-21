@@ -11,6 +11,14 @@ import androidx.room.ColumnInfo;
 public class Furniture {
     public static final String CURRENCY_BERRIES = "berries";
     public static final String CURRENCY_ECO = "eco";
+    public static final String TYPE_CHAIR = "chair";
+    public static final String TYPE_PLANT = "plant";
+    public static final String TYPE_PC = "pc";
+    public static final String TYPE_LAMP = "lamp";
+    public static final String TYPE_SHELF = "shelf";
+    public static final String TYPE_BED = "bed";
+    public static final String TYPE_RUG = "rug";
+    public static final String TYPE_FAN = "fan";
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -67,8 +75,8 @@ public class Furniture {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public String getType() { return normalizeType(type); }
+    public void setType(String type) { this.type = normalizeType(type); }
 
     @NonNull
     public String getCurrency() { return normalizeCurrency(currency); }
@@ -83,5 +91,26 @@ public class Furniture {
             return CURRENCY_ECO;
         }
         return CURRENCY_BERRIES;
+    }
+
+    private static String normalizeType(String type) {
+        if (type == null) {
+            return "";
+        }
+
+        String normalized = type.trim().toLowerCase();
+        switch (normalized) {
+            case TYPE_CHAIR:
+            case TYPE_PLANT:
+            case TYPE_PC:
+            case TYPE_LAMP:
+            case TYPE_SHELF:
+            case TYPE_BED:
+            case TYPE_RUG:
+            case TYPE_FAN:
+                return normalized;
+            default:
+                return normalized;
+        }
     }
 }

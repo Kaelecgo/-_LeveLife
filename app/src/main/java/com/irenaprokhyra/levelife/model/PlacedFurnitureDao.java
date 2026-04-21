@@ -23,8 +23,14 @@ public interface PlacedFurnitureDao {
     @Query("SELECT * FROM placed_furniture WHERE user_id = :userId AND furniture_id = :furnitureId LIMIT 1")
     PlacedFurniture getPlacedFurnitureByFurnitureId(int userId, int furnitureId);
 
+    @Query("SELECT * FROM placed_furniture WHERE user_id = :userId")
+    List<PlacedFurniture> getPlacedFurnitureForUser(int userId);
+
     @Query("DELETE FROM placed_furniture WHERE user_id = :userId AND slot = :slot")
     void removePlacedFurnitureForSlot(int userId, String slot);
+
+    @Query("DELETE FROM placed_furniture WHERE id = :placementId")
+    void removePlacedFurnitureById(int placementId);
 
     @Query(
             "SELECT " +

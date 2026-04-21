@@ -14,11 +14,18 @@
     <string name="inventory_action_remove_from_room">Remove from room</string>
 
     <string name="inventory_slot_picker_title">Choose a spot</string>
-    <string name="inventory_slot_picker_message">Select where you want to place this furniture.</string>
+    <string name="inventory_slot_picker_message">Only compatible anchors are shown for this furniture.</string>
     <string name="inventory_slot_floor">Floor</string>
     <string name="inventory_slot_wall">Wall</string>
     <string name="inventory_slot_desk">Desk</string>
     <string name="inventory_slot_decor">Decor</string>
+    <string name="inventory_slot_rug_center">Room center</string>
+    <string name="inventory_slot_bed_nook">Rest corner</string>
+    <string name="inventory_slot_wall_showcase">Showcase wall</string>
+    <string name="inventory_slot_floor_left">Left floor</string>
+    <string name="inventory_slot_floor_right">Right floor</string>
+    <string name="inventory_slot_surface_left">Left surface</string>
+    <string name="inventory_slot_surface_right">Right surface</string>
     <string name="inventory_slot_cancel">Cancel</string>
     <string name="inventory_slot_already_selected">This furniture is already placed in %1$s.</string>
 

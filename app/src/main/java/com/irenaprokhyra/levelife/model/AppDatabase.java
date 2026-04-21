@@ -10,7 +10,13 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.irenaprokhyra.levelife.util.RoomPlacementRules;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,7 +31,7 @@ import java.util.concurrent.Executors;
                 PlacedFurniture.class,
                 UserFrequencyHint.class
         },
-        version = 14,
+        version = 15,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -220,6 +226,13 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_14_15 = new Migration(14, 15) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            normalizeLegacyPlacedFurnitureAnchors(database);
+        }
+    };
+
 
     public abstract UserDao userDao();
 
@@ -256,7 +269,8 @@ public abstract class AppDatabase extends RoomDatabase {
                                     MIGRATION_10_11,
                                     MIGRATION_11_12,
                                     MIGRATION_12_13,
-                                    MIGRATION_13_14
+                                    MIGRATION_13_14,
+                                    MIGRATION_14_15
                             )
                             .addCallback(sRoomDatabaseCallback)
                             .build();
@@ -464,21 +478,21 @@ public abstract class AppDatabase extends RoomDatabase {
             }
 
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Silla Madera", 50, "Basico", "furn_chair_wood", null, null, Furniture.CURRENCY_BERRIES);
+                    "Silla Madera", 50, "Basico", "furn_chair_wood", null, Furniture.TYPE_CHAIR, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Planta", 5, "Sostenibilidad", "furn_plant_small", null, null, Furniture.CURRENCY_ECO);
+                    "Planta", 5, "Sostenibilidad", "furn_plant_small", null, Furniture.TYPE_PLANT, Furniture.CURRENCY_ECO);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "PC Gamer", 500, "Tecnologia", "furn_pc_gamer", null, null, Furniture.CURRENCY_BERRIES);
+                    "PC Gamer", 500, "Tecnologia", "furn_pc_gamer", null, Furniture.TYPE_PC, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Lampara", 80, "Iluminacion", "furn_lamp_desk", null, null, Furniture.CURRENCY_BERRIES);
+                    "Lampara", 80, "Iluminacion", "furn_lamp_desk", null, Furniture.TYPE_LAMP, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Estanteria", 120, "Almacenaje", "furn_shelf", null, null, Furniture.CURRENCY_BERRIES);
+                    "Estanteria", 120, "Almacenaje", "furn_shelf", null, Furniture.TYPE_SHELF, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Cama Comoda", 300, "Descanso", "furn_bed", null, null, Furniture.CURRENCY_BERRIES);
+                    "Cama Comoda", 300, "Descanso", "furn_bed", null, Furniture.TYPE_BED, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Alfombra", 40, "Decoracion", "furn_rug", null, null, Furniture.CURRENCY_BERRIES);
+                    "Alfombra", 40, "Decoracion", "furn_rug", null, Furniture.TYPE_RUG, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Ventilador Eco", 12, "Sostenibilidad", "furn_fan_eco", null, null, Furniture.CURRENCY_ECO);
+                    "Ventilador Eco", 12, "Sostenibilidad", "furn_fan_eco", null, Furniture.TYPE_FAN, Furniture.CURRENCY_ECO);
 
             db.setTransactionSuccessful();
         } finally {
@@ -514,6 +528,74 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static void ensureFurnitureCatalogSeeded(SupportSQLiteDatabase db) {
         seedFurnitureCatalog(db);
+    }
+
+    private static void normalizeLegacyPlacedFurnitureAnchors(SupportSQLiteDatabase db) {
+        Cursor cursor = db.query(
+                "SELECT pf.id, pf.user_id, pf.furniture_id, pf.slot, pf.placed_at, f.type, f.image_ref " +
+                        "FROM placed_furniture pf " +
+                        "INNER JOIN furniture f ON f.id = pf.furniture_id " +
+                        "ORDER BY pf.user_id ASC, pf.placed_at DESC, pf.id DESC"
+        );
+
+        List<Integer> placementIdsToDelete = new ArrayList<>();
+        Map<Integer, String> placementSlotUpdates = new HashMap<>();
+        Set<String> keptSlots = new HashSet<>();
+        Set<String> keptFurniture = new HashSet<>();
+
+        try {
+            int idColumn = cursor.getColumnIndex("id");
+            int userIdColumn = cursor.getColumnIndex("user_id");
+            int furnitureIdColumn = cursor.getColumnIndex("furniture_id");
+            int slotColumn = cursor.getColumnIndex("slot");
+            int typeColumn = cursor.getColumnIndex("type");
+            int imageRefColumn = cursor.getColumnIndex("image_ref");
+
+            while (cursor.moveToNext()) {
+                int placementId = cursor.getInt(idColumn);
+                int userId = cursor.getInt(userIdColumn);
+                int furnitureId = cursor.getInt(furnitureIdColumn);
+                String rawSlot = cursor.getString(slotColumn);
+                String type = cursor.getString(typeColumn);
+                String imageRef = cursor.getString(imageRefColumn);
+                String canonicalSlot = RoomPlacementRules.normalizeStoredSlot(rawSlot, type, imageRef);
+
+                String slotKey = userId + "|" + canonicalSlot;
+                String furnitureKey = userId + "|" + furnitureId;
+
+                if (keptSlots.contains(slotKey) || keptFurniture.contains(furnitureKey)) {
+                    placementIdsToDelete.add(placementId);
+                    continue;
+                }
+
+                keptSlots.add(slotKey);
+                keptFurniture.add(furnitureKey);
+
+                if (rawSlot == null || !canonicalSlot.equals(rawSlot)) {
+                    placementSlotUpdates.put(placementId, canonicalSlot);
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+
+        if (placementIdsToDelete.isEmpty() && placementSlotUpdates.isEmpty()) {
+            return;
+        }
+
+        for (Integer placementId : placementIdsToDelete) {
+            db.execSQL(
+                    "DELETE FROM placed_furniture WHERE id = ?",
+                    new Object[]{placementId}
+            );
+        }
+
+        for (Map.Entry<Integer, String> update : placementSlotUpdates.entrySet()) {
+            db.execSQL(
+                    "UPDATE placed_furniture SET slot = ? WHERE id = ?",
+                    new Object[]{update.getValue(), update.getKey()}
+            );
+        }
     }
 
 
@@ -795,6 +877,7 @@ public abstract class AppDatabase extends RoomDatabase {
             super.onOpen(db);
             databaseWriteExecutor.execute(() -> {
                 ensureFurnitureCatalogSeeded(db);
+                normalizeLegacyPlacedFurnitureAnchors(db);
                 ensureStarterTaskPackSeeded(db);
             });
         }

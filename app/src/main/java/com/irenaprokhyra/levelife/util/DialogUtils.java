@@ -24,6 +24,8 @@ import com.irenaprokhyra.levelife.model.Task;
 import com.irenaprokhyra.levelife.model.TaskDraft;
 import com.irenaprokhyra.levelife.model.TaskReward;
 
+import java.util.List;
+
 public final class DialogUtils {
 
     private DialogUtils() {
@@ -213,9 +215,10 @@ public final class DialogUtils {
     public static void showFurnitureSlotPickerBottomSheet(
             Context context,
             Furniture furniture,
+            List<String> allowedSlots,
             OnFurnitureSlotSelectedListener listener
     ) {
-        if (context == null || furniture == null || listener == null) {
+        if (context == null || furniture == null || listener == null || allowedSlots == null || allowedSlots.isEmpty()) {
             return;
         }
 
@@ -231,21 +234,42 @@ public final class DialogUtils {
 
         ImageView ivFurniturePreview = view.findViewById(R.id.ivFurniturePreview);
         TextView tvFurnitureName = view.findViewById(R.id.tvFurniturePreviewName);
-        MaterialButton btnFloor = view.findViewById(R.id.btnSlotFloor);
-        MaterialButton btnWall = view.findViewById(R.id.btnSlotWall);
-        MaterialButton btnDesk = view.findViewById(R.id.btnSlotDesk);
-        MaterialButton btnDecor = view.findViewById(R.id.btnSlotDecor);
+        MaterialButton btnOptionOne = view.findViewById(R.id.btnSlotOptionOne);
+        MaterialButton btnOptionTwo = view.findViewById(R.id.btnSlotOptionTwo);
+        MaterialButton btnOptionThree = view.findViewById(R.id.btnSlotOptionThree);
+        MaterialButton btnOptionFour = view.findViewById(R.id.btnSlotOptionFour);
+        MaterialButton btnOptionFive = view.findViewById(R.id.btnSlotOptionFive);
+        MaterialButton btnOptionSix = view.findViewById(R.id.btnSlotOptionSix);
+        MaterialButton btnOptionSeven = view.findViewById(R.id.btnSlotOptionSeven);
         MaterialButton btnCancel = view.findViewById(R.id.btnCancelSlotPicker);
+        MaterialButton[] optionButtons = new MaterialButton[] {
+                btnOptionOne,
+                btnOptionTwo,
+                btnOptionThree,
+                btnOptionFour,
+                btnOptionFive,
+                btnOptionSix,
+                btnOptionSeven
+        };
 
         int drawableResId = FurnitureDrawableResolver.resolveDrawableResId(context, furniture.getImageRef());
         ivFurniturePreview.setImageResource(drawableResId);
         ivFurniturePreview.setContentDescription(furniture.getName());
         tvFurnitureName.setText(furniture.getName());
 
-        bindSlotButton(btnFloor, PlacedFurniture.SLOT_FLOOR, listener, dialog);
-        bindSlotButton(btnWall, PlacedFurniture.SLOT_WALL, listener, dialog);
-        bindSlotButton(btnDesk, PlacedFurniture.SLOT_DESK, listener, dialog);
-        bindSlotButton(btnDecor, PlacedFurniture.SLOT_DECOR, listener, dialog);
+        for (int index = 0; index < optionButtons.length; index++) {
+            MaterialButton button = optionButtons[index];
+            if (index >= allowedSlots.size()) {
+                button.setVisibility(View.GONE);
+                continue;
+            }
+
+            String slot = allowedSlots.get(index);
+            int labelRes = RoomPlacementRules.getSlotLabelRes(slot);
+            button.setVisibility(View.VISIBLE);
+            button.setText(labelRes != 0 ? labelRes : R.string.inventory_slot_picker_title);
+            bindSlotButton(button, slot, listener, dialog);
+        }
         btnCancel.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();

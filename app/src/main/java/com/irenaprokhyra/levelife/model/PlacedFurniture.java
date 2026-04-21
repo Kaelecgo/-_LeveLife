@@ -31,10 +31,20 @@ import androidx.room.PrimaryKey;
         }
 )
 public class PlacedFurniture {
+    // Legacy generic slots kept for compatibility with already placed furniture.
     public static final String SLOT_FLOOR = "floor";
     public static final String SLOT_WALL = "wall";
     public static final String SLOT_DESK = "desk";
     public static final String SLOT_DECOR = "decor";
+
+    // Canonical room anchors for the MVP room scene.
+    public static final String SLOT_WALL_SHOWCASE = "wall_showcase";
+    public static final String SLOT_BED_NOOK = "bed_nook";
+    public static final String SLOT_RUG_CENTER = "rug_center";
+    public static final String SLOT_FLOOR_LEFT = "floor_left";
+    public static final String SLOT_FLOOR_RIGHT = "floor_right";
+    public static final String SLOT_SURFACE_LEFT = "surface_left";
+    public static final String SLOT_SURFACE_RIGHT = "surface_right";
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -66,7 +76,14 @@ public class PlacedFurniture {
         return SLOT_FLOOR.equals(slot)
                 || SLOT_WALL.equals(slot)
                 || SLOT_DESK.equals(slot)
-                || SLOT_DECOR.equals(slot);
+                || SLOT_DECOR.equals(slot)
+                || SLOT_WALL_SHOWCASE.equals(slot)
+                || SLOT_BED_NOOK.equals(slot)
+                || SLOT_RUG_CENTER.equals(slot)
+                || SLOT_FLOOR_LEFT.equals(slot)
+                || SLOT_FLOOR_RIGHT.equals(slot)
+                || SLOT_SURFACE_LEFT.equals(slot)
+                || SLOT_SURFACE_RIGHT.equals(slot);
     }
 
     public int getId() {return id;}

@@ -15,6 +15,7 @@ import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
 import com.irenaprokhyra.levelife.model.PlacedFurnitureItem;
 import com.irenaprokhyra.levelife.util.DialogUtils;
+import com.irenaprokhyra.levelife.util.RoomPlacementRules;
 import com.irenaprokhyra.levelife.view.InventoryAdapter;
 import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
 
@@ -95,9 +96,11 @@ public class InventoryActivity extends AppCompatActivity {
     }
 
     private void showSlotPicker(Furniture furniture) {
+        List<String> allowedSlots = RoomPlacementRules.getAllowedSlots(furniture);
         DialogUtils.showFurnitureSlotPickerBottomSheet(
                 this,
                 furniture,
+                allowedSlots,
                 slot -> handlePlacementRequest(furniture, slot)
         );
     }
@@ -106,7 +109,12 @@ public class InventoryActivity extends AppCompatActivity {
         PlacedFurnitureItem sameFurniture = placedFurnitureByFurnitureId.get(furniture.getId());
         String slotLabel = getSlotLabel(slot);
 
-        if (sameFurniture != null && slot.equals(sameFurniture.getSlot())) {
+        if (sameFurniture != null && slot.equals(
+                RoomPlacementRules.normalizeStoredSlot(
+                        sameFurniture.getSlot(),
+                        sameFurniture.getType(),
+                        sameFurniture.getImageRef()
+                ))) {
             Toast.makeText(
                     this,
                     getString(R.string.inventory_slot_already_selected, slotLabel),
@@ -179,9 +187,14 @@ public class InventoryActivity extends AppCompatActivity {
                 if (item == null) {
                     continue;
                 }
+                String visualSlot = RoomPlacementRules.normalizeStoredSlot(
+                        item.getSlot(),
+                        item.getType(),
+                        item.getImageRef()
+                );
                 placedFurnitureByFurnitureId.put(item.getFurnitureId(), item);
-                placedFurnitureBySlot.put(item.getSlot(), item);
-                placedFurnitureSlots.put(item.getFurnitureId(), getSlotLabel(item.getSlot()));
+                placedFurnitureBySlot.put(visualSlot, item);
+                placedFurnitureSlots.put(item.getFurnitureId(), getSlotLabel(visualSlot));
             }
         }
 
@@ -189,14 +202,9 @@ public class InventoryActivity extends AppCompatActivity {
     }
 
     private String getSlotLabel(String slot) {
-        if ("floor".equals(slot)) {
-            return getString(R.string.inventory_slot_floor);
-        } else if ("wall".equals(slot)) {
-            return getString(R.string.inventory_slot_wall);
-        } else if ("desk".equals(slot)) {
-            return getString(R.string.inventory_slot_desk);
-        } else if ("decor".equals(slot)) {
-            return getString(R.string.inventory_slot_decor);
+        int labelRes = RoomPlacementRules.getSlotLabelRes(slot);
+        if (labelRes != 0) {
+            return getString(labelRes);
         }
         return slot;
     }

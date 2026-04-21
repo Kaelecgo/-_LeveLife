@@ -50,36 +50,60 @@
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSlotFloor"
+        android:id="@+id/btnSlotOptionOne"
         style="@style/LeveLife.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_large"
-        android:text="@string/inventory_slot_floor" />
+        android:text="@string/inventory_slot_rug_center" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSlotWall"
+        android:id="@+id/btnSlotOptionTwo"
         style="@style/LeveLife.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_small"
-        android:text="@string/inventory_slot_wall" />
+        android:text="@string/inventory_slot_bed_nook" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSlotDesk"
+        android:id="@+id/btnSlotOptionThree"
         style="@style/LeveLife.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_small"
-        android:text="@string/inventory_slot_desk" />
+        android:text="@string/inventory_slot_wall_showcase" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSlotDecor"
+        android:id="@+id/btnSlotOptionFour"
         style="@style/LeveLife.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_small"
-        android:text="@string/inventory_slot_decor" />
+        android:text="@string/inventory_slot_floor_left" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSlotOptionFive"
+        style="@style/LeveLife.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_small"
+        android:text="@string/inventory_slot_floor_right" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSlotOptionSix"
+        style="@style/LeveLife.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_small"
+        android:text="@string/inventory_slot_surface_left" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSlotOptionSeven"
+        style="@style/LeveLife.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_small"
+        android:text="@string/inventory_slot_surface_right" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCancelSlotPicker"

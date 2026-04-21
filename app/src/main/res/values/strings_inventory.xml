@@ -14,11 +14,18 @@
     <string name="inventory_action_remove_from_room">Quitar de la habitación</string>
 
     <string name="inventory_slot_picker_title">Elige una zona</string>
-    <string name="inventory_slot_picker_message">Selecciona donde quieres colocar este mueble.</string>
+    <string name="inventory_slot_picker_message">Solo se muestran las posiciones compatibles con este mueble.</string>
     <string name="inventory_slot_floor">Suelo</string>
     <string name="inventory_slot_wall">Pared</string>
     <string name="inventory_slot_desk">Escritorio</string>
     <string name="inventory_slot_decor">Decoración</string>
+    <string name="inventory_slot_rug_center">Centro de la habitación</string>
+    <string name="inventory_slot_bed_nook">Rincón de descanso</string>
+    <string name="inventory_slot_wall_showcase">Pared expositora</string>
+    <string name="inventory_slot_floor_left">Suelo izquierdo</string>
+    <string name="inventory_slot_floor_right">Suelo derecho</string>
+    <string name="inventory_slot_surface_left">Superficie izquierda</string>
+    <string name="inventory_slot_surface_right">Superficie derecha</string>
     <string name="inventory_slot_cancel">Cancelar</string>
     <string name="inventory_slot_already_selected">Ese mueble ya está colocado en %1$s.</string>
 

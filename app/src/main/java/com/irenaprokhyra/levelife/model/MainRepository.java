@@ -3,6 +3,7 @@ package com.irenaprokhyra.levelife.model;
 import android.app.Application;
 import androidx.lifecycle.LiveData;
 import com.irenaprokhyra.levelife.util.PasswordUtils;
+import com.irenaprokhyra.levelife.util.RoomPlacementRules;
 import com.irenaprokhyra.levelife.util.TaskRecurrenceUtils;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -271,38 +272,56 @@ public class MainRepository {
             return false;
         }
 
-        PlacedFurniture existingInTargetSlot = placedFurnitureDao.getPlacedFurnitureForSlot(userId, slot);
-        PlacedFurniture existingForFurniture =
-                placedFurnitureDao.getPlacedFurnitureByFurnitureId(userId, furniture.getId());
+        String canonicalTargetSlot = RoomPlacementRules.normalizeStoredSlot(slot, furniture);
+        List<PlacedFurniture> placedFurnitureForUser = placedFurnitureDao.getPlacedFurnitureForUser(userId);
+        PlacedFurniture existingInTargetSlot = null;
+        PlacedFurniture existingForFurniture = null;
+        String existingFurnitureVisualSlot = null;
+
+        for (PlacedFurniture placedFurniture : placedFurnitureForUser) {
+            Furniture placedFurnitureModel = furnitureDao.getFurnitureById(placedFurniture.getFurnitureId());
+            String visualSlot = RoomPlacementRules.normalizeStoredSlot(
+                    placedFurniture.getSlot(),
+                    placedFurnitureModel
+            );
+
+            if (placedFurniture.getFurnitureId() == furniture.getId()) {
+                existingForFurniture = placedFurniture;
+                existingFurnitureVisualSlot = visualSlot;
+                continue;
+            }
+
+            if (canonicalTargetSlot.equals(visualSlot)) {
+                existingInTargetSlot = placedFurniture;
+            }
+        }
 
         if (existingForFurniture != null) {
-            if (slot.equals(existingForFurniture.getSlot())) {
+            if (canonicalTargetSlot.equals(existingFurnitureVisualSlot)) {
+                existingForFurniture.setSlot(canonicalTargetSlot);
                 existingForFurniture.setPlacedAt(now);
                 placedFurnitureDao.updatePlacedFurniture(existingForFurniture);
                 return true;
             }
 
             if (existingInTargetSlot != null && existingInTargetSlot.getId() != existingForFurniture.getId()) {
-                placedFurnitureDao.removePlacedFurnitureForSlot(userId, slot);
+                placedFurnitureDao.removePlacedFurnitureById(existingInTargetSlot.getId());
             }
 
-            existingForFurniture.setSlot(slot);
+            existingForFurniture.setSlot(canonicalTargetSlot);
             existingForFurniture.setPlacedAt(now);
             placedFurnitureDao.updatePlacedFurniture(existingForFurniture);
             return true;
         }
 
         if (existingInTargetSlot != null) {
-            existingInTargetSlot.setFurnitureId(furniture.getId());
-            existingInTargetSlot.setPlacedAt(now);
-            placedFurnitureDao.updatePlacedFurniture(existingInTargetSlot);
-            return true;
+            placedFurnitureDao.removePlacedFurnitureById(existingInTargetSlot.getId());
         }
 
         PlacedFurniture placedFurniture = new PlacedFurniture(
                 userId,
                 furniture.getId(),
-                slot,
+                canonicalTargetSlot,
                 now
         );
         placedFurnitureDao.insertPlacedFurniture(placedFurniture);
