@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
@@ -18,8 +19,8 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
 
     private List<Furniture> furnitureList = new ArrayList<>();
     private final OnFurnitureBuyClickListener listener;
-
-    private int currentBalance = 0;
+    private int currentBerryBalance = 0;
+    private int currentEcoBalance = 0;
 
     private List<Integer> ownedFurnitureIds = new ArrayList<>();
 
@@ -37,8 +38,9 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
         notifyDataSetChanged();
     }
 
-    public void setCurrentBalance(int balance) {
-        this.currentBalance = balance;
+    public void setBalances(int berryBalance, int ecoBalance) {
+        this.currentBerryBalance = berryBalance;
+        this.currentEcoBalance = ecoBalance;
         notifyDataSetChanged();
     }
 
@@ -64,7 +66,7 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
     @Override
     public void onBindViewHolder(@NonNull FurnitureViewHolder holder, int position) {
         Furniture furniture = furnitureList.get(position);
-        holder.bind(furniture, listener, currentBalance, ownedFurnitureIds);
+        holder.bind(furniture, listener, currentBerryBalance, currentEcoBalance, ownedFurnitureIds);
     }
 
     @Override
@@ -73,7 +75,7 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
     }
 
     static class FurnitureViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvPrice;
+        TextView tvName, tvPrice, tvCategory, tvCurrencyHint;
         ImageView ivIcon;
         Button btnBuy;
 
@@ -81,24 +83,46 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
             super(itemView);
             tvName = itemView.findViewById(R.id.tvFurnitureName);
             tvPrice = itemView.findViewById(R.id.tvFurniturePrice);
+            tvCategory = itemView.findViewById(R.id.tvFurnitureCategory);
+            tvCurrencyHint = itemView.findViewById(R.id.tvFurnitureCurrencyHint);
             ivIcon = itemView.findViewById(R.id.ivFurnitureIcon);
             btnBuy = itemView.findViewById(R.id.btnBuyFurniture);
         }
 
-        public void bind(Furniture furniture, OnFurnitureBuyClickListener listener, int balance, List<Integer> ownedIds) {
+        public void bind(
+                Furniture furniture,
+                OnFurnitureBuyClickListener listener,
+                int berryBalance,
+                int ecoBalance,
+                List<Integer> ownedIds
+        ) {
             tvName.setText(furniture.getName());
-            String priceText = itemView.getContext().getString(R.string.shop_item_price, furniture.getPrice());
+            tvCategory.setText(furniture.getCategory());
+
+            boolean usesEcoCoins = furniture.isEcoCurrency();
+            int availableBalance = usesEcoCoins ? ecoBalance : berryBalance;
+            String priceText = itemView.getContext().getString(
+                    usesEcoCoins ? R.string.shop_item_price_eco : R.string.shop_item_price_berries,
+                    furniture.getPrice()
+            );
             tvPrice.setText(priceText);
+            tvPrice.setTextColor(ContextCompat.getColor(
+                    itemView.getContext(),
+                    usesEcoCoins ? R.color.game_eco : R.color.game_berries
+            ));
+            tvCurrencyHint.setText(usesEcoCoins
+                    ? R.string.shop_item_currency_eco
+                    : R.string.shop_item_currency_berries);
 
             if (ownedIds != null && ownedIds.contains(furniture.getId())) {
                 btnBuy.setEnabled(false);
                 btnBuy.setText(R.string.shop_item_owned);
-            } else if (balance >= furniture.getPrice()) {
+            } else if (availableBalance >= furniture.getPrice()) {
                 btnBuy.setEnabled(true);
                 btnBuy.setText(R.string.common_action_buy);
             } else {
                 btnBuy.setEnabled(false);
-                btnBuy.setText(R.string.shop_item_no_money);
+                btnBuy.setText(usesEcoCoins ? R.string.shop_item_no_eco : R.string.shop_item_no_berries);
             }
 
             int drawableResId = FurnitureDrawableResolver.resolveDrawableResId(

@@ -1,15 +1,24 @@
 <resources>
-    <!-- Tienda, Muebles e Inventario -->
-    <string name="shop_balance_format">Tus Bayas: %1$d 🫐</string>
-    <string name="shop_item_price">%1$d 🫐</string>
-    <string name="shop_item_owned">Comprado 🛋️ </string>
-    <string name="shop_item_no_money">Sin saldo 💸</string>
-    <string name="toast_furniture_selected">Has seleccionado: %1$s por %2$d 🫐</string>
-    <string name="success_buy_furniture">¡Has comprado: %1$s! 🎉</string>
-    <string name="error_not_enough_berries">No tienes suficientes bayas para comprar esto 😅</string>
-    <string name="error_load_catalog">Error al cargar el catálogo ⚠️</string>
-    <string name="error_load_balance">Error al cargar tu balance 📉</string>
+    <string name="shop_title">Tienda</string>
+    <string name="shop_subtitle">Las bayas compran muebles cozy. Los EcoCoins desbloquean muebles sostenibles. Todo lo que compres aparecerá en tu inventario.</string>
 
-    <string name="placeholder_furniture_name">Nombre Mueble</string>
-    <string name="placeholder_furniture_price">0 🫐</string>
+    <string name="shop_balance_berries_format">Bayas: %1$d</string>
+    <string name="shop_balance_eco_format">EcoCoins: %1$d</string>
+
+    <string name="shop_item_price_berries">%1$d bayas</string>
+    <string name="shop_item_price_eco">%1$d EcoCoins</string>
+    <string name="shop_item_currency_berries">Se compra con bayas</string>
+    <string name="shop_item_currency_eco">Se compra con EcoCoins</string>
+    <string name="shop_item_owned">Comprado</string>
+    <string name="shop_item_no_berries">Sin bayas</string>
+    <string name="shop_item_no_eco">Sin EcoCoins</string>
+
+    <string name="toast_furniture_selected">Has seleccionado: %1$s</string>
+    <string name="success_buy_furniture">Has comprado %1$s. Ya está en tu inventario.</string>
+    <string name="error_not_enough_berries">No tienes suficientes bayas para comprar esto.</string>
+    <string name="error_load_catalog">Error al cargar el catálogo.</string>
+    <string name="error_load_balance">Error al cargar tu balance.</string>
+
+    <string name="placeholder_furniture_name">Nombre mueble</string>
+    <string name="placeholder_furniture_price">0 bayas</string>
 </resources>

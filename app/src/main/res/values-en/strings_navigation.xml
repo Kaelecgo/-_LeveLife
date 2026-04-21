@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="btn_shop">Shop 🛒</string>
-    <string name="btn_tasks">Task 📝</string>
-    <string name="btn_logout">Logout 🚪</string>
-    <string name="btn_inventory">Inventory 🎒</string>
+    <string name="btn_shop">Shop</string>
+    <string name="btn_tasks">Task</string>
+    <string name="btn_logout">Logout</string>
+    <string name="btn_inventory">Inventory</string>
 
     <!-- Navigation -->
-    <string name="nav_home">Home 🏠</string>
-    <string name="nav_tasks">Tasks 📝</string>
-    <string name="nav_shop">Shop 🛒</string>
-    <string name="nav_inventory">Inventory 🎒</string>
-    <string name="nav_logout">Logout 🚪</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_tasks">Tasks</string>
+    <string name="nav_shop">Shop</string>
+    <string name="nav_inventory">Inventory</string>
+    <string name="nav_logout">Logout</string>
 </resources>

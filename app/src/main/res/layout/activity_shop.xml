@@ -9,25 +9,72 @@
     android:fitsSystemWindows="true"
     tools:context=".controller.ShopActivity">
 
-    <TextView
-        android:id="@+id/tvShopBalance"
-        style="@style/LeveLife.Text.Title"
-        android:layout_width="match_parent"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardShopHeader"
+        style="@style/LeveLife.Card.Header"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/common_loading"
-        android:textColor="@color/app_text_accent"
-        android:gravity="center"
-        android:padding="@dimen/spacing_medium"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_marginTop="@dimen/spacing_medium"
+        android:layout_marginEnd="@dimen/spacing_medium"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_medium">
+
+            <TextView
+                android:id="@+id/tvShopTitle"
+                style="@style/LeveLife.Text.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/shop_title" />
+
+            <TextView
+                android:id="@+id/tvShopSubtitle"
+                style="@style/LeveLife.Text.BodySecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_tiny"
+                android:text="@string/shop_subtitle" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvShopBerriesBalance"
+                    style="@style/LeveLife.StatChip"
+                    android:background="@drawable/bg_stat_chip_berries"
+                    android:drawableStart="@drawable/ic_berry_small"
+                    android:text="@string/shop_balance_berries_format"
+                    tools:text="Bayas: 50" />
+
+                <TextView
+                    android:id="@+id/tvShopEcoBalance"
+                    style="@style/LeveLife.StatChip"
+                    android:layout_marginStart="@dimen/spacing_small"
+                    android:background="@drawable/bg_stat_chip_eco"
+                    android:drawableStart="@drawable/ic_leaf_small"
+                    android:text="@string/shop_balance_eco_format"
+                    tools:text="EcoCoins: 4" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFurniture"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="@dimen/spacing_medium"
-        app:layout_constraintTop_toBottomOf="@+id/tvShopBalance"
+        app:layout_constraintTop_toBottomOf="@+id/cardShopHeader"
         app:layout_constraintBottom_toTopOf="@+id/includeBottomNav"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

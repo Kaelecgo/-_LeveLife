@@ -1,37 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="my_room">Mi habitacion</string>
+    <string name="my_room">Mi habitación</string>
     <string name="inventory_action_place">Colocar</string>
     <string name="inventory_action_move">Mover</string>
-    <string name="empty_inventory">Tu inventario esta vacio.</string>
+    <string name="empty_inventory">Tu inventario esta vacío.</string>
     <string name="error_loading_inventory">Error cargando inventario.</string>
     <string name="inventory_item_placed">%1$s colocado en tu habitacion.</string>
     <string name="inventory_item_repositioned">%1$s movido a %2$s.</string>
     <string name="inventory_item_removed">%1$s se ha retirado de tu habitacion.</string>
     <string name="inventory_item_meta_fallback">Objeto decorativo</string>
     <string name="inventory_item_placed_in_slot">Colocado en: %1$s</string>
+    <string name="inventory_item_not_placed">Ese mueble no está colocado ahora mismo.</string>
+    <string name="inventory_action_remove_from_room">Quitar de la habitación</string>
 
     <string name="inventory_slot_picker_title">Elige una zona</string>
     <string name="inventory_slot_picker_message">Selecciona donde quieres colocar este mueble.</string>
     <string name="inventory_slot_floor">Suelo</string>
     <string name="inventory_slot_wall">Pared</string>
     <string name="inventory_slot_desk">Escritorio</string>
-    <string name="inventory_slot_decor">Decoracion</string>
+    <string name="inventory_slot_decor">Decoración</string>
     <string name="inventory_slot_cancel">Cancelar</string>
-    <string name="inventory_slot_already_selected">Ese mueble ya esta colocado en %1$s.</string>
+    <string name="inventory_slot_already_selected">Ese mueble ya está colocado en %1$s.</string>
 
     <string name="inventory_replace_slot_title">Reemplazar mueble</string>
-    <string name="inventory_replace_slot_message">La zona %1$s ya esta ocupada por %2$s. Si continuas, se reemplazara por %3$s.</string>
+    <string name="inventory_replace_slot_message">La zona %1$s ya está ocupada por %2$s. Si continuas, se reemplazará por %3$s.</string>
 
-    <string name="inventory_empty_title">Tu inventario esta vacio.</string>
-    <string name="inventory_empty_subtitle">Completa habitos, gana bayas y visita la tienda para empezar a decorar tu espacio.</string>
+    <string name="inventory_empty_title">Tu inventario esta vacío.</string>
+    <string name="inventory_empty_subtitle">Completa tareas, gana bayas y EcoCoins, compra muebles en la tienda y gestiónalos después desde aquí.</string>
 
     <string name="inventory_manage_furniture_title">Gestionar mueble</string>
-    <string name="inventory_manage_furniture_message">Que quieres hacer con %1$s?</string>
+    <string name="inventory_manage_furniture_message">¿Que quieres hacer con %1$s?</string>
     <string name="inventory_manage_action_move">Mover</string>
     <string name="inventory_manage_action_remove">Quitar</string>
     <string name="inventory_remove_furniture_title">Quitar mueble</string>
-    <string name="inventory_remove_furniture_message">Se retirara %1$s de tu habitacion, pero seguira estando en tu inventario.</string>
+    <string name="inventory_remove_furniture_message">Se retirará %1$s de tu habitación, pero seguirá estando en tu inventario.</string>
 
     <string name="content_desc_furniture_icon">Icono del mueble</string>
 </resources>

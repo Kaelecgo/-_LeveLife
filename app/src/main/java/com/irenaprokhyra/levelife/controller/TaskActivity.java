@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -32,6 +33,7 @@ public class TaskActivity extends AppCompatActivity {
     private TaskAdapter adapter;
     private TextView tvEmptyState;
     private FloatingActionButton fabAddTask;
+    private MaterialButton btnTaskEconomyGuideAction;
     private User currentUser;
 
     @Override
@@ -57,6 +59,7 @@ public class TaskActivity extends AppCompatActivity {
     private void initViews() {
         recyclerView = findViewById(R.id.rvTasks);
         tvEmptyState = findViewById(R.id.tvEmptyState);
+        btnTaskEconomyGuideAction = findViewById(R.id.btnTaskEconomyGuideAction);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new TaskAdapter(new TaskAdapter.OnTaskActionListener() {
@@ -113,6 +116,8 @@ public class TaskActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.tasks_frequency_feedbacks_reset), Toast.LENGTH_SHORT).show();
             return true;
         });
+
+        btnTaskEconomyGuideAction.setOnClickListener(v -> navigateTo(ShopActivity.class));
     }
 
     private Task buildTaskFromDraft(TaskDraft draft) {

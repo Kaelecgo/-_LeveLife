@@ -2,31 +2,34 @@
     <!-- Tareas y habitos -->
     <string name="tasks_empty_state">No tienes tareas pendientes. Descansa un momento o crea una nueva.</string>
     <string name="error_load_tasks">Error: no se pudieron cargar las tareas.</string>
-    <string name="content_desc_add_task">Anadir nueva tarea</string>
+    <string name="content_desc_add_task">Añadir nueva tarea</string>
 
     <!-- Vista previa del item -->
     <string name="tasks_preview_title">Tarea de ejemplo</string>
-    <string name="tasks_preview_category">Categoria</string>
+    <string name="tasks_preview_category">Categoría</string>
 
     <!-- Formulario de creacion -->
     <string name="tasks_dialog_new_title">Nueva tarea</string>
     <string name="tasks_dialog_edit_title">Editar tarea</string>
     <string name="tasks_dialog_delete_title">Eliminar tarea</string>
-    <string name="tasks_dialog_delete_message">Esta accion eliminara la tarea de forma permanente. Quieres continuar?</string>
-    <string name="tasks_hint_title">Que tienes que hacer?</string>
-    <string name="tasks_hint_description">Anade una descripcion breve</string>
-    <string name="tasks_hint_category">Categoria</string>
+    <string name="tasks_dialog_delete_message">Esta accion eliminará la tarea de forma permanente. ¿Quieres continuar?</string>
+    <string name="tasks_hint_title">¿Que tienes que hacer?</string>
+    <string name="tasks_hint_description">Añade una descripción breve</string>
+    <string name="tasks_hint_category">Categoría</string>
     <string name="tasks_hint_difficulty">Dificultad</string>
     <string name="tasks_hint_frequency">Frecuencia</string>
     <string name="tasks_updated_message">Tarea actualizada: %1$s</string>
     <string name="tasks_deleted_message">Tarea eliminada: %1$s</string>
+    <string name="tasks_economy_guide_title">Como funcionan tus recompensas</string>
+    <string name="tasks_economy_guide_message">Cada tarea muestra su XP y sus bayas. Las tareas de Sostenibilidad también dan EcoCoins, que podrás gastar en muebles eco dentro de la tienda.</string>
+    <string name="tasks_economy_guide_action">Ver tienda</string>
 
     <string name="dialog_task_reward_preview_title">Vista previa de recompensa</string>
     <string name="dialog_task_reward_preview">%1$d XP | %2$d bayas</string>
     <string name="dialog_task_reward_preview_with_eco">%1$d XP | %2$d bayas | %3$d EcoCoins</string>
 
-    <string name="error_empty_task">El titulo no puede estar vacio.</string>
-    <string name="error_invalid_task_form">Completa titulo, categoria, dificultad y frecuencia.</string>
+    <string name="error_empty_task">El título no puede estar vacío.</string>
+    <string name="error_invalid_task_form">Completa título, categoría, dificultad y frecuencia.</string>
 
     <string name="item_task_reward_format">+%1$d XP | +%2$d bayas</string>
     <string name="item_task_reward_with_eco_format">+%1$d XP | +%2$d bayas | +%3$d Eco</string>
@@ -34,13 +37,13 @@
     <string name="task_meta_format">%1$s | %2$s</string>
 
     <string name="dialog_daily_task_reset_title">Tarea diaria</string>
-    <string name="dialog_daily_task_reset_message">Esta tarea se reiniciara automaticamente. No necesitas volver a crearla y podras completarla de nuevo manana.</string>
+    <string name="dialog_daily_task_reset_message">Esta tarea se reiniciará automáticamente. No necesitas volver a crearla y podrás completarla de nuevo mañana.</string>
     <string name="dialog_weekly_task_reset_title">Tarea semanal</string>
-    <string name="dialog_weekly_task_reset_message">Esta tarea se reiniciara cada lunes. Podras volver a completarla la proxima semana para ganar mas recompensas.</string>
+    <string name="dialog_weekly_task_reset_message">Esta tarea se reiniciará cada lunes. Podrás volver a completarla la próxima semana para ganar más recompensas.</string>
     <string name="dialog_monthly_task_reset_title">Tarea mensual</string>
-    <string name="dialog_monthly_task_reset_message">Esta tarea se reiniciara el primer dia de cada mes. ¡Un gran reto para mantener la constancia!</string>
+    <string name="dialog_monthly_task_reset_message">Esta tarea se reiniciará el primer día de cada mes. ¡Un gran reto para mantener la constancia!</string>
     <string name="dialog_once_task_info_title">Tarea finalizada</string>
-    <string name="dialog_once_task_info_message">Esta tarea era de un solo uso y no se restablecera. Si quieres limpiar tu lista, puedes eliminarla deslizando la tarea hacia un lado.</string>
+    <string name="dialog_once_task_info_message">Esta tarea era de un solo uso y no se restablecerá. Si quieres limpiar tu lista, puedes eliminarla deslizando la tarea hacia un lado.</string>
     <string name="dialog_task_reset_button">Entendido</string>
     <string name="tasks_frequency_feedbacks_reset">Avisos de frecuencia reiniciados para este usuario.</string>
     <string name="task_reset_in_format">Reinicia en: %1$s</string>

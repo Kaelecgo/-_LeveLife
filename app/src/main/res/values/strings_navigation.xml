@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="btn_shop">Tienda 🛒</string>
-    <string name="btn_tasks">Tareas 📝</string>
-    <string name="btn_logout">Cerrar Sesión 🚪</string>
-    <string name="btn_inventory">Inventario 🎒</string>
+    <string name="btn_shop">Tienda</string>
+    <string name="btn_tasks">Tareas</string>
+    <string name="btn_logout">Cerrar Sesión</string>
+    <string name="btn_inventory">Inventario</string>
 
     <!-- Navigation -->
-    <string name="nav_home">Inicio 🏠</string>
-    <string name="nav_tasks">Tareas 📝</string>
-    <string name="nav_shop">Tienda 🛒</string>
-    <string name="nav_inventory">Inventario 🎒</string>
-    <string name="nav_logout">Salir 🚪</string>
+    <string name="nav_home">Inicio</string>
+    <string name="nav_tasks">Tareas</string>
+    <string name="nav_shop">Tienda</string>
+    <string name="nav_inventory">Inventario</string>
+    <string name="nav_logout">Salir</string>
 </resources>

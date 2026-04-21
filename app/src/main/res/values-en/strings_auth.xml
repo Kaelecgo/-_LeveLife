@@ -4,16 +4,16 @@
     <string name="hint_username">>_Username</string>
     <string name="hint_password">>_Password</string>
 
-    <string name="auth_subtitle">Your progress starts here ✨</string>
-    <string name="auth_action_login">>_Start Adventure 🚀</string>
-    <string name="auth_action_register">>_Register 📝</string>
+    <string name="auth_subtitle">Your progress starts here</string>
+    <string name="auth_action_login">>_Start Adventure</string>
+    <string name="auth_action_register">>_Register</string>
 
-    <string name="error_empty_fields">Please fill in all fields ❗</string>
-    <string name="auth_error_login_failed">Error: Incorrect username or password ❌</string>
-    <string name="error_session_expired">Your session has expired, please log in again 🔐</string>
-    <string name="error_user_exists">Username already exists ⚠️</string>
+    <string name="error_empty_fields">Please fill in all fields</string>
+    <string name="auth_error_login_failed">Error: Incorrect username or password</string>
+    <string name="error_session_expired">Your session has expired, please log in again</string>
+    <string name="error_user_exists">Username already exists</string>
 
 
-    <string name="welcome_message">Welcome back, %1$s! 👋</string>
-    <string name="register_success">User successfully created! You can now log in 🎉</string>
+    <string name="welcome_message">Welcome back, %1$s!</string>
+    <string name="register_success">User successfully created! You can now log in</string>
 </resources>

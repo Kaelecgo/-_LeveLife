@@ -1,15 +1,24 @@
 <resources>
-    <!-- Shop, Furniture & Inventory -->
-    <string name="shop_balance_format">Your Berries: %1$d 🫐</string>
-    <string name="shop_item_price">%1$d 🫐</string>
-    <string name="shop_item_owned">Purchased 🛋️</string>
-    <string name="shop_item_no_money">No balance 💸</string>
-    <string name="toast_furniture_selected">Selected: %1$s for %2$d 🫐</string>
-    <string name="success_buy_furniture">Successfully bought: %1$s! 🎉</string>
-    <string name="error_not_enough_berries">Not enough berries to buy this 😅</string>
-    <string name="error_load_catalog">Error loading catalog ⚠️</string>
-    <string name="error_load_balance">Error loading balance 📉</string>
+    <string name="shop_title">Shop</string>
+    <string name="shop_subtitle">Berries buy cozy furniture. EcoCoins unlock sustainable items. Everything you buy appears in your inventory.</string>
 
-    <string name="placeholder_furniture_name">Item Name</string>
-    <string name="placeholder_furniture_price">0 🫐</string>
+    <string name="shop_balance_berries_format">Berries: %1$d</string>
+    <string name="shop_balance_eco_format">EcoCoins: %1$d</string>
+
+    <string name="shop_item_price_berries">%1$d berries</string>
+    <string name="shop_item_price_eco">%1$d EcoCoins</string>
+    <string name="shop_item_currency_berries">Bought with berries</string>
+    <string name="shop_item_currency_eco">Bought with EcoCoins</string>
+    <string name="shop_item_owned">Purchased</string>
+    <string name="shop_item_no_berries">No berries</string>
+    <string name="shop_item_no_eco">No EcoCoins</string>
+
+    <string name="toast_furniture_selected">Selected: %1$s</string>
+    <string name="success_buy_furniture">You bought %1$s. It is now in your inventory.</string>
+    <string name="error_not_enough_berries">You do not have enough berries to buy this.</string>
+    <string name="error_load_catalog">Error loading catalog.</string>
+    <string name="error_load_balance">Error loading your balance.</string>
+
+    <string name="placeholder_furniture_name">Item name</string>
+    <string name="placeholder_furniture_price">0 berries</string>
 </resources>

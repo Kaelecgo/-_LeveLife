@@ -26,7 +26,8 @@ public class ShopActivity extends AppCompatActivity {
     private int currentUserId;
     private MainViewModel viewModel;
     private User currentUser;
-    private TextView tvShopBalance;
+    private TextView tvShopBerriesBalance;
+    private TextView tvShopEcoBalance;
     private RecyclerView rvFurniture;
     private FurnitureAdapter adapter;
 
@@ -51,7 +52,8 @@ public class ShopActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        tvShopBalance = findViewById(R.id.tvShopBalance);
+        tvShopBerriesBalance = findViewById(R.id.tvShopBerriesBalance);
+        tvShopEcoBalance = findViewById(R.id.tvShopEcoBalance);
         rvFurniture = findViewById(R.id.rvFurniture);
         rvFurniture.setLayoutManager(new GridLayoutManager(this, 2));
 
@@ -63,8 +65,9 @@ public class ShopActivity extends AppCompatActivity {
         viewModel.getUser().observe(this, user -> {
             if (user != null) {
                 this.currentUser = user;
-                tvShopBalance.setText(getString(R.string.shop_balance_format, user.getBerries()));
-                adapter.setCurrentBalance(user.getBerries());
+                tvShopBerriesBalance.setText(getString(R.string.shop_balance_berries_format, user.getBerries()));
+                tvShopEcoBalance.setText(getString(R.string.shop_balance_eco_format, user.getEcoCoins()));
+                adapter.setBalances(user.getBerries(), user.getEcoCoins());
             }
         });
 

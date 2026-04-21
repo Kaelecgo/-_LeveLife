@@ -70,13 +70,13 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="top|end"
-            android:layout_margin="8dp"
+            android:layout_margin="@dimen/spacing_tiny"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Borrar"
+            android:contentDescription="@string/inventory_action_remove_from_room"
             android:padding="8dp"
             android:scaleType="fitCenter"
             android:src="@android:drawable/ic_menu_delete"
+            android:visibility="gone"
             app:tint="@android:color/holo_red_dark" />
-
     </FrameLayout>
 </com.google.android.material.card.MaterialCardView>

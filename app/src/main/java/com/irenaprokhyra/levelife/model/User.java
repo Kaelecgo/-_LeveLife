@@ -17,6 +17,7 @@ public class User {
     public static final int FREQUENCY_HINT_WEEKLY = 1 << 1;
     public static final int FREQUENCY_HINT_MONTHLY = 1 << 2;
     public static final int FREQUENCY_HINT_ONCE = 1 << 3;
+    public static final int CURRENT_STARTER_TASK_PACK_VERSION = 2;
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -37,6 +38,9 @@ public class User {
     @ColumnInfo(name = "seen_frequency_hints_mask", defaultValue = "0")
     private int seenFrequencyHintsMask;
 
+    @ColumnInfo(name = "starter_task_pack_version", defaultValue = "0")
+    private int starterTaskPackVersion;
+
     public User() {}
 
     @Ignore
@@ -48,6 +52,7 @@ public class User {
         this.berries = 0;
         this.ecoCoins = 0;
         this.seenFrequencyHintsMask = 0;
+        this.starterTaskPackVersion = 0;
     }
 
     public int getId() { return id; }
@@ -74,6 +79,11 @@ public class User {
     public int getSeenFrequencyHintsMask() { return seenFrequencyHintsMask; }
     public void setSeenFrequencyHintsMask(int seenFrequencyHintsMask) {
         this.seenFrequencyHintsMask = seenFrequencyHintsMask;
+    }
+
+    public int getStarterTaskPackVersion() { return starterTaskPackVersion; }
+    public void setStarterTaskPackVersion(int starterTaskPackVersion) {
+        this.starterTaskPackVersion = starterTaskPackVersion;
     }
 
     public int getXpToNextLevel() {
@@ -109,6 +119,14 @@ public class User {
     public boolean spendBerries(int amount) {
         if (amount > 0 && this.berries >= amount) {
             this.berries -= amount;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean spendEcoCoins(int amount) {
+        if (amount > 0 && this.ecoCoins >= amount) {
+            this.ecoCoins -= amount;
             return true;
         }
         return false;

@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
                 PlacedFurniture.class,
                 UserFrequencyHint.class
         },
-        version = 12,
+        version = 14,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -194,6 +194,32 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_12_13 = new Migration(12, 13) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL(
+                    "ALTER TABLE `furniture` ADD COLUMN `currency` TEXT NOT NULL DEFAULT '" + Furniture.CURRENCY_BERRIES + "'"
+            );
+            database.execSQL(
+                    "UPDATE `furniture` SET `currency` = ?, `category` = ?, `price` = ? WHERE `image_ref` = ?",
+                    new Object[]{Furniture.CURRENCY_ECO, "Sostenibilidad", 5, "furn_plant_small"}
+            );
+            database.execSQL(
+                    "UPDATE `furniture` SET `currency` = ?, `category` = ?, `price` = ? WHERE `image_ref` = ?",
+                    new Object[]{Furniture.CURRENCY_ECO, "Sostenibilidad", 12, "furn_fan_eco"}
+            );
+        }
+    };
+
+    private static final Migration MIGRATION_13_14 = new Migration(13, 14) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL(
+                    "ALTER TABLE `users` ADD COLUMN `starter_task_pack_version` INTEGER NOT NULL DEFAULT 0"
+            );
+        }
+    };
+
 
     public abstract UserDao userDao();
 
@@ -228,7 +254,9 @@ public abstract class AppDatabase extends RoomDatabase {
                                     MIGRATION_8_9,
                                     MIGRATION_9_10,
                                     MIGRATION_10_11,
-                                    MIGRATION_11_12
+                                    MIGRATION_11_12,
+                                    MIGRATION_12_13,
+                                    MIGRATION_13_14
                             )
                             .addCallback(sRoomDatabaseCallback)
                             .build();
@@ -435,22 +463,22 @@ public abstract class AppDatabase extends RoomDatabase {
                 cursor.close();
             }
 
-            insertFurnitureIfMissing(db, existingImageRefs,
-                    "Silla Madera", 50, "Basico", "furn_chair_wood", null, null);
-            insertFurnitureIfMissing(db, existingImageRefs,
-                    "Planta", 30, "Decoracion", "furn_plant_small", null, null);
-            insertFurnitureIfMissing(db, existingImageRefs,
-                    "PC Gamer", 500, "Tecnologia", "furn_pc_gamer", null, null);
-            insertFurnitureIfMissing(db, existingImageRefs,
-                    "Lampara", 80, "Iluminacion", "furn_lamp_desk", null, null);
-            insertFurnitureIfMissing(db, existingImageRefs,
-                    "Estanteria", 120, "Almacenaje", "furn_shelf", null, null);
-            insertFurnitureIfMissing(db, existingImageRefs,
-                    "Cama Comoda", 300, "Descanso", "furn_bed", null, null);
-            insertFurnitureIfMissing(db, existingImageRefs,
-                    "Alfombra", 40, "Decoracion", "furn_rug", null, null);
-            insertFurnitureIfMissing(db, existingImageRefs,
-                    "Ventilador Eco", 150, "Sostenibilidad", "furn_fan_eco", null, null);
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "Silla Madera", 50, "Basico", "furn_chair_wood", null, null, Furniture.CURRENCY_BERRIES);
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "Planta", 5, "Sostenibilidad", "furn_plant_small", null, null, Furniture.CURRENCY_ECO);
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "PC Gamer", 500, "Tecnologia", "furn_pc_gamer", null, null, Furniture.CURRENCY_BERRIES);
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "Lampara", 80, "Iluminacion", "furn_lamp_desk", null, null, Furniture.CURRENCY_BERRIES);
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "Estanteria", 120, "Almacenaje", "furn_shelf", null, null, Furniture.CURRENCY_BERRIES);
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "Cama Comoda", 300, "Descanso", "furn_bed", null, null, Furniture.CURRENCY_BERRIES);
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "Alfombra", 40, "Decoracion", "furn_rug", null, null, Furniture.CURRENCY_BERRIES);
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "Ventilador Eco", 12, "Sostenibilidad", "furn_fan_eco", null, null, Furniture.CURRENCY_ECO);
 
             db.setTransactionSuccessful();
         } finally {
@@ -458,22 +486,27 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     }
 
-    private static void insertFurnitureIfMissing(
+    private static void upsertFurnitureCatalogItem(
             SupportSQLiteDatabase db,
             Set<String> existingImageRefs,
             String name,
             int price, String category,
             String imageRef,
             String description,
-            String type
+            String type,
+            String currency
     ) {
         if (existingImageRefs.contains(imageRef)) {
+            db.execSQL(
+                    "UPDATE furniture SET name = ?, price = ?, category = ?, description = ?, type = ?, currency = ? WHERE image_ref = ?",
+                    new Object[]{name, price, category, description, type, currency, imageRef}
+            );
             return;
         }
 
         db.execSQL(
-                "INSERT INTO furniture (name, price, category, image_ref, description, type) VALUES (?, ?, ?, ?, ?, ?)",
-                new Object[]{name, price, category, imageRef, description, type}
+                "INSERT INTO furniture (name, price, category, image_ref, description, type, currency) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{name, price, category, imageRef, description, type, currency}
         );
 
         existingImageRefs.add(imageRef);
@@ -539,6 +572,215 @@ public abstract class AppDatabase extends RoomDatabase {
         );
     }
 
+    private static void ensureStarterTaskPackSeeded(SupportSQLiteDatabase db) {
+        db.beginTransaction();
+        try {
+            repairLegacyTaskFrequencies(db);
+
+            Cursor cursor = db.query(
+                    "SELECT id FROM users WHERE COALESCE(starter_task_pack_version, 0) < " +
+                            User.CURRENT_STARTER_TASK_PACK_VERSION
+            );
+
+            try {
+                int idColumn = cursor.getColumnIndex("id");
+                while (cursor.moveToNext()) {
+                    int userId = cursor.getInt(idColumn);
+                    upgradeStarterTasksForUser(db, userId);
+                }
+            } finally {
+                cursor.close();
+            }
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    private static void upgradeStarterTasksForUser(SupportSQLiteDatabase db, int userId) {
+        updateLegacyStarterTask(
+                db,
+                userId,
+                "Beber agua",
+                "Empieza el dia cuidandote",
+                10,
+                5,
+                "Beber agua",
+                "Empieza el dia cuidandote",
+                Task.CATEGORY_HEALTH,
+                Task.DIFFICULTY_EASY,
+                Task.FREQUENCY_DAILY,
+                0,
+                false
+        );
+
+        updateLegacyStarterTask(
+                db,
+                userId,
+                "Planificar el dia",
+                "Anota tus 3 prioridades",
+                15,
+                8,
+                "Ordenar tu escritorio",
+                "Dedica unos minutos a dejar limpia tu zona de trabajo",
+                Task.CATEGORY_GENERAL,
+                Task.DIFFICULTY_EASY,
+                Task.FREQUENCY_ONCE,
+                0,
+                false
+        );
+
+        updateLegacyStarterTask(
+                db,
+                userId,
+                "Mover el cuerpo",
+                "Da un paseo corto o estira",
+                20,
+                10,
+                "Caminar 30 minutos",
+                "Haz una caminata larga para activar el cuerpo",
+                Task.CATEGORY_HEALTH,
+                Task.DIFFICULTY_MEDIUM,
+                Task.FREQUENCY_WEEKLY,
+                0,
+                false
+        );
+
+        insertStarterTaskIfMissing(
+                db,
+                userId,
+                "Beber agua",
+                "Empieza el dia cuidandote",
+                Task.CATEGORY_HEALTH,
+                10,
+                5,
+                0,
+                Task.DIFFICULTY_EASY,
+                Task.FREQUENCY_DAILY,
+                false
+        );
+
+        insertStarterTaskIfMissing(
+                db,
+                userId,
+                "Ordenar tu escritorio",
+                "Dedica unos minutos a dejar limpia tu zona de trabajo",
+                Task.CATEGORY_GENERAL,
+                15,
+                8,
+                0,
+                Task.DIFFICULTY_EASY,
+                Task.FREQUENCY_ONCE,
+                false
+        );
+
+        insertStarterTaskIfMissing(
+                db,
+                userId,
+                "Caminar 30 minutos",
+                "Haz una caminata larga para activar el cuerpo",
+                Task.CATEGORY_HEALTH,
+                20,
+                10,
+                0,
+                Task.DIFFICULTY_MEDIUM,
+                Task.FREQUENCY_WEEKLY,
+                false
+        );
+
+        insertStarterTaskIfMissing(
+                db,
+                userId,
+                "Revisar tu consumo de energia",
+                "Busca un pequeno cambio para ahorrar luz o calefaccion este mes",
+                Task.CATEGORY_ECO,
+                40,
+                20,
+                3,
+                Task.DIFFICULTY_HARD,
+                Task.FREQUENCY_MONTHLY,
+                true
+        );
+
+        db.execSQL(
+                "UPDATE users SET starter_task_pack_version = ? WHERE id = ?",
+                new Object[]{User.CURRENT_STARTER_TASK_PACK_VERSION, userId}
+        );
+    }
+
+    private static void updateLegacyStarterTask(
+            SupportSQLiteDatabase db,
+            int userId,
+            String legacyTitle,
+            String legacyDescription,
+            int legacyRewardXp,
+            int legacyRewardBerries,
+            String title,
+            String description,
+            String category,
+            String difficulty,
+            String frequency,
+            int ecoReward,
+            boolean isEcoTask
+    ) {
+        db.execSQL(
+                "UPDATE tasks SET title = ?, description = ?, category = ?, reward_xp = ?, reward_berries = ?, " +
+                        "eco_reward = ?, is_eco_task = ?, difficulty = ?, frequency = ?, isCompleted = 0, last_completed_at = 0 " +
+                        "WHERE user_id = ? AND title = ? AND description = ? AND reward_xp = ? AND reward_berries = ?",
+                new Object[]{
+                        title,
+                        description,
+                        category,
+                        legacyRewardXp,
+                        legacyRewardBerries,
+                        ecoReward,
+                        isEcoTask ? 1 : 0,
+                        difficulty,
+                        frequency,
+                        userId,
+                        legacyTitle,
+                        legacyDescription,
+                        legacyRewardXp,
+                        legacyRewardBerries
+                }
+        );
+    }
+
+    private static void insertStarterTaskIfMissing(
+            SupportSQLiteDatabase db,
+            int userId,
+            String title,
+            String description,
+            String category,
+            int rewardXp,
+            int rewardBerries,
+            int ecoReward,
+            String difficulty,
+            String frequency,
+            boolean isEcoTask
+    ) {
+        db.execSQL(
+                "INSERT INTO tasks (`user_id`, `reward_berries`, `reward_xp`, `eco_reward`, `is_eco_task`, `last_completed_at`, `title`, `description`, `category`, `difficulty`, `isCompleted`, `frequency`) " +
+                        "SELECT ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, 0, ? " +
+                        "WHERE NOT EXISTS (SELECT 1 FROM tasks WHERE user_id = ? AND title = ?)",
+                new Object[]{
+                        userId,
+                        rewardBerries,
+                        rewardXp,
+                        ecoReward,
+                        isEcoTask ? 1 : 0,
+                        title,
+                        description,
+                        category,
+                        difficulty,
+                        frequency,
+                        userId,
+                        title
+                }
+        );
+    }
+
     private static final RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
@@ -553,7 +795,7 @@ public abstract class AppDatabase extends RoomDatabase {
             super.onOpen(db);
             databaseWriteExecutor.execute(() -> {
                 ensureFurnitureCatalogSeeded(db);
-                repairLegacyTaskFrequencies(db);
+                ensureStarterTaskPackSeeded(db);
             });
         }
     };

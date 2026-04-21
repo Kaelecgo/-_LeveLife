@@ -20,6 +20,9 @@
     <string name="tasks_hint_frequency">Frequency</string>
     <string name="tasks_updated_message">Task updated: %1$s</string>
     <string name="tasks_deleted_message">Task deleted: %1$s</string>
+    <string name="tasks_economy_guide_title">How your rewards work</string>
+    <string name="tasks_economy_guide_message">Each task shows its XP and berries. Sustainability tasks also grant EcoCoins, which you can spend on eco furniture in the shop.</string>
+    <string name="tasks_economy_guide_action">Open shop</string>
 
     <string name="dialog_task_reward_preview_title">Reward preview</string>
     <string name="dialog_task_reward_preview">%1$d XP | %2$d berries</string>

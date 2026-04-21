@@ -7,10 +7,10 @@
     <string name="main_eco_default">EcoCoins: 0</string>
     <string name="main_eco_short">%1$d</string>
 
-    <string name="dialog_levelup_title">¡NIVEL SUBIDO! 🎉</string>
-    <string name="dialog_levelup_message">¡Felicidades! Has alcanzado el Nivel %1$d.\n¡Sigue así! ✨</string>
-    <string name="dialog_levelup_button">¡Genial! 🔥</string>
+    <string name="dialog_levelup_title">¡NIVEL SUBIDO!</string>
+    <string name="dialog_levelup_message">¡Felicidades! Has alcanzado el Nivel %1$d.\n¡Sigue así!</string>
+    <string name="dialog_levelup_button">¡Genial!</string>
 
-    <string name="reward_claimed">¡Bien! +%1$d XP y +%2$d Bayas 🫐</string>
+    <string name="reward_claimed">¡Bien! +%1$d XP y +%2$d Bayas</string>
     <string name="reward_claimed_with_eco">¡Bien! +%1$d XP, +%2$d Bayas 🫐 y +%3$d EcoCoins 🌱</string>
 </resources>

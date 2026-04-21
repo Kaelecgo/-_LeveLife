@@ -18,6 +18,7 @@ public class UserProgressTest {
         assertEquals(0, user.getExperience());
         assertEquals(0, user.getBerries());
         assertEquals(0, user.getEcoCoins());
+        assertEquals(0, user.getStarterTaskPackVersion());
     }
 
     @Test
@@ -184,6 +185,28 @@ public class UserProgressTest {
 
         assertFalse(success);
         assertEquals(10, user.getBerries());
+    }
+
+    @Test
+    public void spendEcoCoins_exactBalance_leavesZero() {
+        User user = new User("Irena", "hash");
+        user.setEcoCoins(6);
+
+        boolean success = user.spendEcoCoins(6);
+
+        assertTrue(success);
+        assertEquals(0, user.getEcoCoins());
+    }
+
+    @Test
+    public void spendEcoCoins_insufficientBalance_returnsFalseAndKeepsBalance() {
+        User user = new User("Irena", "hash");
+        user.setEcoCoins(3);
+
+        boolean success = user.spendEcoCoins(6);
+
+        assertFalse(success);
+        assertEquals(3, user.getEcoCoins());
     }
 
     @Test

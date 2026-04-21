@@ -2,10 +2,10 @@
 <resources>
     <string name="main_welcome_format">Hola, %1$s</string>
 
-    <string name="main_room_title">Tu habitacion</string>
+    <string name="main_room_title">Tu habitación</string>
     <string name="main_room_subtitle">Aqui se mostrara tu espacio personalizado.</string>
-    <string name="main_room_empty_title">Todavia no has colocado muebles</string>
-    <string name="main_room_empty_description">Compra objetos en la tienda y preparate para decorar tu habitacion.</string>
+    <string name="main_room_empty_title">Todavía no has colocado muebles</string>
+    <string name="main_room_empty_description">Compra muebles con bayas o EcoCoins y luego colocalos aquí para personalizar tu habitación.</string>
     <string name="main_room_tap_hint">Toca un mueble para moverlo o quitarlo.</string>
 
     <string name="main_level_format">Nivel %1$d</string>

@@ -30,6 +30,14 @@
             android:layout_marginTop="@dimen/spacing_small"/>
 
         <TextView
+            android:id="@+id/tvFurnitureCategory"
+            style="@style/LeveLife.Text.BodySecondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_tiny"
+            android:text="@string/tasks_preview_category" />
+
+        <TextView
             android:id="@+id/tvFurniturePrice"
             style="@style/LeveLife.Text.Body"
             android:layout_width="wrap_content"
@@ -38,6 +46,15 @@
             android:text="@string/placeholder_furniture_price"
             android:textColor="@color/game_berries"
             android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvFurnitureCurrencyHint"
+            style="@style/LeveLife.Text.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_tiny"
+            android:gravity="center"
+            android:text="@string/shop_item_currency_berries" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBuyFurniture"

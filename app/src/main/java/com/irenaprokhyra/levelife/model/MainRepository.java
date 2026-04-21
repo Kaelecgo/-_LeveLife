@@ -123,6 +123,7 @@ public class MainRepository {
 
                     User newUser = new User(username, PasswordUtils.hashPassword(rawPassword));
                     newUser.setBerries(WELCOME_BERRIES);
+                    newUser.setStarterTaskPackVersion(User.CURRENT_STARTER_TASK_PACK_VERSION);
 
                     long insertedId = userDao.insertUser(newUser);
                     if (insertedId <= 0) {
@@ -348,7 +349,11 @@ public class MainRepository {
                         return false;
                     }
 
-                    if (!user.spendBerries(furniture.getPrice())) {
+                    boolean purchaseSucceeded = furniture.isEcoCurrency()
+                            ? user.spendEcoCoins(furniture.getPrice())
+                            : user.spendBerries(furniture.getPrice());
+
+                    if (!purchaseSucceeded) {
                         return false;
                     }
 
@@ -362,7 +367,7 @@ public class MainRepository {
                         callback.onSuccess();
                     }
                 } else if (callback != null) {
-                    callback.onError("No se pudo realizar la compra (saldo insuficiente o ya posees el objeto)");
+                    callback.onError("No se pudo realizar la compra con la moneda disponible o ya posees el objeto");
                 }
             } catch (Exception e) {
                 if (callback != null) {
@@ -386,24 +391,35 @@ public class MainRepository {
 
         taskDao.insertTask(new Task(
                 userId,
-                "Planificar el dia",
-                "Anota tus 3 prioridades",
+                "Ordenar tu escritorio",
+                "Dedica unos minutos a dejar limpia tu zona de trabajo",
                 Task.CATEGORY_GENERAL,
                 15, 8, 0,
                 Task.DIFFICULTY_EASY,
-                Task.FREQUENCY_DAILY,
+                Task.FREQUENCY_ONCE,
                 false
         ));
 
         taskDao.insertTask(new Task(
                 userId,
-                "Mover el cuerpo",
-                "Da un paseo corto o estira",
+                "Caminar 30 minutos",
+                "Haz una caminata larga para activar el cuerpo",
                 Task.CATEGORY_HEALTH,
                 20, 10, 0,
                 Task.DIFFICULTY_MEDIUM,
-                Task.FREQUENCY_DAILY,
+                Task.FREQUENCY_WEEKLY,
                 false
+        ));
+
+        taskDao.insertTask(new Task(
+                userId,
+                "Revisar tu consumo de energia",
+                "Busca un pequeno cambio para ahorrar luz o calefaccion este mes",
+                Task.CATEGORY_ECO,
+                40, 20, 3,
+                Task.DIFFICULTY_HARD,
+                Task.FREQUENCY_MONTHLY,
+                true
         ));
     }
 

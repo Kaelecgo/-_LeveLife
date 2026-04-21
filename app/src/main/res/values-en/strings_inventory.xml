@@ -10,6 +10,8 @@
     <string name="inventory_item_removed">%1$s has been removed from your room.</string>
     <string name="inventory_item_meta_fallback">Decor item</string>
     <string name="inventory_item_placed_in_slot">Placed in: %1$s</string>
+    <string name="inventory_item_not_placed">That furniture is not currently placed.</string>
+    <string name="inventory_action_remove_from_room">Remove from room</string>
 
     <string name="inventory_slot_picker_title">Choose a spot</string>
     <string name="inventory_slot_picker_message">Select where you want to place this furniture.</string>
@@ -24,7 +26,7 @@
     <string name="inventory_replace_slot_message">The %1$s area is already occupied by %2$s. If you continue, it will be replaced by %3$s.</string>
 
     <string name="inventory_empty_title">Your inventory is empty.</string>
-    <string name="inventory_empty_subtitle">Complete habits, earn berries, and visit the shop to start decorating your space.</string>
+    <string name="inventory_empty_subtitle">Complete tasks, earn berries and EcoCoins, buy furniture in the shop, and manage it here afterwards.</string>
 
     <string name="inventory_manage_furniture_title">Manage furniture</string>
     <string name="inventory_manage_furniture_message">What do you want to do with %1$s?</string>

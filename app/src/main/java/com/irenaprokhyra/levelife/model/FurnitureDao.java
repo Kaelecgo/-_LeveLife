@@ -12,7 +12,7 @@ public interface FurnitureDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertFurniture(Furniture furniture);
 
-    @Query("SELECT * FROM furniture ORDER BY price ASC")
+    @Query("SELECT * FROM furniture ORDER BY CASE WHEN currency = 'eco' THEN 1 ELSE 0 END, price ASC, name ASC")
     LiveData<List<Furniture>> getAllFurnitureLiveData();
 
     @Query("SELECT * FROM furniture WHERE category = :categoryName")
@@ -32,7 +32,7 @@ public interface FurnitureDao {
             "WHERE crossRef.userId = :userId")
     LiveData<List<Furniture>> getInventoryForUserLiveData(int userId);
 
-    @Query("SELECT * FROM furniture ORDER BY price ASC")
+    @Query("SELECT * FROM furniture ORDER BY CASE WHEN currency = 'eco' THEN 1 ELSE 0 END, price ASC, name ASC")
     List<Furniture> getAllFurniture();
 
     @Query("SELECT f.* FROM furniture f " +
