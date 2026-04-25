@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.TaskDraft;
 import com.irenaprokhyra.levelife.model.Task;
@@ -94,10 +93,10 @@ public class TaskActivity extends AppCompatActivity {
                         TaskActivity.this,
                         () -> {
                             viewModel.deleteTask(taskToDelete);
-                            Snackbar.make(
-                                    recyclerView,
+                            Toast.makeText(
+                                    TaskActivity.this,
                                     getString(R.string.tasks_deleted_message, taskToDelete.getTitle()),
-                                    Snackbar.LENGTH_SHORT
+                                    Toast.LENGTH_SHORT
                             ).show();
                         }
                 );

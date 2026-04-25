@@ -1,7 +1,7 @@
 <resources>
     <!-- Gamificación: Niveles, XP, Bayas y EcoCoins -->
     <string name="main_level_default">Nivel 1</string>
-    <string name="main_xp_default">>_XP: 0/100</string>
+    <string name="main_xp_default">0 / 100 XP</string>
     <string name="main_berries_short">%1$d</string>
     <string name="main_berries_default">0 Bayas</string>
     <string name="main_eco_default">EcoCoins: 0</string>

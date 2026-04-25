@@ -1,5 +1,8 @@
 package com.irenaprokhyra.levelife.controller;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvMainLevel;
     private TextView tvMainBerries;
     private TextView tvMainEcoCoins;
+    private TextView tvMainXpText;
     private ProgressBar pbMainXp;
     private BottomNavigationView bottomNavigationView;
 
@@ -48,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView ivPlacedSurfaceLeft;
     private ImageView ivPlacedSurfaceRight;
     private final Map<String, PlacedFurnitureItem> placedFurnitureBySlot = new HashMap<>();
+    private int lastKnownLevel = -1;
+    private int lastKnownExperience = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         tvMainLevel = findViewById(R.id.tvMainLevel);
         tvMainBerries = findViewById(R.id.tvMainBerries);
         tvMainEcoCoins = findViewById(R.id.tvMainEcoCoins);
+        tvMainXpText = findViewById(R.id.tvMainXpText);
         pbMainXp = findViewById(R.id.pbMainXp);
         layoutRoomEmptyState = findViewById(R.id.layoutRoomEmptyState);
 
@@ -205,11 +212,106 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI(User user) {
+        int xpToNextLevel = Math.max(1, user.getXpToNextLevel());
+        int currentExperience = Math.max(0, Math.min(user.getExperience(), xpToNextLevel));
+
         tvMainSectionLabel.setText(getString(R.string.main_welcome_format, user.getName()));
         tvMainLevel.setText(getString(R.string.main_level_format, user.getLevel()));
         tvMainBerries.setText(String.valueOf(user.getBerries()));
         tvMainEcoCoins.setText(String.valueOf(user.getEcoCoins()));
-        pbMainXp.setProgress(user.getProgressPercentage());
+
+        pbMainXp.post(() -> renderExperienceProgress(user.getLevel(), currentExperience, xpToNextLevel));
+    }
+
+    private void renderExperienceProgress(int level, int currentExperience, int xpToNextLevel) {
+        if (lastKnownLevel == -1) {
+            tvMainLevel.setText(getString(R.string.main_level_format, level));
+            updateProgressVisuals(currentExperience, xpToNextLevel);
+            lastKnownLevel = level;
+            lastKnownExperience = currentExperience;
+            return;
+        }
+
+        if (level > lastKnownLevel) {
+            animateLevelUpProgress(level, currentExperience, xpToNextLevel);
+            return;
+        }
+
+        tvMainLevel.setText(getString(R.string.main_level_format, level));
+        animateProgress(lastKnownExperience, currentExperience, xpToNextLevel, () -> {
+            lastKnownLevel = level;
+            lastKnownExperience = currentExperience;
+        });
+    }
+
+    private void animateLevelUpProgress(int targetLevel, int targetExperience, int targetXpToNextLevel) {
+        int previousMax = Math.max(1, lastKnownLevel * 100);
+        int startProgress = Math.max(0, Math.min(lastKnownExperience, previousMax));
+
+        pbMainXp.setMax(previousMax);
+        updateProgressText(startProgress, previousMax);
+
+        ObjectAnimator animateToMax = ObjectAnimator.ofInt(pbMainXp, "progress", startProgress, previousMax);
+        animateToMax.setDuration(550L);
+        animateToMax.addUpdateListener(animation ->
+                updateProgressText((int) animation.getAnimatedValue(), previousMax)
+        );
+        animateToMax.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                tvMainLevel.setText(getString(R.string.main_level_format, targetLevel));
+                pbMainXp.setMax(targetXpToNextLevel);
+                pbMainXp.setProgress(0);
+                updateProgressText(0, targetXpToNextLevel);
+
+                animateProgress(0, targetExperience, targetXpToNextLevel, () -> {
+                    lastKnownLevel = targetLevel;
+                    lastKnownExperience = targetExperience;
+                });
+            }
+        });
+        animateToMax.start();
+    }
+
+    private void animateProgress(int from, int to, int xpToNextLevel, Runnable onEnd) {
+        int safeFrom = Math.max(0, Math.min(from, xpToNextLevel));
+        int safeTo = Math.max(0, Math.min(to, xpToNextLevel));
+
+        pbMainXp.setMax(xpToNextLevel);
+        pbMainXp.setProgress(safeFrom);
+        updateProgressText(safeFrom, xpToNextLevel);
+
+        if (safeFrom == safeTo) {
+            if (onEnd != null) {
+                onEnd.run();
+            }
+            return;
+        }
+
+        ObjectAnimator progressAnimator = ObjectAnimator.ofInt(pbMainXp, "progress", safeFrom, safeTo);
+        progressAnimator.setDuration(600L);
+        progressAnimator.addUpdateListener(animation ->
+                updateProgressText((int) animation.getAnimatedValue(), xpToNextLevel)
+        );
+        progressAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (onEnd != null) {
+                    onEnd.run();
+                }
+            }
+        });
+        progressAnimator.start();
+    }
+
+    private void updateProgressVisuals(int currentExperience, int xpToNextLevel) {
+        pbMainXp.setMax(xpToNextLevel);
+        pbMainXp.setProgress(currentExperience);
+        updateProgressText(currentExperience, xpToNextLevel);
+    }
+
+    private void updateProgressText(int currentExperience, int xpToNextLevel) {
+        tvMainXpText.setText(getString(R.string.main_xp_format, currentExperience, xpToNextLevel));
     }
 
     private void setupNavigation() {
