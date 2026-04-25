@@ -399,6 +399,17 @@ public class MainRepository {
     private void seedStarterTasks(int userId) {
         taskDao.insertTask(new Task(
                 userId,
+                "Apagar luces innecesarias",
+                "Haz una pequena accion diaria para reducir tu consumo energetico",
+                Task.CATEGORY_ECO,
+                10, 5, 1,
+                Task.DIFFICULTY_EASY,
+                Task.FREQUENCY_DAILY,
+                true
+        ));
+
+        taskDao.insertTask(new Task(
+                userId,
                 "Beber agua",
                 "Empieza el dia cuidandote",
                 Task.CATEGORY_HEALTH,

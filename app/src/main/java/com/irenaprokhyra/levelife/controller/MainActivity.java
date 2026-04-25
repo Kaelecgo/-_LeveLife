@@ -69,6 +69,14 @@ public class MainActivity extends AppCompatActivity {
         setupBackButtonBlock();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (bottomNavigationView != null) {
+            bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        }
+    }
+
     private void initViews() {
         tvMainSectionLabel = findViewById(R.id.tvMainSectionLabel);
         tvMainLevel = findViewById(R.id.tvMainLevel);
@@ -95,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setItemIconTintList(null);
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
     }
 
     private void configureFurnitureView(ImageView imageView, String slot) {

@@ -17,7 +17,7 @@ public class User {
     public static final int FREQUENCY_HINT_WEEKLY = 1 << 1;
     public static final int FREQUENCY_HINT_MONTHLY = 1 << 2;
     public static final int FREQUENCY_HINT_ONCE = 1 << 3;
-    public static final int CURRENT_STARTER_TASK_PACK_VERSION = 2;
+    public static final int CURRENT_STARTER_TASK_PACK_VERSION = 3;
 
     @PrimaryKey(autoGenerate = true)
     private int id;

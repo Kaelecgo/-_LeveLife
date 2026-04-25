@@ -478,21 +478,21 @@ public abstract class AppDatabase extends RoomDatabase {
             }
 
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Silla Madera", 50, "Basico", "furn_chair_wood", null, Furniture.TYPE_CHAIR, Furniture.CURRENCY_BERRIES);
+                    "Silla Madera", 35, "Basico", "furn_chair_wood", null, Furniture.TYPE_CHAIR, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Planta", 5, "Sostenibilidad", "furn_plant_small", null, Furniture.TYPE_PLANT, Furniture.CURRENCY_ECO);
+                    "Planta", 3, "Sostenibilidad", "furn_plant_small", null, Furniture.TYPE_PLANT, Furniture.CURRENCY_ECO);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "PC Gamer", 500, "Tecnologia", "furn_pc_gamer", null, Furniture.TYPE_PC, Furniture.CURRENCY_BERRIES);
+                    "PC Gamer", 180, "Tecnologia", "furn_pc_gamer", null, Furniture.TYPE_PC, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Lampara", 80, "Iluminacion", "furn_lamp_desk", null, Furniture.TYPE_LAMP, Furniture.CURRENCY_BERRIES);
+                    "Lampara", 55, "Iluminacion", "furn_lamp_desk", null, Furniture.TYPE_LAMP, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Estanteria", 120, "Almacenaje", "furn_shelf", null, Furniture.TYPE_SHELF, Furniture.CURRENCY_BERRIES);
+                    "Estanteria", 85, "Almacenaje", "furn_shelf", null, Furniture.TYPE_SHELF, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Cama Comoda", 300, "Descanso", "furn_bed", null, Furniture.TYPE_BED, Furniture.CURRENCY_BERRIES);
+                    "Cama Comoda", 140, "Descanso", "furn_bed", null, Furniture.TYPE_BED, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Alfombra", 40, "Decoracion", "furn_rug", null, Furniture.TYPE_RUG, Furniture.CURRENCY_BERRIES);
+                    "Alfombra", 30, "Decoracion", "furn_rug", null, Furniture.TYPE_RUG, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
-                    "Ventilador Eco", 12, "Sostenibilidad", "furn_fan_eco", null, Furniture.TYPE_FAN, Furniture.CURRENCY_ECO);
+                    "Ventilador Eco", 8, "Sostenibilidad", "furn_fan_eco", null, Furniture.TYPE_FAN, Furniture.CURRENCY_ECO);
 
             db.setTransactionSuccessful();
         } finally {
@@ -681,6 +681,20 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     private static void upgradeStarterTasksForUser(SupportSQLiteDatabase db, int userId) {
+        insertStarterTaskIfMissing(
+                db,
+                userId,
+                "Apagar luces innecesarias",
+                "Haz una pequena accion diaria para reducir tu consumo energetico",
+                Task.CATEGORY_ECO,
+                10,
+                5,
+                1,
+                Task.DIFFICULTY_EASY,
+                Task.FREQUENCY_DAILY,
+                true
+        );
+
         updateLegacyStarterTask(
                 db,
                 userId,

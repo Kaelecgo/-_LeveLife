@@ -1,14 +1,15 @@
 <resources>
     <string name="shop_title">Tienda</string>
-    <string name="shop_subtitle">Las bayas compran muebles cozy. Los EcoCoins desbloquean muebles sostenibles. Todo lo que compres aparecerá en tu inventario.</string>
+    <string name="shop_subtitle">Compra muebles para personalizar tu habitación y reforzar tu progreso visual.</string>
+    <string name="shop_economy_hint">Bayas: muebles cozy y decorativos. EcoCoins: muebles sostenibles. Después de comprar, ve a Inventario para colocarlos en la habitación.</string>
 
     <string name="shop_balance_berries_format">Bayas: %1$d</string>
     <string name="shop_balance_eco_format">EcoCoins: %1$d</string>
 
     <string name="shop_item_price_berries">%1$d bayas</string>
     <string name="shop_item_price_eco">%1$d EcoCoins</string>
-    <string name="shop_item_currency_berries">Se compra con bayas</string>
-    <string name="shop_item_currency_eco">Se compra con EcoCoins</string>
+    <string name="shop_item_currency_berries">Mueble cozy: se compra con bayas</string>
+    <string name="shop_item_currency_eco">Mueble eco: se compra con EcoCoins</string>
     <string name="shop_item_owned">Comprado</string>
     <string name="shop_item_no_berries">Sin bayas</string>
     <string name="shop_item_no_eco">Sin EcoCoins</string>

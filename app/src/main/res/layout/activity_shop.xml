@@ -66,6 +66,14 @@
                     android:text="@string/shop_balance_eco_format"
                     tools:text="EcoCoins: 4" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvShopEconomyHint"
+                style="@style/LeveLife.Text.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:text="@string/shop_economy_hint" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

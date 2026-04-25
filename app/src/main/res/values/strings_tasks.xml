@@ -20,8 +20,9 @@
     <string name="tasks_hint_frequency">Frecuencia</string>
     <string name="tasks_updated_message">Tarea actualizada: %1$s</string>
     <string name="tasks_deleted_message">Tarea eliminada: %1$s</string>
-    <string name="tasks_economy_guide_title">Cómo funcionan tus recompensas</string>
-    <string name="tasks_economy_guide_message">Cada tarea muestra su XP y sus bayas. Las tareas de Sostenibilidad también dan EcoCoins, que podrás gastar en muebles eco dentro de la tienda.</string>
+    <string name="tasks_economy_guide_title">Cómo funciona tu progreso</string>
+    <string name="tasks_economy_guide_message">Completa tareas para ganar XP y bayas. Las tareas de Sostenibilidad también te dan EcoCoins.</string>
+    <string name="tasks_economy_guide_detail">Las bayas compran muebles cozy. Los EcoCoins compran muebles sostenibles. Todo lo que compres aparecerá en tu inventario para colocarlo luego en tu habitación.</string>
     <string name="tasks_economy_guide_action">Ver tienda</string>
 
     <string name="dialog_task_reward_preview_title">Vista previa de recompensa</string>

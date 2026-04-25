@@ -1,14 +1,15 @@
 <resources>
     <string name="shop_title">Shop</string>
-    <string name="shop_subtitle">Berries buy cozy furniture. EcoCoins unlock sustainable items. Everything you buy appears in your inventory.</string>
+    <string name="shop_subtitle">Buy furniture to personalize your room and make your progress visible.</string>
+    <string name="shop_economy_hint">Berries: cozy and decorative furniture. EcoCoins: sustainable furniture. After buying, go to Inventory to place it in your room.</string>
 
     <string name="shop_balance_berries_format">Berries: %1$d</string>
     <string name="shop_balance_eco_format">EcoCoins: %1$d</string>
 
     <string name="shop_item_price_berries">%1$d berries</string>
     <string name="shop_item_price_eco">%1$d EcoCoins</string>
-    <string name="shop_item_currency_berries">Bought with berries</string>
-    <string name="shop_item_currency_eco">Bought with EcoCoins</string>
+    <string name="shop_item_currency_berries">Cozy item: bought with berries</string>
+    <string name="shop_item_currency_eco">Eco item: bought with EcoCoins</string>
     <string name="shop_item_owned">Purchased</string>
     <string name="shop_item_no_berries">No berries</string>
     <string name="shop_item_no_eco">No EcoCoins</string>

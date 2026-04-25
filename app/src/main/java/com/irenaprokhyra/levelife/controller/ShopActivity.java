@@ -15,6 +15,7 @@ import com.irenaprokhyra.levelife.R;
 import com.irenaprokhyra.levelife.model.Furniture;
 import com.irenaprokhyra.levelife.model.User;
 import com.irenaprokhyra.levelife.util.DialogUtils;
+import com.irenaprokhyra.levelife.util.FeedbackUtils;
 import com.irenaprokhyra.levelife.view.FurnitureAdapter;
 import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
 
@@ -99,6 +100,7 @@ public class ShopActivity extends AppCompatActivity {
 
         viewModel.purchaseFurniture(furniture, () -> {
             runOnUiThread(() -> {
+                FeedbackUtils.playPurchaseFeedback(rvFurniture);
                 Toast.makeText(this, getString(R.string.success_buy_furniture, furniture.getName()), Toast.LENGTH_SHORT).show();
             });
         });

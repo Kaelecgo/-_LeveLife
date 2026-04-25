@@ -22,6 +22,7 @@ import com.irenaprokhyra.levelife.model.TaskDraft;
 import com.irenaprokhyra.levelife.model.Task;
 import com.irenaprokhyra.levelife.model.User;
 import com.irenaprokhyra.levelife.util.DialogUtils;
+import com.irenaprokhyra.levelife.util.FeedbackUtils;
 import com.irenaprokhyra.levelife.view.TaskAdapter;
 import com.irenaprokhyra.levelife.viewmodel.MainViewModel;
 
@@ -168,6 +169,7 @@ public class TaskActivity extends AppCompatActivity {
             if (user != null) {
                 // Si el nivel ha subido respecto al que teníamos guardado, mostramos el diálogo
                 if (currentUser != null && user.getLevel() > currentUser.getLevel()) {
+                    FeedbackUtils.playLevelUpFeedback(recyclerView);
                     DialogUtils.showLevelUpDialog(this, user.getLevel());
                 }
                 this.currentUser = user;
@@ -188,6 +190,7 @@ public class TaskActivity extends AppCompatActivity {
         // Nuevo observador para el mensaje de éxito de la tarea
         viewModel.getRewardMessage().observe(this, message -> {
             if (message != null && !message.isEmpty()) {
+                FeedbackUtils.playTaskCompletedFeedback(recyclerView);
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                 // Limpiamos el mensaje para que no se repita al rotar la pantalla
                 viewModel.clearTaskCompletionMessage();

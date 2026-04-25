@@ -50,6 +50,14 @@
                 android:layout_marginTop="@dimen/spacing_tiny"
                 android:text="@string/tasks_economy_guide_message" />
 
+            <TextView
+                android:id="@+id/tvTaskEconomyGuideDetail"
+                style="@style/LeveLife.Text.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:text="@string/tasks_economy_guide_detail" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnTaskEconomyGuideAction"
                 style="@style/LeveLife.Button.Secondary"
