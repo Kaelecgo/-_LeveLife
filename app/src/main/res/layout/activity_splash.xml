@@ -23,7 +23,7 @@
         android:id="@+id/ivSplashLogo"
         android:layout_width="400dp"
         android:layout_height="400dp"
-        android:src="@drawable/logo_with_title_no_bg"
+        android:src="@drawable/logo_sin_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.454"

@@ -31,8 +31,8 @@
     <!-- COLORES SEMÁNTICOS (Los que usamos en la App) -->
 
     <!-- Fondos y Superficies -->
-    <color name="app_background">@color/cozy_beige_bg</color>
-    <color name="app_surface_card">@color/cozy_white_card</color>
+    <color name="app_background">#FAE9FF</color>
+    <color name="app_surface_card">#fefaff</color>
 
     <!-- Textos -->
     <color name="app_text_primary">@color/neutral_grey_dark</color>
@@ -43,8 +43,8 @@
     <color name="app_button_primary">@color/brand_purple_dark</color>
     <color name="app_chip_berries">@color/cozy_tan</color>
     <color name="app_chip_eco">@color/cozy_green_soft</color>
-    <color name="app_nav_bg">@color/cozy_green_nav</color>
-    <color name="app_nav_item_active_bg">@color/cozy_green_soft</color>
+    <color name="app_nav_bg">#7f67b2</color>
+    <color name="app_nav_item_active_bg">#fae9ff</color>
 
     <!-- COMPATIBILIDAD (Para que compilen los drawables y layouts antiguos) -->
     <color name="black">#000000</color>
@@ -65,7 +65,7 @@
     <color name="nav_icon_active">@color/neutral_grey_dark</color>
     <color name="nav_icon_inactive">#F6F3EC</color>
     <color name="nav_item_active_bg">#E8ECD8</color>
-    <color name="room_surface_top">#F7F0E5</color>
+    <color name="room_surface_top">#FAE9FF</color>
     <color name="room_surface_bottom">#EEDFCB</color>
     <color name="room_border">#E5D5BF</color>
 
