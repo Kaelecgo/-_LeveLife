@@ -329,6 +329,10 @@ public class MainActivity extends AppCompatActivity {
             if (id == R.id.nav_tasks) {
                 navigateTo(TaskActivity.class);
             }
+            if (id == R.id.nav_logout) {
+                DialogUtils.showLogoutConfirmationDialog(this, this::performLogout);
+                return false;
+            }
             return true;
         });
     }
@@ -350,6 +354,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void redirectToLogin() {
         startActivity(new Intent(this, LoginActivity.class));
+        finish();
+    }
+
+    private void performLogout() {
+        SessionManager.clearSession(this);
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
         finish();
     }
 }

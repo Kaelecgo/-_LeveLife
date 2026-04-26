@@ -220,7 +220,7 @@ public class TaskActivity extends AppCompatActivity {
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
-                finish();
+                navigateHome();
                 return true;
             } else if (itemId == R.id.nav_shop) {
                 navigateTo(ShopActivity.class);
@@ -241,6 +241,14 @@ public class TaskActivity extends AppCompatActivity {
     private void navigateTo(Class<?> destinationClass) {
         Intent intent = new Intent(this, destinationClass);
         intent.putExtra("USER_ID", currentUserId);
+        startActivity(intent);
+        finish();
+    }
+
+    private void navigateHome() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("USER_ID", currentUserId);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }

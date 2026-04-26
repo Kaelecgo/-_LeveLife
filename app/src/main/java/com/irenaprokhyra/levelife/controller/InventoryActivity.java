@@ -221,7 +221,7 @@ public class InventoryActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.nav_home) {
-                finish();
+                navigateHome();
                 return true;
             } else if (itemId == R.id.nav_shop) {
                 Intent intent = new Intent(this, ShopActivity.class);
@@ -249,6 +249,14 @@ public class InventoryActivity extends AppCompatActivity {
         getSharedPreferences("LeveLifeSession", MODE_PRIVATE).edit().clear().apply();
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void navigateHome() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("USER_ID", currentUserId);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }
