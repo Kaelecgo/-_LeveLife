@@ -385,7 +385,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
         database.execSQL("DROP TABLE `tasks`");
         database.execSQL("ALTER TABLE `tasks_migrated_v10` RENAME TO `tasks`");
-        database.execSQL("CREATE INDEX IF NOT EXISTS `index_tasks_user_id` ON `tasks` (`user_id`)");
+        database.execSQL("CREATE INDEX IF NOT EXISTS `index_tasks_user_id` ON `tasks` (`user_id`) text;");
     }
 
     private static void rebuildPlacedFurnitureTable(@NonNull SupportSQLiteDatabase database) {
@@ -446,7 +446,7 @@ public abstract class AppDatabase extends RoomDatabase {
     @NonNull
     private static Set<String> getTableColumns(@NonNull SupportSQLiteDatabase database, @NonNull String tableName) {
         Set<String> columns = new HashSet<>();
-        Cursor cursor = database.query("PRAGMA table_info(`" + tableName + "`)");
+        Cursor cursor = database.query("PRAGMA table_info(`" + tableName + "`);");
 
         try {
             int nameColumn = cursor.getColumnIndex("name");
@@ -493,6 +493,18 @@ public abstract class AppDatabase extends RoomDatabase {
                     "Alfombra", 30, "Decoracion", "furn_rug", null, Furniture.TYPE_RUG, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
                     "Ventilador Eco", 8, "Sostenibilidad", "furn_fan_eco", null, Furniture.TYPE_FAN, Furniture.CURRENCY_ECO);
+
+            // Muebles añadidos según la petición de las compañeras
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "Cama Gato", 40, "Decoracion", "furn_cat_bed", null, Furniture.TYPE_RUG, Furniture.CURRENCY_BERRIES);
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "Arbol Gato", 60, "Decoracion", "furn_cat_tree", null, Furniture.TYPE_PLANT, Furniture.CURRENCY_BERRIES);
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "Armario", 120, "Almacenaje", "furn_closet", null, Furniture.TYPE_SHELF, Furniture.CURRENCY_BERRIES);
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "Lampara Pie", 50, "Iluminacion", "furn_lamp_floor", null, Furniture.TYPE_LAMP, Furniture.CURRENCY_BERRIES);
+            upsertFurnitureCatalogItem(db, existingImageRefs,
+                    "Sofa", 100, "Descanso", "furn_sofa", null, Furniture.TYPE_CHAIR, Furniture.CURRENCY_BERRIES);
 
             db.setTransactionSuccessful();
         } finally {
