@@ -46,6 +46,7 @@ dependencies {
     implementation("com.airbnb.android:lottie:6.4.0")
 
     testImplementation(libs.junit)
+    testImplementation("org.xerial:sqlite-jdbc:3.46.1.3")
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
