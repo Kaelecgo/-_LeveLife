@@ -45,9 +45,7 @@ public abstract class AppDatabase extends RoomDatabase {
     private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL(
-                    "CREATE INDEX IF NOT EXISTS `index_tasks_user_id` ON `tasks` (`user_id`)"
-            );
+            database.execSQL(DatabaseSql.CREATE_TASK_USER_ID_INDEX_SQL);
         }
     };
 
@@ -385,7 +383,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
         database.execSQL("DROP TABLE `tasks`");
         database.execSQL("ALTER TABLE `tasks_migrated_v10` RENAME TO `tasks`");
-        database.execSQL("CREATE INDEX IF NOT EXISTS `index_tasks_user_id` ON `tasks` (`user_id`) text;");
+        database.execSQL(DatabaseSql.CREATE_TASK_USER_ID_INDEX_SQL);
     }
 
     private static void rebuildPlacedFurnitureTable(@NonNull SupportSQLiteDatabase database) {
