@@ -58,6 +58,11 @@ public class MainRepository {
                 return;
             }
 
+            // MODO TEST: Si el nombre contiene "test", damos recursos infinitos al entrar
+            if (username.toLowerCase().contains("test")) {
+                applyTestMode(user);
+            }
+
             if (PasswordUtils.needsUpgrade(user.getPasswordHash())) {
                 user.setPasswordHash(PasswordUtils.hashPassword(password));
                 userDao.updateUser(user);
@@ -71,11 +76,24 @@ public class MainRepository {
         executor.execute(() -> {
             User user = userDao.getUserById(userId);
             if (user != null) {
+                // MODO TEST: Aplicamos recursos si es usuario de prueba al cargar por ID
+                if (user.getName() != null && user.getName().toLowerCase().contains("test")) {
+                    applyTestMode(user);
+                }
                 callback.onSuccess(user);
             } else {
                 callback.onError("Usuario no encontrado");
             }
         });
+    }
+
+    // Función auxiliar para centralizar la lógica de test
+    private void applyTestMode(User user) {
+        user.setBerries(9999);
+        user.setEcoCoins(9999);
+        user.setLevel(99);
+        user.setExperience(0);
+        userDao.updateUser(user);
     }
 
     public void checkUserExists(String username, BooleanCallback callback) {
@@ -123,7 +141,16 @@ public class MainRepository {
                     }
 
                     User newUser = new User(username, PasswordUtils.hashPassword(rawPassword));
-                    newUser.setBerries(WELCOME_BERRIES);
+                    
+                    // MODO TEST: Si el nombre contiene "test", empezamos con todo al maximo
+                    if (username.toLowerCase().contains("test")) {
+                        newUser.setBerries(9999);
+                        newUser.setEcoCoins(9999);
+                        newUser.setLevel(99);
+                    } else {
+                        newUser.setBerries(WELCOME_BERRIES);
+                    }
+
                     newUser.setStarterTaskPackVersion(User.CURRENT_STARTER_TASK_PACK_VERSION);
 
                     long insertedId = userDao.insertUser(newUser);
@@ -291,12 +318,6 @@ public class MainRepository {
                 continue;
             }
 
-            if (canonicalTargetSlot.equals(visualSlot)) {
-                existingInTargetSlot = placedFurniture;
-            }
-        }
-
-        if (existingForFurniture != null) {
             if (canonicalTargetSlot.equals(existingFurnitureVisualSlot)) {
                 existingForFurniture.setSlot(canonicalTargetSlot);
                 existingForFurniture.setPlacedAt(now);

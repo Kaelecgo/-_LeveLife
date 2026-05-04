@@ -19,7 +19,7 @@
             android:id="@+id/ivFurnitureIcon"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/logo_with_no_bg512"
+            android:src="@drawable/logo_fondo_clarito"
             android:contentDescription="@string/content_desc_furniture_icon"/>
 
         <TextView

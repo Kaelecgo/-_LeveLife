@@ -491,8 +491,6 @@ public abstract class AppDatabase extends RoomDatabase {
                     "Alfombra", 30, "Decoracion", "furn_rug", null, Furniture.TYPE_RUG, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,
                     "Ventilador Eco", 8, "Sostenibilidad", "furn_fan_eco", null, Furniture.TYPE_FAN, Furniture.CURRENCY_ECO);
-
-            // Muebles añadidos según la petición de las compañeras
             upsertFurnitureCatalogItem(db, existingImageRefs,
                     "Cama Gato", 40, "Decoracion", "furn_cat_bed", null, Furniture.TYPE_RUG, Furniture.CURRENCY_BERRIES);
             upsertFurnitureCatalogItem(db, existingImageRefs,

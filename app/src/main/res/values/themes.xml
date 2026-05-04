@@ -10,6 +10,9 @@
         <item name="colorOnSurface">@color/app_text_primary</item>
         <item name="colorSecondary">@color/app_text_accent</item>
 
+        <!-- Splash Screen API 31+ -->
+        <item name="android:windowSplashScreenBackground">@color/app_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/logo_sin_bg</item>
 
         <item name="materialButtonStyle">@style/LeveLife.Button</item>
         <item name="textInputStyle">@style/LeveLife.TextInputLayout</item>
