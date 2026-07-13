@@ -39,7 +39,7 @@ MVVM (Model-View-ViewModel) with Android Jetpack
 * **Local Persistence** 
 Room Database over SQLite
 
-## 👥 Authors
+## Authors
 This project was developed as the Final Degree Project for the Higher Technical Degree in Multi-platform Application Development (DAM) by:
 * Carolina Montiel
 * Irena Prokhyra
